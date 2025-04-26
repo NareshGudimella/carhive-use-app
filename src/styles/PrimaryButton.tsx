@@ -15,6 +15,7 @@ export const PrimaryButtonStyle=StyleSheet.create({
     },
     textstyle:{
         fontSize:15,
-        fontWeight:'bold'
+        fontWeight:'bold',
+        marginHorizontal:wp(5)
     }
 })

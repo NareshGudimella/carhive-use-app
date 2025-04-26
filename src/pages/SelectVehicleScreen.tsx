@@ -12,6 +12,7 @@ import React, { useState } from "react";
 import { BottomModelView } from "../components/BottomModelView";
 import FilterButton from "../components/FilterButton";
 import PrimaryButton from "../components/PrimaryButton";
+import { Rating } from "react-native-ratings";
 
 class Componentprops extends Baseprops { }
 
@@ -524,13 +525,14 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                 }}>
                                                 3.5
                                             </Text>
-                                            <Image
-                                                source={require('../assets/Star.png')}
-                                                style={{
-                                                    height: 14,
-                                                    width: 14,
-                                                    marginHorizontal: wp(1)
-                                                }} />
+                                            <Rating
+                                                readonly
+                                                startingValue={3.4}
+                                                imageSize={13}
+                                                ratingCount={5}
+                                                fractions={1}
+                                                style={{ marginLeft: 8 }}
+                                            />
                                             <Text>
                                                 - <Text style={{
                                                     fontSize: 16,
