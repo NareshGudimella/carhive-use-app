@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './src/pages/HomeScreen';
 import CalendarScreen from './src/pages/CalendarScreen';
 import SelectVehicleScreen from './src/pages/SelectVehicleScreen';
+import VehicleDetailsScreen from './src/pages/VehicleDetailsScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -15,6 +16,7 @@ function RootStack() {
       <Stack.Screen name="HomeScreen" component={HomeScreen} />
       <Stack.Screen name='CalendarScreen' component={CalendarScreen}/>
       <Stack.Screen name='SelectVehicleScreen' component={SelectVehicleScreen}/>
+      <Stack.Screen name='VehicleDetailsScreen' component={VehicleDetailsScreen}/>
     </Stack.Navigator>
   );
 }

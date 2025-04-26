@@ -9,10 +9,10 @@ class Componentprops extends Baseprops {
 
 const PrimaryButton: React.FC<Componentprops> = (props) => {
     return (
-        <Pressable 
-        onPress={()=>props.onclick()}
-        style={
-            PrimaryButtonStyle.style}>
+        <Pressable
+            onPress={() => props.onclick()}
+            style={
+                PrimaryButtonStyle.style}>
             <Text
                 style={PrimaryButtonStyle.textstyle}
             >{props.title}</Text>

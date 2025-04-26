@@ -9,15 +9,47 @@ import { wp, hp } from "../utils/ResponsiveScreen";
 import { BottomTabstyles } from "../styles/BottomTabstyles";
 import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
 import React, { useState } from "react";
-import { CarouselimageStyles } from "../styles/CarouselimageStyles";
 import { BottomModelView } from "../components/BottomModelView";
+import FilterButton from "../components/FilterButton";
+import PrimaryButton from "../components/PrimaryButton";
 
 class Componentprops extends Baseprops { }
 
+const segment = [
+    { id: 1, model: 'Hatchback' },
+    { id: 2, model: 'Sedan' },
+    { id: 3, model: 'SUV' },
+    { id: 4, model: 'Muv' }]
+
+const Brand = [
+    { id: 1, model: 'Maruti' },
+    { id: 2, model: 'Tata' },
+    { id: 3, model: 'Hyundai' },
+    { id: 4, model: 'Honda' },
+    { id: 5, model: 'Mahindra' }]
+const FuelType = [
+    { id: 1, type: 'Diesel' },
+    { id: 1, type: 'Petrol' },
+    { id: 1, type: 'Electric' },
+
+]
+const TransmissionType = [
+    { id: 1, type: 'Automatic' },
+    { id: 2, type: 'Manual' }
+]
+const SeatingCapacity = [
+    { id: 1, type: '5 Seats' },
+    { id: 2, type: '7 Seats' }
+]
+const short = [
+    { id: 1, type: 'Low to High' },
+    { id: 2, type: 'High to Low' }
+]
 const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
 
     const ref = React.useRef<ICarouselInstance>(null);
     const [filterModel, setFilterModal] = useState(false);
+    const [selectfilter, setSelectfilter] = useState<any>('')
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
@@ -61,16 +93,138 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                     backgroundColor: '#EEEEEE',
                                     marginVertical: hp(1.5)
                                 }} />
-                                <View>
+                                <ScrollView>
                                     <Text style={{
                                         color: '#64748B',
                                         fontSize: 17,
                                         fontWeight: 'bold'
                                     }}>Sort by</Text>
-                                    <View>
-
+                                    <View style={{
+                                        flexDirection: 'row',
+                                        marginVertical: hp(1)
+                                    }}>
+                                        {
+                                            short.map((e: any, index: any) => (
+                                                <FilterButton
+                                                    title={e.type}
+                                                    onclick={() => setSelectfilter(e.id)} />
+                                            ))
+                                        }
                                     </View>
-                                </View>
+                                    <View>
+                                        <Text
+                                            style={{
+                                                color: '#64748B',
+                                                fontSize: 17,
+                                                fontWeight: 'bold'
+                                            }}
+                                        >Segment</Text>
+                                        <View
+                                            style={{
+                                                flexWrap: 'wrap',
+                                                flexDirection: 'row',
+                                            }}>
+                                            {
+                                                segment.map((e: any, index: any) => (
+                                                    <FilterButton
+                                                        title={e.model}
+                                                        onclick={() => setSelectfilter(e.id)} />
+                                                ))
+                                            }
+                                        </View>
+                                    </View>
+                                    <View>
+                                        <Text
+                                            style={{
+                                                color: '#64748B',
+                                                fontSize: 17,
+                                                fontWeight: 'bold', marginTop: hp(1)
+                                            }}
+                                        >Brand</Text>
+                                        <View
+                                            style={{
+                                                flexWrap: 'wrap',
+                                                flexDirection: 'row',
+                                            }}>
+                                            {
+                                                Brand.map((e: any, index: any) => (
+                                                    <FilterButton
+                                                        title={e.model}
+                                                        onclick={() => setSelectfilter(e.id)} />
+                                                ))
+                                            }
+                                        </View>
+                                    </View>
+                                    <View>
+                                        <Text
+                                            style={{
+                                                color: '#64748B',
+                                                fontSize: 17,
+                                                fontWeight: 'bold', marginTop: hp(1)
+                                            }}
+                                        >Fuel Type</Text>
+                                        <View
+                                            style={{
+                                                flexWrap: 'wrap',
+                                                flexDirection: 'row',
+                                            }}>
+                                            {
+                                                FuelType.map((e: any, index: any) => (
+                                                    <FilterButton
+                                                        title={e.type}
+                                                        onclick={() => setSelectfilter(e.id)} />
+                                                ))
+                                            }
+                                        </View>
+                                    </View>
+                                    <View>
+                                        <Text
+                                            style={{
+                                                color: '#64748B',
+                                                fontSize: 17,
+                                                fontWeight: 'bold', marginTop: hp(1)
+                                            }}
+                                        >Transmission Type</Text>
+                                        <View
+                                            style={{
+                                                flexWrap: 'wrap',
+                                                flexDirection: 'row',
+                                            }}>
+                                            {
+                                                TransmissionType.map((e: any, index: any) => (
+                                                    <FilterButton
+                                                        title={e.type}
+                                                        onclick={() => setSelectfilter(e.id)} />
+                                                ))
+                                            }
+                                        </View>
+                                    </View>
+                                    <View>
+                                        <Text
+                                            style={{
+                                                color: '#64748B',
+                                                fontSize: 17,
+                                                fontWeight: 'bold', marginTop: hp(1)
+                                            }}
+                                        >Seating Capacity</Text>
+                                        <View
+                                            style={{
+                                                flexWrap: 'wrap',
+                                                flexDirection: 'row',
+                                            }}>
+                                            {
+                                                SeatingCapacity.map((e: any, index: any) => (
+                                                    <FilterButton
+                                                        title={e.type}
+                                                        onclick={() => setSelectfilter(e.id)} />
+                                                ))
+                                            }
+                                        </View>
+                                    </View>
+                                    <View style={{ marginTop: hp(2) }}>
+                                        <PrimaryButton title='Apply filter' />
+                                    </View>
+                                </ScrollView>
                             </View>
                         </BottomModelView>
                     </Modal>
@@ -198,7 +352,10 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                             marginBottom: hp(2)
                         }}>
                         {[1, 2, 3,].map((e, index: any) => (
-                            <View key={index}>
+                            <Pressable
+                                onPress={() =>
+                                    props.navigation.navigate('VehicleDetailsScreen')}
+                                key={index}>
                                 <Carousel
                                     ref={ref}
                                     width={wp(90)}
@@ -208,7 +365,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                     renderItem={({ index }: { index: any }) => (
                                         <View>
                                             <Image
-                                                source={require('../assets/image(1).png')}
+                                                source={require('../assets/Image(3).png')}
                                                 style={{
                                                     justifyContent: "center",
                                                     height: hp(28),
@@ -398,7 +555,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                             Driving License, Bike</Text>
                                     </View>
                                 </View>
-                            </View>
+                            </Pressable>
                         ))}
                     </ScrollView>
                 </View>
