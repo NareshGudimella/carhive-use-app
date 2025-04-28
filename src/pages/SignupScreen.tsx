@@ -1,93 +1,206 @@
 import { Image, Pressable, SafeAreaView, Text, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
-import { BottomTabstyles } from "../styles/BottomTabstyles";
 import { wp, hp } from "../utils/ResponsiveScreen";
 import Textinput from "../components/TextInput";
-import DropdownTextinput from "../components/DropdownTextinput";
 import PrimaryButton from "../components/PrimaryButton";
+import { Dropdown } from "react-native-element-dropdown";
+import { useState } from "react";
+import { input } from "../styles/TextInputStyle";
+import DatePicker from "react-native-date-picker";
 
 class Componentprops extends Baseprops { }
 
 const SignupScreen: React.FC<Componentprops> = (props) => {
+    const [gender, setGender] = useState(null);
+    const [isFocus, setIsFocus] = useState(false);
+    const [date, setDate] = useState(new Date())
+    const [open, setOpen] = useState(false)
+
+    const genderData = [
+        { label: "Male", value: "male" },
+        { label: "Female", value: "female" },
+        { label: "Other", value: "other" },
+    ];
+
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            <Pressable style={{
-                marginHorizontal: wp(5),
-                marginVertical: hp(2)
-            }}>
-                <Image source={require('../assets/Back.png')}
-                    style={{
-                        height: 30,
-                        width: 30
-                    }} />
+            <Pressable
+                onPress={() => props.navigation.goBack()}
+                style={{
+                    marginHorizontal: wp(5),
+                    marginVertical: hp(2)
+                }}>
+                <Image
+                    source={require("../assets/Back.png")}
+                    style={{ height: 35, width: 35 }}
+                />
             </Pressable>
+
             <View style={{ marginHorizontal: wp(7) }}>
                 <Text style={{
                     fontSize: 28,
-                    fontWeight: 'bold'
-                }}>Sign up to Ride a car</Text>
+                    fontWeight: "bold"
+                }}>
+                    Sign up to Ride a car
+                </Text>
                 <Text
                     style={{
                         fontSize: 17,
-                        fontWeight: '400',
-                        color: '#9CA3AF',
+                        fontWeight: "400",
+                        color: "#9CA3AF",
                         width: wp(70),
-                        marginVertical: hp(1.5)
+                        marginVertical: hp(1.5),
                     }}
-                >Ready to hit the road?
-                    Signing up to book your
-                    ride is quick and easy!</Text>
+                >
+                    Ready to hit the road? Signing up to book your ride is quick and
+                    easy!
+                </Text>
             </View>
+
             <View style={{
                 marginHorizontal: wp(7),
                 marginTop: hp(2)
             }}>
                 <Textinput
-                    image={require('../assets/users.png')}
-                    placeholder='Your name'
-                    keyboardtype='' />
+                    image={require("../assets/users.png")}
+                    placeholder="Your name"
+                    keyboardtype=""
+                />
                 <Textinput
-                    image={require('../assets/sms.png')}
-                    placeholder='Email'
-                    keyboardtype='' />
-                <DropdownTextinput
-                    image={require('../assets/sms.png')}
-                    title='Gender'
-                    img={require('../assets/mingcute_down-fill.png')}
+                    image={require("../assets/sms.png")}
+                    placeholder="Email"
+                    keyboardtype=""
                 />
-                <DropdownTextinput
-                    image={require('../assets/sms.png')}
-                    title='Date of birth'
-                    img={require('../assets/mingcute_down-fill.png')}
+                <Dropdown
+                    style={{
+                        height: hp(6),
+                        borderColor: "#E5E7EB",
+                        borderWidth: 1,
+                        borderRadius: 8,
+                        paddingHorizontal: 15,
+                        marginVertical: hp(1),
+                        backgroundColor: "#EEEFF2",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        elevation: 1,
+                    }}
+                    containerStyle={{
+                        borderRadius: 8,
+                        backgroundColor: "#EEEFF2",
+                    }}
+                    placeholderStyle={{
+                        fontSize: 16,
+                        color: "#9CA3AF",
+                    }}
+                    selectedTextStyle={{
+                        fontSize: 16,
+                        color: "#000",
+                    }}
+                    iconStyle={{
+                        width: 24,
+                        height: 24,
+                    }}
+                    data={genderData}
+                    maxHeight={300}
+                    labelField="label"
+                    valueField="value"
+                    placeholder="Gender"
+                    value={gender}
+                    onFocus={() => setIsFocus(true)}
+                    onBlur={() => setIsFocus(false)}
+                    onChange={(item) => {
+                        setGender(item.value);
+                        setIsFocus(false);
+                    }}
+                    renderLeftIcon={() => (
+                        <Image
+                            source={require("../assets/sms.png")}
+                            style={[input.style, { marginRight: wp(4) }]}
+                        />
+                    )}
+                    renderRightIcon={() => (
+                        <Image
+                            source={require("../assets/mingcute_down-fill.png")}
+                            style={{
+                                width: 20,
+                                height: 20,
+                                tintColor: isFocus ? "#FBC41D" : "#9CA3AF",
+                            }}
+                        />
+                    )}
                 />
+                <Pressable
+                    onPress={() => setOpen(true)}
+                    style={input.continer}>
+                    <View style={{
+                        flexDirection: "row",
+                        alignItems: 'center'
+                    }}>
+                        <Image
+                            source={require('../assets/sms.png')}
+                            style={input.style} />
+                        <Text style={[input.textinput, { color: '#9CA3AF' }]}>
+                            Date of birth
+                        </Text>
+                    </View>
+                    <Image
+                        source={require('../assets/mingcute_down-fill.png')}
+                        style={input.style} />
+                </Pressable>
+
+                <DatePicker
+                    modal
+                    open={open}
+                    date={date || new Date()}
+                    mode="date"
+                    dividerColor="#FBC41D"
+                    onConfirm={(date) => {
+                        setOpen(false);
+                        setDate(date);
+                    }}
+                    onCancel={() => {
+                        setOpen(false);
+                    }}
+                    theme="light"
+                />
+
             </View>
+
             <View
                 style={{
                     flex: 1,
-                    justifyContent: 'flex-end',
+                    justifyContent: "flex-end",
                     marginHorizontal: wp(7),
                     marginVertical: hp(3),
                 }}
             >
-                <PrimaryButton title='Submit' />
+                <PrimaryButton
+                    title="Submit"
+                    onclick={() => props.navigation.navigate('KycDetailsScreen')}
+                />
                 <View style={{
-                    justifyContent: 'center',
-                    alignItems: 'center'
+                    justifyContent: "center",
+                    alignItems: "center"
                 }}>
                     <Text
                         style={{
-                            color: '#9CA3AF',
+                            color: "#9CA3AF",
                             width: wp(70),
-                            textAlign: 'center',
-                            marginTop: hp(1.5)
-                        }}>By signing up you agree to
-                        <Text
-                            style={{ color: '#FBC41D' }}>
-                            Terms of Services & Privacy Policy.</Text>
+                            textAlign: "center",
+                            marginTop: hp(1.5),
+                            lineHeight: hp(3)
+                        }}
+                    >
+                        By signing up you agree to
+                        <Text style={{ color: "#FBC41D" }}>
+                            {" "}
+                            Terms of Services & Privacy Policy.
+                        </Text>
                     </Text>
                 </View>
             </View>
         </SafeAreaView>
-    )
-}
-export default SignupScreen
+    );
+};
+
+export default SignupScreen;

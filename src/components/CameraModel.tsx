@@ -1,0 +1,184 @@
+import { Image, Linking, Modal, PermissionsAndroid, Platform, Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { Asset, launchCamera, launchImageLibrary } from "react-native-image-picker";
+import { useState } from "react";
+import { check, PERMISSIONS, request } from "react-native-permissions";
+import { Baseprops } from "../utils/navigation";
+import { hp, wp } from "../utils/ResponsiveScreen";
+import PrimaryButton from "./PrimaryButton";
+
+class Componentprops extends Baseprops {
+    cameraModal?: boolean;
+    close: any;
+    selectedImage?: any
+    onclick?:any;
+}
+
+const CameraModalScreen: React.FC<Componentprops> = (props) => {
+
+    const [image, setImage] = useState<Asset | null>(null)
+
+    const cameraPermissions = async () => {
+        if (Platform.OS == 'android') {
+            const check =
+                await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CAMERA)
+            if (check) {
+                cameraClick()
+            } else {
+                const granted =
+                    await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA)
+                if (granted == PermissionsAndroid.RESULTS.GRANTED) {
+                    cameraClick()
+                } else {
+                    Linking.openSettings()
+                }
+            }
+        } else if (Platform.OS == 'ios') {
+            const grant = await check(PERMISSIONS.IOS.CAMERA)
+            if (grant) {
+                cameraClick()
+            } else {
+                const granted = await request(PERMISSIONS.IOS.CAMERA)
+                if (granted == 'granted') {
+                    Linking.openSettings()
+                }
+            }
+        }
+    }
+
+    const cameraClick = async () => {
+
+        const result: any = await launchCamera({
+            mediaType: 'photo',
+            quality: 1,
+            maxHeight: 600,
+            maxWidth: 600
+        })
+        setImage(result.assets[0])
+    }
+
+    const galleryClick = async () => {
+        const result: any = await launchImageLibrary({
+            mediaType: 'photo',
+            quality: 1,
+            maxHeight: 600,
+            maxWidth: 600
+        })
+        setImage(result.assets[0])
+    }
+
+    return (
+        <Modal
+            animationType="slide"
+            transparent={true}
+            visible={props.cameraModal}
+        >
+            <View style={[styles.centeredView,
+            {
+                backgroundColor: 'rgba(0,0,0,0.5)',
+                marginTop: hp(0)
+            }]}>
+                <View style={[styles.modalView,
+                { paddingVertical: hp(3) }]}>
+                    <Text style={{
+                        textAlign: 'center',
+                        fontSize: 22,
+                        fontWeight: 'bold',
+                        color: '#000000'
+                    }}>Select Photo</Text>
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            justifyContent: 'space-evenly',
+                            marginTop: hp(3)
+                        }}>
+                        <Pressable
+                            onPress={cameraPermissions}
+                            style={{ alignItems: 'center' }}>
+                            <Image
+                                style={{
+                                    width: 30,
+                                    height: 30
+                                }} source={require('../assets/Huge.png')} />
+                            <Text
+                                style={{
+                                    color: '#000000',
+                                    fontSize: 16,
+                                    fontWeight: 'bold'
+                                }}>Camera</Text>
+                        </Pressable>
+                        <Pressable
+                            onPress={galleryClick}
+                            style={{ alignItems: 'center' }}>
+                            <Image
+                                style={{ width: 30, height: 30 }}
+                                source={require('../assets/gallery.png')} />
+                            <Text
+                                style={{
+                                    color: '#000000',
+                                    fontSize: 16,
+                                    fontWeight: 'bold'
+                                }}>Gallery</Text>
+                        </Pressable>
+                    </View>
+                    {image != null ? <>
+                        <Image style={{
+                            width: 100,
+                            height: 100,
+                            marginTop: hp(2),
+                            alignSelf: 'center'
+                        }} source={{ uri: image?.uri }} />
+                        <View style={{
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            alignItems: 'center', marginHorizontal: wp(15),
+                            marginTop: hp(3)
+                        }}>
+                            <PrimaryButton title='Submit'
+                                onclick={() => {
+                                    setImage(image),
+                                        props.close()
+                                        props.onclick()
+                                }} />
+                            <PrimaryButton
+                                title='Cancle'
+                                onclick={() => props.close()} />
+                        </View>
+                    </> :
+                        <View style={{
+                            marginHorizontal: wp(20),
+                            marginTop: hp(5)
+                        }}>
+                            <PrimaryButton
+                                title='Cancle'
+                                onclick={() => props.close()} />
+                        </View>}
+
+                </View>
+            </View>
+        </Modal>
+    )
+}
+
+const styles = StyleSheet.create({
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        marginTop: 22,
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+});
+
+
+export default CameraModalScreen;

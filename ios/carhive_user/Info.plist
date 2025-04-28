@@ -25,6 +25,12 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
+	<key>NSCameraUsageDescription</key>
+    <string>[REASON]</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+    <string>[REASON]</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>[REASON]</string>
 	<dict>
 	  <!-- Do not change NSAllowsArbitraryLoads to true, or you will risk app rejection! -->
 		<key>NSAllowsArbitraryLoads</key>
