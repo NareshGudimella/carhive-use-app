@@ -10,6 +10,11 @@ import SignupScreen from './src/pages/SignupScreen';
 import KycDetailsScreen from './src/pages/KycDetailsScreen';
 import CarSummaryScreen from './src/pages/CarSummaryScreen';
 import PaymentScreen from './src/pages/PaymentScreen';
+import PaymentSuccessScreen from './src/pages/PaymentSuccessScreen';
+import FavoritesScreen from './src/pages/FavoritesScreen';
+import RentalsScreen from './src/pages/RentalsScreen';
+import OrderDetailsScreen from './src/pages/OrderDetailsScreen';
+import ExtendServiceRequestScreen from './src/pages/ExtendServiceRequestScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -24,7 +29,12 @@ function RootStack() {
       <Stack.Screen name='SignupScreen' component={SignupScreen} />
       <Stack.Screen name='KycDetailsScreen' component={KycDetailsScreen} />
       <Stack.Screen name='CarSummaryScreen' component={CarSummaryScreen} />
-      <Stack.Screen name='PaymentScreen' component={PaymentScreen}/>
+      <Stack.Screen name='PaymentScreen' component={PaymentScreen} />
+      <Stack.Screen name='PaymentSuccessScreen' component={PaymentSuccessScreen} />
+      <Stack.Screen name='FavoritesScreen' component={FavoritesScreen} />
+      <Stack.Screen name='RentalsScreen' component={RentalsScreen} />
+      <Stack.Screen name='OrderDetailsScreen' component={OrderDetailsScreen} />
+      <Stack.Screen name='ExtendServiceRequestScreen' component={ExtendServiceRequestScreen} />
     </Stack.Navigator>
   );
 }

@@ -299,11 +299,32 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                 marginHorizontal: wp(5),
                                 marginVertical: hp(2)
                             }}>
+                                <Pressable
+                                    onPress={() => setEligiabilityModal(false)}
+                                    style={{
+                                        backgroundColor: '#EEEEEE',
+                                        borderRadius: 20,
+                                        width: 35,
+                                        height: 35,
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        marginVertical: wp(2),
+                                        alignSelf: 'center',
+                                        position: 'absolute',
+                                        top: hp(-8)
+                                    }}>
+                                    <Image
+                                        source={require('../assets/close.png')}
+                                        style={{
+                                            height: 15,
+                                            width: 15
+                                        }} />
+                                </Pressable>
                                 <Text
                                     style={{
                                         fontSize: 16,
                                         fontWeight: 'bold',
-
+                                         marginVertical:hp(1)
                                     }}
                                 >Important points for your booking
                                 </Text>
@@ -427,24 +448,24 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                         }} />
                                 </View>
                                 <View style={{
-                        justifyContent: "center",
-                        alignItems: "center"
-                    }}>
-                        <Text
-                            style={{
-                                color: "#9CA3AF",
-                                width: wp(70),
-                                textAlign: "center",
-                                lineHeight: hp(2.5)
-                            }}
-                        >
-                            By signing up you agree to
-                            <Text style={{ color: "#FBC41D" }}>
-                                {" "}
-                                Terms of Services & Privacy Policy.
-                            </Text>
-                        </Text>
-                    </View>
+                                    justifyContent: "center",
+                                    alignItems: "center"
+                                }}>
+                                    <Text
+                                        style={{
+                                            color: "#9CA3AF",
+                                            width: wp(70),
+                                            textAlign: "center",
+                                            lineHeight: hp(2.5)
+                                        }}
+                                    >
+                                        By signing up you agree to
+                                        <Text style={{ color: "#FBC41D" }}>
+                                            {" "}
+                                            Terms of Services & Privacy Policy.
+                                        </Text>
+                                    </Text>
+                                </View>
                             </View>
                         </BottomModelView>
                     </Modal>
@@ -519,8 +540,10 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                     fontWeight: 'bold'
                                 }}>29 April, Mon</Text>
                                 <Text style={{
-                                    color: '#27272780',
-                                    fontWeight: '400', marginTop: 2
+                                   color: '#27272780',
+                                   fontWeight: '500', 
+                                   marginTop: 2,
+                                   fontSize:13
                                 }}>5:00 AM</Text>
                             </View>
                             <Image
@@ -536,8 +559,10 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                     fontWeight: 'bold'
                                 }}>29 April, Mon</Text>
                                 <Text style={{
-                                    color: '#27272780',
-                                    fontWeight: '400', marginTop: 2
+                                   color: '#27272780',
+                                   fontWeight: '500', 
+                                   marginTop: 2,
+                                   fontSize:13
                                 }}>5:00 AM</Text>
                             </View>
                         </View>

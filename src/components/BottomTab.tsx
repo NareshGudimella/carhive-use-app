@@ -5,6 +5,7 @@ import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp
 } from 'react-native-responsive-screen';
+
 class Componentprops extends Baseprops {
     step?: any;
 }
@@ -22,7 +23,9 @@ const BottomTabNavigation: React.FC<Componentprops> = (props) => {
             borderTopRightRadius: 20,
             height: hp(9)
         }}>
-            <Pressable style={{ alignItems: 'center', }}>
+            <Pressable
+                onPress={() => props.navigation.navigate('HomeScreen')}
+                style={{ alignItems: 'center', }}>
                 <View style={{ alignItems: 'center', }}>
                     <Image source={props.step == 1 ?
                         require('../assets/home-2.png') :
@@ -43,7 +46,9 @@ const BottomTabNavigation: React.FC<Componentprops> = (props) => {
                         : <></>
                 }
             </Pressable>
-            <Pressable style={{ alignItems: 'center' }}>
+            <Pressable
+                onPress={() => props.navigation.navigate('FavoritesScreen')}
+                style={{ alignItems: 'center' }}>
                 <View style={{ alignItems: 'center', }}>
                     <Image source={props.step == 2 ?
                         require('../assets/shop.png') :
@@ -64,7 +69,9 @@ const BottomTabNavigation: React.FC<Componentprops> = (props) => {
                         : <></>
                 }
             </Pressable>
-            <Pressable style={{ alignItems: 'center' }}>
+            <Pressable
+                onPress={() => props.navigation.navigate('RentalsScreen')}
+                style={{ alignItems: 'center' }}>
                 <View style={{ alignItems: 'center', }}>
                     <Image source={props.step == 3 ?
                         require('../assets/calendar-add.png') :

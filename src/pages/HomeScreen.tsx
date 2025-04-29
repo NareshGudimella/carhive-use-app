@@ -115,7 +115,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                         <Text
                                             style={{
                                                 marginHorizontal: wp(2),
-                                                fontSize: 16,
+                                                fontSize: 14,
                                                 fontWeight: '600'
                                             }}>29 April 2025</Text>
                                     </Pressable>
@@ -135,7 +135,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                         <Text
                                             style={{
                                                 marginHorizontal: wp(2),
-                                                fontSize: 16,
+                                                fontSize: 14,
                                                 fontWeight: '600'
                                             }}>10:00PM</Text>
                                     </Pressable>
@@ -165,7 +165,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                         <Text
                                             style={{
                                                 marginHorizontal: wp(2),
-                                                fontSize: 16,
+                                                fontSize: 14,
                                                 fontWeight: '600'
                                             }}>29 April 2025</Text>
                                     </Pressable>
@@ -185,7 +185,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                         <Text
                                             style={{
                                                 marginHorizontal: wp(2),
-                                                fontSize: 16,
+                                                fontSize: 14,
                                                 fontWeight: '600'
                                             }}>10:00PM</Text>
                                     </Pressable>
@@ -212,7 +212,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                     />
                 </View>
             </ScrollView>
-            <BottomTabNavigation step={1} />
+            <BottomTabNavigation step={1} navigation={props.navigation} />
         </GestureHandlerRootView>
     )
 }
