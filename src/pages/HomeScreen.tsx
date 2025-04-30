@@ -25,7 +25,9 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
         <GestureHandlerRootView style={[Background.bgcolor, { flex: 1 }]}>
             <ScrollView style={{ flex: 1 }}>
                 <View style={{ flexDirection: 'row', marginVertical: hp(3) }}>
-                    <Pressable style={{
+                    <Pressable
+                    onPress={()=>props.navigation.navigate('SelectCityScreen')}
+                     style={{
                         flexDirection: 'row',
                         alignItems: 'center',
                         backgroundColor: '#ffffff',

@@ -15,6 +15,13 @@ import FavoritesScreen from './src/pages/FavoritesScreen';
 import RentalsScreen from './src/pages/RentalsScreen';
 import OrderDetailsScreen from './src/pages/OrderDetailsScreen';
 import ExtendServiceRequestScreen from './src/pages/ExtendServiceRequestScreen';
+import ProfileScreen from './src/pages/ProfileScreen';
+import ProfileDetailsScreen from './src/pages/ProfileDetailsScreen';
+import HostScreen from './src/pages/HostScreen';
+import BecomeHostScreen from './src/pages/BecomeHostScreen';
+import { Provider } from 'react-redux';
+import { store } from './src/storage/redux';
+import SelectCityScreen from './src/pages/SelectCityScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -35,14 +42,21 @@ function RootStack() {
       <Stack.Screen name='RentalsScreen' component={RentalsScreen} />
       <Stack.Screen name='OrderDetailsScreen' component={OrderDetailsScreen} />
       <Stack.Screen name='ExtendServiceRequestScreen' component={ExtendServiceRequestScreen} />
+      <Stack.Screen name='ProfileScreen' component={ProfileScreen} />
+      <Stack.Screen name='ProfileDetailsScreen' component={ProfileDetailsScreen} />
+      <Stack.Screen name='HostScreen' component={HostScreen} />
+      <Stack.Screen name='BecomeHostScreen' component={BecomeHostScreen} />
+      <Stack.Screen name='SelectCityScreen' component={SelectCityScreen} />
     </Stack.Navigator>
   );
 }
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <RootStack />
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <RootStack />
+      </NavigationContainer>
+    </Provider>
   );
 }

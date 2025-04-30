@@ -92,7 +92,9 @@ const BottomTabNavigation: React.FC<Componentprops> = (props) => {
                         : <></>
                 }
             </Pressable>
-            <Pressable style={{ alignItems: 'center' }}>
+            <Pressable 
+            onPress={()=>props.navigation.navigate('ProfileScreen')}
+             style={{ alignItems: 'center' }}>
                 <View style={{ alignItems: 'center', }}>
                     <Image source={props.step == 4 ?
                         require('../assets/frame.png') :
