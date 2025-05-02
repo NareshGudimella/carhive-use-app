@@ -3,6 +3,7 @@ import { Baseprops } from "../utils/navigation";
 import Textinput from "../components/TextInput";
 import { wp, hp } from "../utils/ResponsiveScreen";
 import { useState } from "react";
+import PrimaryButton from "../components/PrimaryButton";
 
 class Componentprops extends Baseprops { }
 const data = [{ id: 1, city: 'Hyderbad' },
@@ -56,13 +57,24 @@ const SelectCityScreen: React.FC<Componentprops> = (props) => {
                                     style={{
                                         fontSize: 16,
                                         fontWeight: 'bold',
-                                        color: selectCity == e.city?'#ffffff':'#000000'
+                                        color: selectCity == e.city ? '#ffffff' : '#000000'
                                     }}>{e.city}</Text>
                             </Pressable>
                         ))
                     }
                 </View>
             </ScrollView>
+            {
+                selectCity && 
+            <View style={{
+                marginHorizontal: wp(5),
+                marginVertical: hp(3)
+            }}>
+                <PrimaryButton
+                    title='Submit'
+                    onclick={() => props.navigation.navigate('HomeScreen')} />
+            </View>
+            }
         </SafeAreaView>
     )
 }

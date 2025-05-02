@@ -1,6 +1,5 @@
 import {
-    Image, Modal, Pressable,
-    SafeAreaView, StyleSheet,
+    Image, Modal, Pressable, StyleSheet,
     Text, View
 } from "react-native";
 import { Baseprops } from "../utils/navigation";
@@ -11,6 +10,7 @@ import PrimaryButton from "../components/PrimaryButton";
 import { useEffect, useState } from "react";
 import CameraModalScreen from "../components/CameraModel";
 import { CenterModalView } from "../components/CenterModelView";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 class Componentprops extends Baseprops { }
 
@@ -87,7 +87,8 @@ const KycDetailsScreen: React.FC<Componentprops> = (props) => {
                 onPress={() => props.navigation.goBack()}
                 style={{
                     marginHorizontal: wp(5),
-                    marginVertical: hp(2)
+                    marginVertical: hp(2),
+                    marginTop: hp(4)
                 }}>
                 <Image
                     source={require("../assets/Back.png")}
@@ -133,20 +134,24 @@ const KycDetailsScreen: React.FC<Componentprops> = (props) => {
                             justifyContent: 'space-between',
                             marginVertical: hp(1)
                         }}>
-                            <Cardview>
-                                <CameraView
-                                    image={require('../assets/Huge.png')}
-                                    title='Upload Front'
-                                    onclick={() => SetCaremaModal(true)}
-                                />
-                            </Cardview>
-                            <Cardview>
-                                <CameraView
-                                    image={require('../assets/Huge.png')}
-                                    title='Upload Back'
-                                    onclick={() => SetCaremaModal(true)}
-                                />
-                            </Cardview>
+                            <View style={{ width: wp(38) }}>
+                                <Cardview>
+                                    <CameraView
+                                        image={require('../assets/Huge.png')}
+                                        title='Upload Front'
+                                        onclick={() => SetCaremaModal(true)}
+                                    />
+                                </Cardview>
+                            </View>
+                            <View style={{ width: wp(38) }}>
+                                <Cardview>
+                                    <CameraView
+                                        image={require('../assets/Huge.png')}
+                                        title='Upload Back'
+                                        onclick={() => SetCaremaModal(true)}
+                                    />
+                                </Cardview>
+                            </View>
                         </View>
                         <Text style={{
                             fontSize: 18,
@@ -159,20 +164,24 @@ const KycDetailsScreen: React.FC<Componentprops> = (props) => {
                             marginVertical: hp(1),
                             marginBottom: hp(2)
                         }}>
-                            <Cardview>
-                                <CameraView
-                                    image={require('../assets/Huge.png')}
-                                    title='Upload Front'
-                                    onclick={() => SetCaremaModal(true)}
-                                />
-                            </Cardview>
-                            <Cardview>
-                                <CameraView
-                                    image={require('../assets/Huge.png')}
-                                    title='Upload Back'
-                                    onclick={() => SetCaremaModal(true)}
-                                />
-                            </Cardview>
+                            <View style={{ width: wp(38) }}>
+                                <Cardview>
+                                    <CameraView
+                                        image={require('../assets/Huge.png')}
+                                        title='Upload Front'
+                                        onclick={() => SetCaremaModal(true)}
+                                    />
+                                </Cardview>
+                            </View>
+                            <View style={{ width: wp(38) }}>
+                                <Cardview>
+                                    <CameraView
+                                        image={require('../assets/Huge.png')}
+                                        title='Upload Back'
+                                        onclick={() => SetCaremaModal(true)}
+                                    />
+                                </Cardview>
+                            </View>
                         </View>
                     </View>
                 </Cardview>

@@ -1,5 +1,5 @@
 import {
-    Image, Modal, Pressable, SafeAreaView,
+    Image, Modal, Pressable,
     ScrollView, Text, TextInput, View
 } from "react-native";
 import { Baseprops } from "../utils/navigation";
@@ -12,6 +12,7 @@ import { useState } from "react";
 import PrimaryButton from "../components/PrimaryButton";
 import { BottomModelView } from "../components/BottomModelView";
 import { CenterModalView } from "../components/CenterModelView";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 class Componentprops extends Baseprops { }
 const data = [{
@@ -91,9 +92,10 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                         }}>No, Continue</Text>
                                     </Pressable>
                                     <Pressable
-                                    onPress={()=>{props.navigation.navigate('ExtendServiceRequestScreen'),
-                                        setExtendServiceModal(false)
-                                    }}
+                                        onPress={() => {
+                                            props.navigation.navigate('ExtendServiceRequestScreen'),
+                                                setExtendServiceModal(false)
+                                        }}
                                         style={{
                                             borderWidth: 1,
                                             paddingHorizontal: wp(7),
@@ -518,7 +520,9 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                             marginBottom: hp(2),
                                                             marginHorizontal: wp(10)
                                                         }}>
-                                                            <PrimaryButton title='Rate your Experience' />
+                                                            <PrimaryButton
+                                                                title='Rate your Experience'
+                                                                onclick={() => props.navigation.navigate('SelectVehicleScreen')} />
                                                         </View>
                                                     </View>
                                                 </Cardview>

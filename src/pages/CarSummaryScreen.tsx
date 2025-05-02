@@ -1,4 +1,4 @@
-import { Image, Modal, Pressable, SafeAreaView, ScrollView, Text, View } from "react-native";
+import { Image, Modal, Pressable, ScrollView, Text, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { hp, wp } from "../utils/ResponsiveScreen";
 import { Cardview } from "../components/Cardview";
@@ -7,6 +7,7 @@ import PrimaryButton from "../components/PrimaryButton";
 import { useState } from "react";
 import { BottomModelView } from "../components/BottomModelView";
 import { Checkbox } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 class Componentprops extends Baseprops { }
 
@@ -25,6 +26,9 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                         animationType="slide"
                         transparent={true}
                         visible={termsAndConditions}
+                        onRequestClose={() => {
+                            setTermsAndCondition(!termsAndConditions);
+                          }}
                     >
                         <BottomModelView>
                             <View>
@@ -445,6 +449,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                         title='Proceed'
                                         onclick={() => {
                                             props.navigation.navigate('PaymentScreen')
+                                            setEligiabilityModal(false)
                                         }} />
                                 </View>
                                 <View style={{
@@ -471,7 +476,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                     </Modal>
                 </View>
             }
-            <ScrollView style={{ flex: 1 }}>
+            <View style={{ flex: 1 }}>
                 <View style={{
                     backgroundColor: '#ffffff',
                     borderBottomLeftRadius: 20,
@@ -481,7 +486,8 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                         flexDirection: 'row',
                         alignItems: 'center',
                         marginHorizontal: wp(5),
-                        marginVertical: hp(2)
+                        marginVertical: hp(3),
+                        marginTop:hp(4)
                     }}>
                         <Pressable onPress={() => props.navigation.goBack()}>
                             <Image
@@ -517,7 +523,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                         }}>Range Rover Sport</Text>
                     </View>
                 </View>
-                <View style={{ marginHorizontal: wp(5) }}>
+                <ScrollView style={{ marginHorizontal: wp(5) }}>
                     <Text style={{
                         fontSize: 16,
                         fontWeight: 'bold',
@@ -785,8 +791,8 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                             </View>
                         </Cardview>
                     </View>
-                </View>
-            </ScrollView>
+                </ScrollView>
+            </View>
             <View
                 style={{
                     backgroundColor: '#27272708',

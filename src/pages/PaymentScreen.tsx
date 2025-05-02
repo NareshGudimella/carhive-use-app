@@ -1,10 +1,11 @@
-import { Image, Pressable, SafeAreaView, Text, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { wp, hp } from "../utils/ResponsiveScreen";
 import { Cardview } from "../components/Cardview";
 import { RadioButton } from "react-native-paper";
 import { useState } from "react";
 import PrimaryButton from "../components/PrimaryButton";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 class Componentprops extends Baseprops { }
 
@@ -17,7 +18,8 @@ const PaymentScreen: React.FC<Componentprops> = (props) => {
                 onPress={() => props.navigation.goBack()}
                 style={{
                     marginHorizontal: wp(5),
-                    marginVertical: hp(3)
+                    marginVertical: hp(2),
+                    marginTop:hp(3)
                 }}>
                 <Image
                     source={require('../assets/Back.png')}
@@ -28,7 +30,7 @@ const PaymentScreen: React.FC<Componentprops> = (props) => {
             </Pressable>
             <View style={{
                 marginHorizontal: wp(5),
-                marginVertical: hp(3),
+                marginVertical: hp(2),
                 flex: 1
             }}>
                 <Text style={{

@@ -1,10 +1,11 @@
-import { Image, Platform, Pressable, SafeAreaView, Text, View } from "react-native";
+import { Image, Platform, Pressable, Text, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { BottomTabstyles } from "../styles/BottomTabstyles";
 import { wp, hp } from "../utils/ResponsiveScreen";
 import { Cardview } from "../components/Cardview";
 import { useState } from "react";
 import { Calendar } from "react-native-calendars";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 class Componentprops extends Baseprops { }
 
@@ -23,6 +24,7 @@ const CalendarScreen: React.FC<Componentprops> = (props) => {
                         marginVertical: hp(3), alignItems: 'center'
                     }}>
                     <Pressable
+                        onPress={() => props.navigation.goBack()}
                         style={{
                             height: hp(6),
                             width: wp(13),

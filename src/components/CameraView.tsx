@@ -15,8 +15,7 @@ export const CameraView: React.FC<Componentprops> = (props) => {
             style={{
                 justifyContent: 'center',
                 alignItems: 'center',
-                paddingVertical: hp(3),
-                paddingHorizontal: hp(4.5),
+                paddingVertical: hp(2.5),
             }}>
             <Image
                 source={props.image}
@@ -27,7 +26,7 @@ export const CameraView: React.FC<Componentprops> = (props) => {
             <Text style={{
                 color: '#64748B',
                 fontWeight: '500',
-                marginVertical: hp(1)
+                marginTop: hp(1)
             }}>{props.title}</Text>
         </Pressable>
     )

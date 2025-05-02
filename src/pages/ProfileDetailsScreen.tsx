@@ -1,15 +1,16 @@
-import { Image, Modal, Pressable, SafeAreaView, ScrollView, Text, View } from "react-native";
+import { Image, Modal, Pressable, ScrollView, Text, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { wp, hp } from "../utils/ResponsiveScreen";
 import { Cardview } from "../components/Cardview";
 import { CameraView } from "../components/CameraView";
 import { useState } from "react";
 import { BottomModelView } from "../components/BottomModelView";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 class Componentprops extends Baseprops { }
 
 const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
-    
+
     return (
         <SafeAreaView style={{
             flex: 1
@@ -18,7 +19,8 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                 <View style={{
                     flexDirection: 'row',
                     alignItems: 'center',
-                    margin: wp(5)
+                    margin: wp(5),
+                    marginTop: hp(4)
                 }}>
                     <Pressable
                         onPress={() => props.navigation.goBack()}
@@ -67,7 +69,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                             </View>
                             <Cardview>
                                 <Text style={{
-                                    marginVertical: hp(1.5),
+                                    marginVertical: hp(2),
                                     marginHorizontal: wp(4),
                                     fontSize: 16,
                                     fontWeight: 'bold'
@@ -78,7 +80,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                             <View style={{ marginVertical: hp(0.8) }} />
                             <Cardview>
                                 <Text style={{
-                                    marginVertical: hp(1.5),
+                                    marginVertical: hp(2),
                                     marginHorizontal: wp(4),
                                     fontSize: 16,
                                     fontWeight: 'bold'
@@ -89,7 +91,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                             <View style={{ marginVertical: hp(0.8) }} />
                             <Cardview>
                                 <Text style={{
-                                    marginVertical: hp(1.5),
+                                    marginVertical: hp(2),
                                     marginHorizontal: wp(4),
                                     fontSize: 16,
                                     fontWeight: 'bold'
@@ -100,7 +102,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                             <View style={{ marginVertical: hp(0.8) }} />
                             <Cardview>
                                 <Text style={{
-                                    marginVertical: hp(1.5),
+                                    marginVertical: hp(2),
                                     marginHorizontal: wp(4),
                                     fontSize: 16,
                                     fontWeight: 'bold'
@@ -128,18 +130,28 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                     justifyContent: 'space-between',
                                     marginVertical: hp(1)
                                 }}>
-                                    <Cardview>
-                                        <CameraView
-                                            image={require('../assets/Huge.png')}
-                                            title='Upload Front'
-                                        />
-                                    </Cardview>
-                                    <Cardview>
-                                        <CameraView
-                                            image={require('../assets/Huge.png')}
-                                            title='Upload Back'
-                                        />
-                                    </Cardview>
+                                    <View style={{
+                                        width: wp(38)
+                                    }}>
+                                        <Cardview>
+                                            <CameraView
+                                                image={require('../assets/Huge.png')}
+                                                title='Upload Front'
+                                                onclick={() => props.navigation.navigate('KycDetailsScreen')}
+                                            />
+                                        </Cardview>
+                                    </View>
+                                    <View style={{
+                                        width: wp(38)
+                                    }}>
+                                        <Cardview>
+                                            <CameraView
+                                                image={require('../assets/Huge.png')}
+                                                title='Upload Back'
+                                                onclick={() => props.navigation.navigate('KycDetailsScreen')}
+                                            />
+                                        </Cardview>
+                                    </View>
                                 </View>
                                 <Text style={{
                                     fontSize: 18,
@@ -152,18 +164,24 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                     marginVertical: hp(1),
                                     marginBottom: hp(2)
                                 }}>
-                                    <Cardview>
-                                        <CameraView
-                                            image={require('../assets/Huge.png')}
-                                            title='Upload Front'
-                                        />
-                                    </Cardview>
-                                    <Cardview>
-                                        <CameraView
-                                            image={require('../assets/Huge.png')}
-                                            title='Upload Back'
-                                        />
-                                    </Cardview>
+                                    <View style={{ width: wp(38) }}>
+                                        <Cardview>
+                                            <CameraView
+                                                image={require('../assets/Huge.png')}
+                                                title='Upload Front'
+                                                onclick={() => props.navigation.navigate('KycDetailsScreen')}
+                                            />
+                                        </Cardview>
+                                    </View>
+                                    <View style={{ width: wp(38) }}>
+                                        <Cardview>
+                                            <CameraView
+                                                image={require('../assets/Huge.png')}
+                                                title='Upload Back'
+                                                onclick={() => props.navigation.navigate('KycDetailsScreen')}
+                                            />
+                                        </Cardview>
+                                    </View>
                                 </View>
                             </View>
                         </Cardview>

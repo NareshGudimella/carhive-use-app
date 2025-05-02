@@ -1,10 +1,11 @@
-import { Image, Pressable, SafeAreaView, ScrollView, Text, View } from "react-native";
+import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { hp, wp } from "../utils/ResponsiveScreen";
 import { Cardview } from "../components/Cardview";
 import { SelectorBoxStyle } from "../styles/Selectorbox";
 import { BottomTabstyles } from "../styles/BottomTabstyles";
 import PrimaryButton from "../components/PrimaryButton";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 class Componentprops extends Baseprops { }
 
@@ -167,10 +168,12 @@ const ExtendServiceRequestScreen: React.FC<Componentprops> = (props) => {
                     </View>
                 </View>
             </ScrollView>
-            <View style={{marginHorizontal:wp(5),
-                marginVertical:hp(3)
+            <View style={{
+                marginHorizontal: wp(5),
+                marginVertical: hp(3)
             }}>
-                <PrimaryButton title='Request Now'/>
+                <PrimaryButton title='Request Now'
+                    onclick={() => props.navigation.navigate('RentalsScreen')} />
             </View>
         </SafeAreaView>
     )

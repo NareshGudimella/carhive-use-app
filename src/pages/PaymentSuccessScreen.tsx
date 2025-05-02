@@ -1,7 +1,8 @@
-import { Image, SafeAreaView, Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { hp, wp } from "../utils/ResponsiveScreen";
 import PrimaryButton from "../components/PrimaryButton";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 class Componentprops extends Baseprops { }
 const PaymentSuccessScreen: React.FC<Componentprops> = (props) => {
@@ -40,7 +41,7 @@ const PaymentSuccessScreen: React.FC<Componentprops> = (props) => {
                     width: wp(70),
                     marginVertical: hp(5)
                 }}>
-                    <PrimaryButton title='View details' />
+                    <PrimaryButton title='View details' onclick={() => props.navigation.navigate('HomeScreen')} />
                 </View>
             </View>
         </SafeAreaView>

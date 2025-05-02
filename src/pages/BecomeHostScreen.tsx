@@ -1,8 +1,9 @@
-import { Image, Pressable, SafeAreaView, Text, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { hp, wp } from "../utils/ResponsiveScreen";
 import Textinput from "../components/TextInput";
 import PrimaryButton from "../components/PrimaryButton";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 class Componentprops extends Baseprops { }
 
@@ -11,7 +12,9 @@ const BecomeHostScreen: React.FC<Componentprops> = (props) => {
         <SafeAreaView style={{ flex: 1 }}>
             <Pressable
                 onPress={() => props.navigation.goBack()}
-                style={{ padding: hp(2) }}>
+                style={{ padding: hp(2),
+                    marginTop:hp(2)
+                 }}>
                 <Image source={require('../assets/Back.png')}
                     style={{
                         height: 35,
@@ -49,7 +52,7 @@ const BecomeHostScreen: React.FC<Componentprops> = (props) => {
                 justifyContent: 'flex-end',
                 marginVertical: hp(1)
             }}>
-                <PrimaryButton title='Submit' />
+                <PrimaryButton title='Submit' onclick={()=>props.navigation.navigate('ProfileScreen')} />
                 <Text style={{
                     fontSize: 14,
                     fontWeight: '500',

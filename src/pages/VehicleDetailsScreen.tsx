@@ -1,4 +1,4 @@
-import { Image, Modal, Pressable, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Image, Modal, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { hp, wp } from "../utils/ResponsiveScreen";
 import { BackButtonStyle } from "../styles/BackButtonStyle";
@@ -12,6 +12,7 @@ import { BottomModelView } from "../components/BottomModelView";
 import Textinput from "../components/TextInput";
 import { OtpInput } from "react-native-otp-entry";
 import { style } from "../styles/OtpStyle";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 class Componentprops extends Baseprops { }
 
@@ -195,9 +196,9 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                     </View>
                                     <PrimaryButton
                                         title='Verify'
-                                        onclick={()=>{
-                                            setOtpModal(false),
-                                            props.navigation.navigate('SignupScreen')
+                                        onclick={() => {
+                                            props.navigation.navigate('SignupScreen'),
+                                                setOtpModal(false)
                                         }}
                                     />
                                 </View>
@@ -206,9 +207,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                     </View>
                 }
             </View>
-            <ScrollView
-                showsVerticalScrollIndicator={false}
-                style={{ flex: 1 }}>
+            <View style={{ flex: 1 }}>
                 <Image
                     source={require('../assets/Image(3).png')}
                     style={{
@@ -217,7 +216,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                     }} />
                 <View style={{
                     position: 'absolute',
-                    top: hp(2),
+                    top: hp(3),
                     marginHorizontal: wp(5),
                     flexDirection: 'row',
                     alignItems: 'center',
@@ -252,10 +251,13 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                             style={BottomTabstyles.selectedstyle} />
                     </Pressable>
                 </View>
-                <View style={{
-                    marginHorizontal: wp(5),
-                    marginTop: hp(2)
-                }}>
+                <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    style={{
+                        flex: 1,
+                        marginHorizontal: wp(5),
+                        paddingVertical: hp(2)
+                    }}>
                     <Cardview>
                         <View style={{
                             paddingVertical: hp(1),
@@ -338,7 +340,8 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                         </View>
                                         <View style={{
                                             flexDirection: 'row',
-                                            alignItems: 'center', marginVertical: hp(1)
+                                            alignItems: 'center',
+                                            marginVertical: hp(2)
                                         }}>
                                             <Image
                                                 source={require('../assets/Icon.png')}
@@ -355,7 +358,10 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                         }}>
                                             <Image
                                                 source={require('../assets/Music.png')}
-                                                style={ImageStyle.style}
+                                                style={{
+                                                    height: 20,
+                                                    width: 17
+                                                }}
                                                 tintColor='#8A8A8F'
                                             />
                                             <Text style={
@@ -380,7 +386,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                         <View style={{
                                             flexDirection: 'row',
                                             alignItems: 'center',
-                                            marginVertical: hp(1)
+                                            marginVertical: hp(2)
                                         }}>
                                             <Image
                                                 source={require('../assets/Steer.png')}
@@ -397,7 +403,10 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                         }}>
                                             <Image
                                                 source={require('../assets/Tyre.png')}
-                                                style={ImageStyle.style}
+                                                style={{
+                                                    height: 20,
+                                                    width: 16
+                                                }}
                                                 tintColor='#8A8A8F'
                                             />
                                             <Text style={
@@ -487,7 +496,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                 </View>
                                 <View style={{
                                     flexDirection: 'row',
-                                    marginTop: wp(2)
+                                    marginTop: wp(3.5)
                                 }}>
                                     <Image
                                         source={require('../assets/id-card.png')}
@@ -512,7 +521,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                     <View style={{ marginVertical: hp(2) }}>
                         <Cardview>
                             <View style={{
-                                paddingVertical: hp(1),
+                                paddingVertical: hp(2),
                                 paddingHorizontal: hp(2)
                             }}>
                                 <Text
@@ -597,8 +606,8 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                         </Cardview>
                     </View>
                     <View style={{
-                        marginVertical: hp(2),
-                        marginTop: hp(5)
+                        marginTop: hp(5),
+                        marginBottom: hp(4)
                     }}>
                         <Cardview>
                             <View style={{
@@ -628,8 +637,8 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                             </View>
                         </Cardview>
                     </View>
-                </View>
-            </ScrollView>
+                </ScrollView>
+            </View>
         </SafeAreaView>
     )
 }

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1004901800308",
+    "project_id": "carhive-b3ffb",
+    "storage_bucket": "carhive-b3ffb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1004901800308:android:ea471cfeaa3948e3ee3421",
+        "android_client_info": {
+          "package_name": "com.carhive_user"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4IbavpgFU-n2OgZ4bIjcn1gQmnM_9eIA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

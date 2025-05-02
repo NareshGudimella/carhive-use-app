@@ -1,4 +1,4 @@
-import { Image, Pressable, SafeAreaView, Text, View } from "react-native";
+import { Image, Pressable,  Text, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { wp, hp } from "../utils/ResponsiveScreen";
 import Textinput from "../components/TextInput";
@@ -7,6 +7,7 @@ import { Dropdown } from "react-native-element-dropdown";
 import { useState } from "react";
 import { input } from "../styles/TextInputStyle";
 import DatePicker from "react-native-date-picker";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 class Componentprops extends Baseprops { }
 
@@ -28,7 +29,8 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
                 onPress={() => props.navigation.goBack()}
                 style={{
                     marginHorizontal: wp(5),
-                    marginVertical: hp(2)
+                    marginVertical: hp(2),
+                    marginTop:hp(3.5)
                 }}>
                 <Image
                     source={require("../assets/Back.png")}

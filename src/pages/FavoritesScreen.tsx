@@ -1,4 +1,4 @@
-import { Image, Pressable, SafeAreaView, ScrollView, Text, TextInput, View } from "react-native";
+import { Image, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { hp, wp } from "../utils/ResponsiveScreen";
 import Textinput from "../components/TextInput";
@@ -6,6 +6,7 @@ import { input } from "../styles/TextInputStyle";
 import BottomTabNavigation from "../components/BottomTab";
 import { Cardview } from "../components/Cardview";
 import { Rating } from "react-native-ratings";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 class Componentprops extends Baseprops { }
 

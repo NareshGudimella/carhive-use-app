@@ -13,6 +13,7 @@ import { BottomModelView } from "../components/BottomModelView";
 import FilterButton from "../components/FilterButton";
 import PrimaryButton from "../components/PrimaryButton";
 import { Rating } from "react-native-ratings";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 class Componentprops extends Baseprops { }
 
@@ -54,6 +55,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
+            <SafeAreaView style={{flex:1}}>
             {
                 filterModel && <View style={{}}>
                     <Modal
@@ -237,7 +239,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                     flexDirection: 'row',
                     alignItems: 'center',
                     marginHorizontal: wp(5),
-                    marginVertical: hp(2)
+                    marginVertical: hp(3),
                 }}>
                     <Pressable onPress={() => props.navigation.goBack()}>
                         <Image source={require('../assets/Back.png')}
@@ -265,7 +267,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                         elevation: 1,
                         justifyContent: 'space-between',
                         flexDirection: 'row',
-                        alignItems: 'center'
+                        alignItems: 'center',
                     }}>
                         <View style={{ alignItems: 'center' }}>
                             <Text style={{
@@ -300,7 +302,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                     </View>
                     <Pressable>
                         <Image source={require('../assets/edit.png')}
-                            style={{ height: 30, width: 30 }}
+                            style={{ height: 25, width: 25 }}
                         />
                     </Pressable>
                 </View>
@@ -562,6 +564,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                     </ScrollView>
                 </View>
             </View>
+            </SafeAreaView>
         </GestureHandlerRootView>
     )
 }
