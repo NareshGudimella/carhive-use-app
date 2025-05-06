@@ -23,7 +23,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
     const ref = React.useRef<ICarouselInstance>(null);
 
     return (
-        <GestureHandlerRootView style={[Background.bgcolor, { flex: 1 }]}>
+        <SafeAreaView style={[Background.bgcolor, { flex: 1 }]}>
             <SafeAreaView style={{ flex: 1 }}>
                 <ScrollView style={{ flex: 1 }}>
                     <View style={{
@@ -223,7 +223,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                 </ScrollView>
                 <BottomTabNavigation step={1} navigation={props.navigation} />
             </SafeAreaView>
-        </GestureHandlerRootView>
+        </SafeAreaView>
     )
 }
 export default HomeScreen

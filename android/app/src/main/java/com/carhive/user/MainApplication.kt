@@ -1,4 +1,4 @@
-package com.carhive_user
+package com.carhive.user
 
 import android.app.Application
 import com.facebook.react.PackageList

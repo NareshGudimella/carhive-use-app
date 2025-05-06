@@ -22,14 +22,20 @@ import BecomeHostScreen from './src/pages/BecomeHostScreen';
 import { Provider } from 'react-redux';
 import { store } from './src/storage/redux';
 import SelectCityScreen from './src/pages/SelectCityScreen';
+import { Foregroundmessage, requestfirebasePermissions } from './src/firebase/firebase';
 
 
 const Stack = createNativeStackNavigator();
 
 function RootStack() {
+  React.useEffect(() => {
+    requestfirebasePermissions()
+    Foregroundmessage()
+  })
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="HomeScreen" component={HomeScreen} />
+      <Stack.Screen name='SelectCityScreen' component={SelectCityScreen} /> 
       <Stack.Screen name='CalendarScreen' component={CalendarScreen} />
       <Stack.Screen name='SelectVehicleScreen' component={SelectVehicleScreen} />
       <Stack.Screen name='VehicleDetailsScreen' component={VehicleDetailsScreen} />
@@ -46,7 +52,6 @@ function RootStack() {
       <Stack.Screen name='ProfileDetailsScreen' component={ProfileDetailsScreen} />
       <Stack.Screen name='HostScreen' component={HostScreen} />
       <Stack.Screen name='BecomeHostScreen' component={BecomeHostScreen} />
-      <Stack.Screen name='SelectCityScreen' component={SelectCityScreen} />
     </Stack.Navigator>
   );
 }

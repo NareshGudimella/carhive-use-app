@@ -1,19 +1,31 @@
-import { Pressable, SafeAreaView, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import Textinput from "../components/TextInput";
 import { wp, hp } from "../utils/ResponsiveScreen";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PrimaryButton from "../components/PrimaryButton";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 class Componentprops extends Baseprops { }
-const data = [{ id: 1, city: 'Hyderbad' },
-{ id: 2, city: 'Benglore' },
-{ id: 3, city: 'Vizag' },
-{ id: 4, city: 'Mumbai' }
-]
 
 const SelectCityScreen: React.FC<Componentprops> = (props) => {
-    const [selectCity, setSelectCity] = useState<any>('')
+
+    const [selectCity, setSelectCity] = useState<any>(null)
+    const [citys, setCitys] = useState<any>([])
+
+    useEffect(() => {
+        const data = [
+            { id: 1, city: 'Hyderbad' },
+            { id: 2, city: 'Benglore' },
+            { id: 3, city: 'Vizag' },
+            { id: 4, city: 'Mumbai' }
+        ]
+        setCitys(data)
+    }, [])
+
+
+
+
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <ScrollView style={{
@@ -36,8 +48,7 @@ const SelectCityScreen: React.FC<Componentprops> = (props) => {
                     flexDirection: 'row',
                     flexWrap: 'wrap'
                 }}>
-                    {
-                        data.map((e: any, index: any) => (
+                    {citys.map((e: any, index: any) => (
                             <Pressable
                                 onPress={() => setSelectCity(e.city)}
                                 style={{
@@ -65,15 +76,15 @@ const SelectCityScreen: React.FC<Componentprops> = (props) => {
                 </View>
             </ScrollView>
             {
-                selectCity && 
-            <View style={{
-                marginHorizontal: wp(5),
-                marginVertical: hp(3)
-            }}>
-                <PrimaryButton
-                    title='Submit'
-                    onclick={() => props.navigation.navigate('HomeScreen')} />
-            </View>
+                selectCity && selectCity != '' &&
+                <View style={{
+                    marginHorizontal: wp(5),
+                    marginVertical: hp(3)
+                }}>
+                    <PrimaryButton
+                        title='Submit'
+                        onclick={() => props.navigation.navigate('HomeScreen')} />
+                </View>
             }
         </SafeAreaView>
     )

@@ -95,7 +95,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                                 color: '#FBC41D'
                                             }}>  Privacy policy</Text>
                                     </Text>
-                                    <View style={{ marginTop: hp(2) }}>
+                                    <View style={{ marginVertical: hp(2) }}>
                                         <PrimaryButton title='Request OTP'
                                             onclick={() => {
                                                 setMobileNumberModal(false),
@@ -194,6 +194,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                             fontSize: 16
                                         }}>Resend</Text>
                                     </View>
+                                    <View style={{marginBottom:hp(2)}}>
                                     <PrimaryButton
                                         title='Verify'
                                         onclick={() => {
@@ -201,6 +202,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                                 setOtpModal(false)
                                         }}
                                     />
+                                    </View>
                                 </View>
                             </BottomModelView>
                         </Modal>

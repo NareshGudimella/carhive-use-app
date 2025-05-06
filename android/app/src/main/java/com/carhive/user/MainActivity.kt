@@ -1,4 +1,4 @@
-package com.carhive_user
+package com.carhive.user
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
