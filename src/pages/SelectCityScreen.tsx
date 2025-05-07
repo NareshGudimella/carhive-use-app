@@ -37,7 +37,7 @@ const SelectCityScreen: React.FC<Componentprops> = (props) => {
                 }}>
                     <Textinput placeholder='Search'
                         image={require('../assets/search.png')}
-                        keyboardtype='' />
+                        keyboardtype='default' />
                 </View>
                 <Text style={{
                     fontSize: 18,

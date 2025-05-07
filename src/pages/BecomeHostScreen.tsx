@@ -37,10 +37,10 @@ const BecomeHostScreen: React.FC<Componentprops> = (props) => {
                 <View style={{ marginVertical: hp(1) }}>
                     <Textinput placeholder='Your name'
                         image={require('../assets/users.png')}
-                        keyboardtype='' />
+                        keyboardtype='default' />
                     <Textinput placeholder='Your email'
                         image={require('../assets/sms.png')}
-                        keyboardtype='' />
+                        keyboardtype='default' />
                     <Textinput placeholder='Mobile number'
                         image={require('../assets/sms.png')}
                         keyboardtype='numeric' />

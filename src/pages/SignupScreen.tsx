@@ -66,12 +66,12 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
                 <Textinput
                     image={require("../assets/users.png")}
                     placeholder="Your name"
-                    keyboardtype=""
+                    keyboardtype="default"
                 />
                 <Textinput
                     image={require("../assets/sms.png")}
                     placeholder="Email"
-                    keyboardtype=""
+                    keyboardtype="default"
                 />
                 <Dropdown
                     style={{

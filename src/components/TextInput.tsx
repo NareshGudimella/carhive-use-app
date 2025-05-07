@@ -18,7 +18,7 @@ const Textinput: React.FC<Componentprops> = (props) => {
                 placeholder={props.placeholder}
                 placeholderTextColor="#9CA3AF"
                 style={input.textinput}
-                keyboardType={props.keyboardtype}
+                keyboardType={props.keyboardtype} 
             />
         </View>
     )
