@@ -3,7 +3,6 @@ import { View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './src/pages/HomeScreen';
-import CalendarScreen from './src/pages/CalendarScreen';
 import SelectVehicleScreen from './src/pages/SelectVehicleScreen';
 import VehicleDetailsScreen from './src/pages/VehicleDetailsScreen';
 import SignupScreen from './src/pages/SignupScreen';
@@ -23,6 +22,7 @@ import { Provider } from 'react-redux';
 import { store } from './src/storage/redux';
 import SelectCityScreen from './src/pages/SelectCityScreen';
 import { Foregroundmessage, requestfirebasePermissions } from './src/firebase/firebase';
+import { getCity, setCity } from './src/storage/AsyncStorage';
 
 
 const Stack = createNativeStackNavigator();
@@ -32,11 +32,11 @@ function RootStack() {
     requestfirebasePermissions()
     Foregroundmessage()
   })
+  
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="HomeScreen" component={HomeScreen} />
       <Stack.Screen name='SelectCityScreen' component={SelectCityScreen} /> 
-      <Stack.Screen name='CalendarScreen' component={CalendarScreen} />
       <Stack.Screen name='SelectVehicleScreen' component={SelectVehicleScreen} />
       <Stack.Screen name='VehicleDetailsScreen' component={VehicleDetailsScreen} />
       <Stack.Screen name='SignupScreen' component={SignupScreen} />

@@ -16,3 +16,13 @@ export const removeToken = async () => {
         await AsyncStorage.removeItem('@token')
     } catch (e) { }
 }
+export const setCity = async (city: any) => {
+    try {
+        return AsyncStorage.setItem('city', city)
+    } catch (e) { }
+}
+export const getCity = async () => {
+    try {
+        return AsyncStorage.getItem('city')
+    } catch (e) { }
+}

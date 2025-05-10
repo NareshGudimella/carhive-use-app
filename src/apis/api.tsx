@@ -1,6 +1,6 @@
 import { getToken } from "../storage/AsyncStorage"
 
-const BASE_URL = ''
+const BASE_URL = 'https://carhive.pengwinsolutions.in/api'
 
 export const excuteResponse = async (url: string, body: any) => {
 
@@ -49,4 +49,21 @@ export const excuteGetResponse = async (url: string) => {
         console.log(e)
     }
     return { code: 1 }
+}
+
+export const Login = async (mobile: any) => {
+    return excuteResponse('auth/login', { mobile })
+}
+export const Otp = async (mobile: any, otp: any) => {
+    return excuteResponse('auth/verfy', { mobile, otp })
+}
+export const CarsList = async (from_date: any, to_date: any,
+    city_id: any, user_latitude: any, user_longitude: any) => {
+    return excuteResponse('auth/cars', {
+        from_date, to_date, city_id,
+        user_latitude, user_longitude
+    })
+}
+export const carDetails=async(carid:any,from_date:any,to_date:any)=>{
+    return excuteResponse(`auth/cars/details/${carid}`,{from_date,to_date})
 }

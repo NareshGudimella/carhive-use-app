@@ -6,6 +6,8 @@ class Componentprops extends Baseprops {
     placeholder?: any;
     image?: any;
     keyboardtype:any
+    value?:any
+    onChangeText?:any
 }
 
 const Textinput: React.FC<Componentprops> = (props) => {
@@ -19,6 +21,8 @@ const Textinput: React.FC<Componentprops> = (props) => {
                 placeholderTextColor="#9CA3AF"
                 style={input.textinput}
                 keyboardType={props.keyboardtype} 
+                value={props.value}
+                onChangeText={props.onChangeText}
             />
         </View>
     )

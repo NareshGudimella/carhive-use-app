@@ -1,10 +1,10 @@
-import { Image, Modal, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Image, Modal, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { hp, wp } from "../utils/ResponsiveScreen";
 import { BackButtonStyle } from "../styles/BackButtonStyle";
 import { BottomTabstyles } from "../styles/BottomTabstyles";
 import { Cardview } from "../components/Cardview";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { ImageStyle } from "../styles/ImageStyle";
 import { Rating } from 'react-native-ratings';
 import PrimaryButton from "../components/PrimaryButton";
@@ -13,6 +13,9 @@ import Textinput from "../components/TextInput";
 import { OtpInput } from "react-native-otp-entry";
 import { style } from "../styles/OtpStyle";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { carDetails, excuteResponse, Login, Otp } from "../apis/api";
+import { setToken } from "../storage/AsyncStorage";
+import { useFocusEffect } from "@react-navigation/native";
 
 class Componentprops extends Baseprops { }
 
@@ -21,6 +24,62 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
     const [mobileNumberModal, setMobileNumberModal] = useState(false)
     const [otpModal, setOtpModal] = useState(false)
     const [otp, setOtp] = useState<any>('')
+    const [phoneNumber, setPhoneNumber] = useState<any>('')
+    const [carData, setCarData] = useState<any>(null)
+
+    useFocusEffect(
+        useCallback(() => {
+            if (props.route.params && props.route.params?.id) {
+                handelVicheDetails(props.route.params?.id)
+            }
+        }, [])
+    )
+
+    const handelLogin = async () => {
+        if (phoneNumber.trim().length == 0 &&
+            phoneNumber.trim().length != 10) {
+            Alert.alert('Alert', 'Invalid mobile number')
+            return
+        }
+        const response = await Login(phoneNumber)
+        console.log('Login', response)
+        if (response.code == 0) {
+            setOtpModal(true)
+        }
+    }
+    const handelOtp = async () => {
+        if (!otp || otp.length !== 4) {
+            Alert.alert('Alert!', 'Enter a valid 4-digit OTP.');
+            return;
+        }
+        const response = await Otp(phoneNumber, otp)
+        console.log('otp', response)
+        if (response.code == 0) {
+            setToken(response.data.token)
+            console.log('token', response.data.token)
+            if (response.data.profile_flag == 0) {
+                console.log('yes', response.data.profile_flag)
+                props.navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'SignupScreen' }]
+                })
+            } else if (response.data.profile_flag == 1) {
+                console.log('no', response.data.profile_flag)
+                props.navigation.navigate('CarSummaryScreen')
+            }
+        }
+    }
+    const handelVicheDetails = async (carid: any) => {
+        const response = await carDetails(carid,
+            props.route.params.fromdate,
+            props.route.params.todate
+        );
+        console.log('CarDetails', response)
+        if (response.code == 0) {
+            setCarData(response.data)
+            console.log('hello', carData)
+        }
+    }
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <View>
@@ -75,6 +134,8 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                         image={require('../assets/call.png')}
                                         placeholder='Enter your mobile number'
                                         keyboardtype='numeric'
+                                        value={phoneNumber}
+                                        onChangeText={setPhoneNumber}
                                     />
                                     <Text
                                         style={{
@@ -99,7 +160,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                         <PrimaryButton title='Request OTP'
                                             onclick={() => {
                                                 setMobileNumberModal(false),
-                                                    setOtpModal(true)
+                                                    handelLogin()
                                             }}
                                         />
                                     </View>
@@ -194,14 +255,14 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                             fontSize: 16
                                         }}>Resend</Text>
                                     </View>
-                                    <View style={{marginBottom:hp(2)}}>
-                                    <PrimaryButton
-                                        title='Verify'
-                                        onclick={() => {
-                                            props.navigation.navigate('SignupScreen'),
+                                    <View style={{ marginBottom: hp(2) }}>
+                                        <PrimaryButton
+                                            title='Verify'
+                                            onclick={() => {
+                                                handelOtp()
                                                 setOtpModal(false)
-                                        }}
-                                    />
+                                            }}
+                                        />
                                     </View>
                                 </View>
                             </BottomModelView>
@@ -210,12 +271,12 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                 }
             </View>
             <View style={{ flex: 1 }}>
-                <Image
+                {carData && <Image
                     source={require('../assets/Image(3).png')}
                     style={{
                         height: hp(30),
                         width: wp(100)
-                    }} />
+                    }} />}
                 <View style={{
                     position: 'absolute',
                     top: hp(3),
@@ -270,7 +331,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                     fontSize: 17,
                                     fontWeight: 'bold'
                                 }}
-                            >Range Rover Sport</Text>
+                            >{carData && carData.brand_name} {carData && carData.model_name}</Text>
                             <Text
                                 style={{
                                     fontSize: 13,
@@ -279,13 +340,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                 }}>
                                 {textExpanded ? (
                                     <>
-                                        Simplifies renting a Bike, enabling
-                                        users to search for available
-                                        vehicles, select pick-up and times,
-                                        choose a car type, and manage their
-                                        booking. The app helps rental
-                                        companies to manage their fleet,
-                                        track reservations.{' '}
+                                        {carData && carData.car_description}{' '}
                                         <Text
                                             onPress={() => setTextExpanded(false)}
                                             style={{ color: '#FBC41D' }}
@@ -295,10 +350,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                     </>
                                 ) : (
                                     <>
-                                        Simplifies renting a Bike, enabling
-                                        users to search for available vehicles,
-                                        select pick-up locations and times,
-                                        choose a car type , and manage their ...
+                                        {carData && carData.car_description}
                                         {' '}
                                         <Text
                                             onPress={() => setTextExpanded(true)}
@@ -326,95 +378,28 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                     flexDirection: 'row',
                                     marginVertical: wp(2)
                                 }}>
-                                    <View >
-                                        <View style={{
-                                            flexDirection: 'row',
-                                            alignItems: 'center'
-                                        }}>
-                                            <Image
-                                                source={require('../assets/IconAir.png')}
-                                                style={ImageStyle.style}
-                                                tintColor='#8A8A8F'
-                                            />
-                                            <Text style={
-                                                ImageStyle.text
-                                            }>Air</Text>
-                                        </View>
-                                        <View style={{
-                                            flexDirection: 'row',
-                                            alignItems: 'center',
-                                            marginVertical: hp(2)
-                                        }}>
-                                            <Image
-                                                source={require('../assets/Icon.png')}
-                                                style={ImageStyle.style}
-                                                tintColor='#8A8A8F'
-                                            />
-                                            <Text style={
-                                                ImageStyle.text
-                                            }>Cruise Control</Text>
-                                        </View>
-                                        <View style={{
-                                            flexDirection: 'row',
-                                            alignItems: 'center'
-                                        }}>
-                                            <Image
-                                                source={require('../assets/Music.png')}
-                                                style={{
-                                                    height: 20,
-                                                    width: 17
-                                                }}
-                                                tintColor='#8A8A8F'
-                                            />
-                                            <Text style={
-                                                ImageStyle.text
-                                            }>Music Player</Text>
-                                        </View>
-                                    </View>
-                                    <View style={{ marginHorizontal: wp(5) }}>
-                                        <View style={{
-                                            flexDirection: 'row',
-                                            alignItems: 'center'
-                                        }}>
-                                            <Image
-                                                source={require('../assets/Compass.png')}
-                                                style={ImageStyle.style}
-                                                tintColor='#8A8A8F'
-                                            />
-                                            <Text style={
-                                                ImageStyle.text
-                                            }>GPS</Text>
-                                        </View>
-                                        <View style={{
-                                            flexDirection: 'row',
-                                            alignItems: 'center',
-                                            marginVertical: hp(2)
-                                        }}>
-                                            <Image
-                                                source={require('../assets/Steer.png')}
-                                                style={ImageStyle.style}
-                                                tintColor='#8A8A8F'
-                                            />
-                                            <Text style={
-                                                ImageStyle.text
-                                            }>Manual</Text>
-                                        </View>
-                                        <View style={{
-                                            flexDirection: 'row',
-                                            alignItems: 'center'
-                                        }}>
-                                            <Image
-                                                source={require('../assets/Tyre.png')}
-                                                style={{
-                                                    height: 20,
-                                                    width: 16
-                                                }}
-                                                tintColor='#8A8A8F'
-                                            />
-                                            <Text style={
-                                                ImageStyle.text
-                                            }>Winter Tyres</Text>
-                                        </View>
+                                    <View style={{
+                                        flexDirection: 'row',
+                                        flexWrap: 'wrap'
+                                    }}>
+                                        {carData && carData.features.map((e: any, index: any) => (
+                                            <View key={index} style={{
+                                                flexDirection: 'row',
+                                                alignItems: 'center',
+                                                width: wp(40),
+                                                marginVertical: hp(0.5)
+                                            }}>
+                                                <Image
+                                                    source={{ uri: e.featureIcon }}
+                                                    style={ImageStyle.style}
+                                                    tintColor='#8A8A8F'
+                                                />
+                                                <Text style={
+                                                    ImageStyle.text
+                                                }>{e.feature}</Text>
+                                            </View>
+                                        ))}
+
                                     </View>
                                 </View>
                             </View>
@@ -444,7 +429,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                     <Text style={{
                                         fontSize: 18,
                                         fontWeight: 'bold'
-                                    }}>Avinash Naidu</Text>
+                                    }}>{carData && carData.hosted_by}</Text>
                                     <View style={{
                                         flexDirection: 'row',
                                         alignItems: 'center'
@@ -452,10 +437,10 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                         <Text style={{
                                             fontSize: 15,
                                             fontWeight: '400'
-                                        }}>3.4</Text>
+                                        }}>{carData && carData.rating}</Text>
                                         <Rating
                                             readonly
-                                            startingValue={3.4}
+                                            startingValue={carData && carData.rating}
                                             imageSize={13}
                                             ratingCount={5}
                                             fractions={1}
