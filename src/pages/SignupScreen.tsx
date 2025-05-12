@@ -1,4 +1,4 @@
-import { Image, Pressable,  Text, View } from "react-native";
+import { Alert, Image, Pressable, Text, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { wp, hp } from "../utils/ResponsiveScreen";
 import Textinput from "../components/TextInput";
@@ -8,6 +8,8 @@ import { useState } from "react";
 import { input } from "../styles/TextInputStyle";
 import DatePicker from "react-native-date-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { SignUp } from "../apis/api";
+import moment from "moment";
 
 class Componentprops extends Baseprops { }
 
@@ -16,12 +18,24 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
     const [isFocus, setIsFocus] = useState(false);
     const [date, setDate] = useState(new Date())
     const [open, setOpen] = useState(false)
+    const [userName, setUserName] = useState('')
+    const [userEmail, setUserEmail] = useState('')
 
     const genderData = [
         { label: "Male", value: "male" },
         { label: "Female", value: "female" },
         { label: "Other", value: "other" },
     ];
+
+    const handelSignup = async () => {
+        const response = await SignUp(userName, userEmail, gender, date)
+        console.log('Signupresponse', response)
+        if (response.code == 0) {
+            props.navigation.navigate('KycDetailsScreen')
+        } else {
+            Alert.alert('Alert', 'Unable to get details')
+        }
+    }
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -30,7 +44,7 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
                 style={{
                     marginHorizontal: wp(5),
                     marginVertical: hp(2),
-                    marginTop:hp(3.5)
+                    marginTop: hp(3.5)
                 }}>
                 <Image
                     source={require("../assets/Back.png")}
@@ -67,11 +81,15 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
                     image={require("../assets/users.png")}
                     placeholder="Your name"
                     keyboardtype="default"
+                    onChangeText={setUserName}
+                    value={userName}
                 />
                 <Textinput
                     image={require("../assets/sms.png")}
                     placeholder="Email"
                     keyboardtype="default"
+                    onChangeText={setUserEmail}
+                    value={userEmail}
                 />
                 <Dropdown
                     style={{
@@ -134,20 +152,16 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
                 <Pressable
                     onPress={() => setOpen(true)}
                     style={input.continer}>
-                    <View style={{
-                        flexDirection: "row",
-                        alignItems: 'center'
-                    }}>
-                        <Image
-                            source={require('../assets/sms.png')}
-                            style={input.style} />
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <Image source={require('../assets/sms.png')} style={input.style} />
                         <Text style={[input.textinput, { color: '#9CA3AF' }]}>
-                            Date of birth
+                            {date === null ? 'Date of birth' : moment(date).format("DD-MM-YYYY")}
                         </Text>
                     </View>
                     <Image
                         source={require('../assets/mingcute_down-fill.png')}
-                        style={input.style} />
+                        style={input.style}
+                    />
                 </Pressable>
 
                 <DatePicker
@@ -156,16 +170,15 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
                     date={date || new Date()}
                     mode="date"
                     dividerColor="#FBC41D"
-                    onConfirm={(date) => {
+                    onConfirm={(selectedDate) => {
                         setOpen(false);
-                        setDate(date);
+                        setDate(selectedDate);
                     }}
                     onCancel={() => {
                         setOpen(false);
                     }}
                     theme="light"
                 />
-
             </View>
 
             <View
@@ -178,7 +191,7 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
             >
                 <PrimaryButton
                     title="Submit"
-                    onclick={() => props.navigation.navigate('KycDetailsScreen')}
+                    onclick={() => handelSignup()}
                 />
                 <View style={{
                     justifyContent: "center",

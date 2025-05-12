@@ -4,7 +4,7 @@ import { hp, wp } from "../utils/ResponsiveScreen";
 import { BackButtonStyle } from "../styles/BackButtonStyle";
 import { BottomTabstyles } from "../styles/BottomTabstyles";
 import { Cardview } from "../components/Cardview";
-import { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { ImageStyle } from "../styles/ImageStyle";
 import { Rating } from 'react-native-ratings';
 import PrimaryButton from "../components/PrimaryButton";
@@ -13,9 +13,12 @@ import Textinput from "../components/TextInput";
 import { OtpInput } from "react-native-otp-entry";
 import { style } from "../styles/OtpStyle";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { carDetails, excuteResponse, Login, Otp } from "../apis/api";
-import { setToken } from "../storage/AsyncStorage";
+import { carDetails, excuteGetResponse, excuteResponse, Login, Otp } from "../apis/api";
+import { getToken, setToken } from "../storage/AsyncStorage";
 import { useFocusEffect } from "@react-navigation/native";
+import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
+import { useDispatch } from "react-redux";
+import { updateProfile } from "../storage/redux";
 
 class Componentprops extends Baseprops { }
 
@@ -26,7 +29,8 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
     const [otp, setOtp] = useState<any>('')
     const [phoneNumber, setPhoneNumber] = useState<any>('')
     const [carData, setCarData] = useState<any>(null)
-
+    const ref = React.useRef<ICarouselInstance>(null);
+    const dispatch = useDispatch()
     useFocusEffect(
         useCallback(() => {
             if (props.route.params && props.route.params?.id) {
@@ -34,7 +38,23 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
             }
         }, [])
     )
+    const handelButtonSubmit = async () => {
+        const token = await getToken()
+        console.log('token', token)
+        if (token && token != '') {
 
+            props.navigation.navigate('CarSummaryScreen',
+                {
+                    carid: carData.carid,
+                    fromDate: carData.from_date,
+                    toDate: carData.to_date,
+                    lat: carData.latitude,
+                    long: carData.longitude
+                })
+        } else {
+            setMobileNumberModal(true)
+        }
+    }
     const handelLogin = async () => {
         if (phoneNumber.trim().length == 0 &&
             phoneNumber.trim().length != 10) {
@@ -59,13 +79,17 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
             console.log('token', response.data.token)
             if (response.data.profile_flag == 0) {
                 console.log('yes', response.data.profile_flag)
-                props.navigation.reset({
-                    index: 0,
-                    routes: [{ name: 'SignupScreen' }]
-                })
+                setOtpModal(false)
             } else if (response.data.profile_flag == 1) {
                 console.log('no', response.data.profile_flag)
-                props.navigation.navigate('CarSummaryScreen')
+                props.navigation.navigate('CarSummaryScreen',
+                    {
+                        carid: carData.carid,
+                        fromDate: carData.from_date,
+                        toDate: carData.to_date,
+                        lat: carData.latitude,
+                        long: carData.longitude
+                    })
             }
         }
     }
@@ -92,7 +116,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                             onRequestClose={() => {
                                 setMobileNumberModal(!mobileNumberModal);
                             }}>
-                            <BottomModelView>
+                            <BottomModelView onclick={()=>setMobileNumberModal(false)}>
                                 <View style={{
                                     marginHorizontal: wp(5),
                                     marginVertical: hp(2)
@@ -179,7 +203,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                             onRequestClose={() => {
                                 setOtpModal(!otpModal);
                             }}>
-                            <BottomModelView>
+                            <BottomModelView onclick={()=>setOtpModal(false)}>
                                 <View style={{
                                     marginHorizontal: wp(5),
                                     marginVertical: hp(2)
@@ -271,12 +295,26 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                 }
             </View>
             <View style={{ flex: 1 }}>
-                {carData && <Image
-                    source={require('../assets/Image(3).png')}
-                    style={{
-                        height: hp(30),
-                        width: wp(100)
-                    }} />}
+                <View>
+                    {carData && <Carousel
+                        autoPlay={false}
+                        ref={ref}
+                        width={wp(100)}
+                        style={{}}
+                        height={hp(25)}
+                        data={carData.gallery}
+                        renderItem={({ item }: { item: any }) => (
+                            <View>
+                                <Image source={{ uri: item.image }}
+                                    style={{
+                                        height: hp(25), width: wp(100),
+                                        borderBottomLeftRadius: 20,
+                                        borderBottomRightRadius: 20
+                                    }} />
+                            </View>
+                        )}
+                    />}
+                </View>
                 <View style={{
                     position: 'absolute',
                     top: hp(3),
@@ -520,9 +558,9 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                     horizontal
                                     showsHorizontalScrollIndicator={false}
                                     style={{ marginTop: hp(1) }}>
-                                    {[1, 2, 3, 4].map((e, index: any) => (
+                                    {carData && carData.gallery.map((e: any, index: any) => (
                                         <Image key={index}
-                                            source={require('../assets/bike.png')}
+                                            source={{ uri: e.image }}
                                             style={{
                                                 height: 75,
                                                 width: 120,
@@ -542,11 +580,13 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                             }}>
                                 <Text style={{
                                     fontSize: 17,
-                                    fontWeight: 'bold'
+                                    fontWeight: 'bold',
+                                    marginBottom: hp(1)
                                 }}>Reviews</Text>
                                 <View style={{
                                     flexDirection: 'row',
-                                    alignItems: 'center'
+                                    alignItems: 'center',
+
                                 }}>
                                     <Image
                                         source={require('../assets/user.png')}
@@ -560,14 +600,14 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                         <Text style={{
                                             fontSize: 18,
                                             fontWeight: 'bold'
-                                        }}>Jagadesh</Text>
+                                        }}>{carData && carData.reviews[0].name}</Text>
                                         <View style={{
                                             flexDirection: 'row',
                                             alignItems: 'center'
                                         }}>
                                             <Rating
                                                 readonly
-                                                startingValue={4}
+                                                startingValue={carData && carData.reviews[0].rating}
                                                 imageSize={11}
                                                 ratingCount={5}
                                                 fractions={1}
@@ -584,11 +624,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                 <Text style={{
                                     fontWeight: '500',
                                     marginVertical: hp(2)
-                                }}>Amazing service easy car to use!Nice
-                                    little car, wasn’t cleaned on the outside
-                                    but the interior was nice enough. Car
-                                    location was tricky to find (15 mins)
-                                    walking around trying to find it.</Text>
+                                }}>{carData && carData.reviews[0].review}</Text>
                             </View>
                         </Cardview>
                     </View>
@@ -611,16 +647,16 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                     <Text style={{
                                         fontSize: 24,
                                         fontWeight: 'bold'
-                                    }}>₹3980</Text>
+                                    }}>₹{carData && carData.total_price}</Text>
                                     <Text style={{
                                         color: '#64748B',
                                         top: (-3),
                                         marginHorizontal: wp(2)
-                                    }}>₹199 /Day</Text>
+                                    }}>₹{carData && carData.price_per_hour} /Day</Text>
                                 </View>
                                 <PrimaryButton
                                     title='Book Now'
-                                    onclick={() => setMobileNumberModal(true)} />
+                                    onclick={() => handelButtonSubmit()} />
                             </View>
                         </Cardview>
                     </View>

@@ -23,25 +23,13 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                         onRequestClose={() => {
                             setLogoutModal(!logoutModal);
                         }}>
-                        <BottomModelView>
+                        <BottomModelView onclick={()=>setLogoutModal(false)}>
                             <View style={{
                                 justifyContent: 'center',
                                 alignItems: 'center',
                                 marginVertical: hp(3)
                             }}>
-                                <Pressable
-                                    style={{
-                                        position: 'absolute',
-                                        top: hp(-6)
-                                    }}
-                                    onPress={() => setLogoutModal(false)}>
-                                    <Image
-                                        style={{
-                                            height: 50,
-                                            width: 50,
-                                        }}
-                                        source={require('../assets/Logout.png')} />
-                                </Pressable>
+                                
                                 <Text style={{
                                     fontSize: 18,
                                     fontWeight: 'bold'

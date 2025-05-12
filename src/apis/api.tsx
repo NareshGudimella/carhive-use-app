@@ -48,7 +48,7 @@ export const excuteGetResponse = async (url: string) => {
     } catch (e) {
         console.log(e)
     }
-    return { code: 1 }
+    return { code: 2 }
 }
 
 export const Login = async (mobile: any) => {
@@ -64,6 +64,24 @@ export const CarsList = async (from_date: any, to_date: any,
         user_latitude, user_longitude
     })
 }
-export const carDetails=async(carid:any,from_date:any,to_date:any)=>{
-    return excuteResponse(`auth/cars/details/${carid}`,{from_date,to_date})
+export const carDetails = async (carid: any, from_date: any, to_date: any) => {
+    return excuteResponse(`auth/cars/details/${carid}`, { from_date, to_date })
+}
+export const SignUp = async (name: any, email: any, gender: any, dob: any) => {
+    return excuteResponse(`secure/signup`, { name, email, gender, dob })
+}
+export const summery = async (carid: any, from_date: any, to_date: any,
+    latitude: any, longitude: any) => {
+    return excuteResponse(`secure/cars/details/${carid}`,
+        { from_date, to_date, latitude, longitude })
+}
+export const updateProfile = async (name: any, email: any, gender: any,
+    aadhar_front_image: any, aadhar_back_image: any,
+    driving_licence_front: any,driving_licence_back:any) => {
+    return excuteResponse(`secure/profile/update`, {
+        name, email, gender,
+        aadhar_front_image, aadhar_back_image,
+        driving_licence_front,
+        driving_licence_back
+    })
 }

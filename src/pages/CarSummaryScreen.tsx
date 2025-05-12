@@ -1,13 +1,15 @@
-import { Image, Modal, Pressable, ScrollView, Text, View } from "react-native";
+import { Alert, Image, Modal, Pressable, ScrollView, Text, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { hp, wp } from "../utils/ResponsiveScreen";
 import { Cardview } from "../components/Cardview";
 import { Rating } from "react-native-ratings";
 import PrimaryButton from "../components/PrimaryButton";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { BottomModelView } from "../components/BottomModelView";
 import { Checkbox } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { excuteGetResponse, excuteResponse, summery } from "../apis/api";
+import { useFocusEffect } from "@react-navigation/native";
 
 class Componentprops extends Baseprops { }
 
@@ -17,6 +19,36 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
     const [typeofTandC, setTypeTandC] = useState('t&c')
     const [checked, setChecked] = useState(false);
     const [eligiabilityModal, setEligiabilityModal] = useState(false)
+    const [carDetails, setCarDetails] = useState<any>(null)
+    const [ModelcancelData, setModelcancelData] = useState<any>(null)
+    useFocusEffect(
+        useCallback(() => {
+            console.log('id', (props.route.params && props.route.params.carid))
+            handelSummeryScreen(props.route.params && props.route.params.carid)
+        }, [])
+    )
+
+    const handelSummeryScreen = async (carid: any) => {
+        const response = await summery(carid,
+            props.route.params.fromDate,
+            props.route.params.toDate,
+            props.route.params.lat,
+            props.route.params.long
+        )
+        console.log('Summeryresponse', response)
+        if (response.code == 0) {
+            setCarDetails(response.data)
+        } else {
+            Alert.alert('Alert', 'Unable to get details')
+        }
+    }
+    const handelModelData = async () => {
+        const response = await excuteGetResponse(`secure/cars/policies/${carDetails.carid}`)
+        console.log('t&c', response)
+        if (response.code == 0) {
+            setModelcancelData(response.data)
+        }
+    }
     return (
         <SafeAreaView style={{ flex: 1 }}>
             {
@@ -28,9 +60,9 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                         visible={termsAndConditions}
                         onRequestClose={() => {
                             setTermsAndCondition(!termsAndConditions);
-                          }}
+                        }}
                     >
-                        <BottomModelView>
+                        <BottomModelView onclick={() => setTermsAndCondition(false)}>
                             <View>
                                 <View style={{
                                     flexDirection: 'row',
@@ -121,22 +153,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                                 marginHorizontal: wp(3),
                                                 marginVertical: hp(1)
                                             }}>
-                                                Lorem ipsum dolor sit amet,
-                                                consectetur adipiscing elit,
-                                                sed do eiusmod tempor incididunt
-                                                ut labore et dolore magna aliqua.
-                                                Ut enim ad minim veniam, quis
-                                                nostrud exercitation ullamco
-                                                laboris nisi ut aliquip ex
-                                                ea commodo consequat. Duis
-                                                aute irure dolor in
-                                                reprehenderit in voluptate
-                                                velit esse cillum dolore eu
-                                                fugiat nulla pariatur. Excepteur
-                                                sint occaecat cupidatat non
-                                                proident, sunt in culpa qui
-                                                officia deserunt mollit
-                                                anim id est laborum."
+                                             {ModelcancelData && ModelcancelData.modification}
                                             </Text>
                                             <View style={{
                                                 flexDirection: 'row',
@@ -178,22 +195,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                                     marginHorizontal: wp(3),
                                                     marginVertical: hp(1)
                                                 }}>
-                                                    Lorem ipsum dolor sit amet,
-                                                    consectetur adipiscing elit,
-                                                    sed do eiusmod tempor incididunt
-                                                    ut labore et dolore magna aliqua.
-                                                    Ut enim ad minim veniam, quis
-                                                    nostrud exercitation ullamco
-                                                    laboris nisi ut aliquip ex
-                                                    ea commodo consequat. Duis
-                                                    aute irure dolor in
-                                                    reprehenderit in voluptate
-                                                    velit esse cillum dolore eu
-                                                    fugiat nulla pariatur. Excepteur
-                                                    sint occaecat cupidatat non
-                                                    proident, sunt in culpa qui
-                                                    officia deserunt mollit
-                                                    anim id est laborum."
+                                                   {ModelcancelData && ModelcancelData.cancellation}
                                                 </Text>
                                                 <View style={{
                                                     flexDirection: 'row',
@@ -235,22 +237,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                                         marginHorizontal: wp(3),
                                                         marginVertical: hp(1)
                                                     }}>
-                                                        Lorem ipsum dolor sit amet,
-                                                        consectetur adipiscing elit,
-                                                        sed do eiusmod tempor incididunt
-                                                        ut labore et dolore magna aliqua.
-                                                        Ut enim ad minim veniam, quis
-                                                        nostrud exercitation ullamco
-                                                        laboris nisi ut aliquip ex
-                                                        ea commodo consequat. Duis
-                                                        aute irure dolor in
-                                                        reprehenderit in voluptate
-                                                        velit esse cillum dolore eu
-                                                        fugiat nulla pariatur. Excepteur
-                                                        sint occaecat cupidatat non
-                                                        proident, sunt in culpa qui
-                                                        officia deserunt mollit
-                                                        anim id est laborum."
+                                                      {ModelcancelData && ModelcancelData.modification}
                                                     </Text>
                                                     <View style={{
                                                         flexDirection: 'row',
@@ -298,37 +285,16 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                         transparent={true}
                         visible={eligiabilityModal}
                     >
-                        <BottomModelView>
+                        <BottomModelView onclick={()=>setEligiabilityModal(false)}>
                             <View style={{
                                 marginHorizontal: wp(5),
                                 marginVertical: hp(2)
                             }}>
-                                <Pressable
-                                    onPress={() => setEligiabilityModal(false)}
-                                    style={{
-                                        backgroundColor: '#EEEEEE',
-                                        borderRadius: 20,
-                                        width: 35,
-                                        height: 35,
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        marginVertical: wp(2),
-                                        alignSelf: 'center',
-                                        position: 'absolute',
-                                        top: hp(-8)
-                                    }}>
-                                    <Image
-                                        source={require('../assets/close.png')}
-                                        style={{
-                                            height: 15,
-                                            width: 15
-                                        }} />
-                                </Pressable>
                                 <Text
                                     style={{
                                         fontSize: 16,
                                         fontWeight: 'bold',
-                                         marginVertical:hp(1)
+                                        marginVertical: hp(1)
                                     }}
                                 >Important points for your booking
                                 </Text>
@@ -487,7 +453,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                         alignItems: 'center',
                         marginHorizontal: wp(5),
                         marginVertical: hp(3),
-                        marginTop:hp(4)
+                        marginTop: hp(4)
                     }}>
                         <Pressable onPress={() => props.navigation.goBack()}>
                             <Image
@@ -505,25 +471,25 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                         }}>Summary</Text>
                     </View>
                     <View>
-                        <Image
-                            source={require('../assets/image(4).png')}
+                        {carDetails && <Image
+                            source={{ uri: carDetails.gallery[0].image }}
                             style={{
                                 height: hp(20),
                                 width: wp(90),
                                 borderRadius: 15,
                                 marginHorizontal: wp(5)
                             }}
-                        />
+                        />}
                         <Text style={{
                             fontSize: 18,
                             fontWeight: 'bold',
                             marginVertical: hp(1),
                             textAlign: 'center',
                             marginBottom: hp(2)
-                        }}>Range Rover Sport</Text>
+                        }}>{carDetails && carDetails.brand_name} {carDetails && carDetails.model_name}</Text>
                     </View>
                 </View>
-                <ScrollView style={{ marginHorizontal: wp(5) }}>
+                <ScrollView showsVerticalScrollIndicator={false} style={{ marginHorizontal: wp(5) }}>
                     <Text style={{
                         fontSize: 16,
                         fontWeight: 'bold',
@@ -544,13 +510,13 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                 <Text style={{
                                     fontSize: 15,
                                     fontWeight: 'bold'
-                                }}>29 April, Mon</Text>
+                                }}>{carDetails && carDetails.from_date?.slice(0, 10)}</Text>
                                 <Text style={{
-                                   color: '#27272780',
-                                   fontWeight: '500', 
-                                   marginTop: 2,
-                                   fontSize:13
-                                }}>5:00 AM</Text>
+                                    color: '#27272780',
+                                    fontWeight: '500',
+                                    marginTop: 2,
+                                    fontSize: 13
+                                }}>{carDetails && carDetails.from_date?.slice(10, 16)}</Text>
                             </View>
                             <Image
                                 source={require('../assets/arrow.png')}
@@ -563,13 +529,13 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                 <Text style={{
                                     fontSize: 15,
                                     fontWeight: 'bold'
-                                }}>29 April, Mon</Text>
+                                }}>{carDetails && carDetails.to_date?.slice(0, 10)}</Text>
                                 <Text style={{
-                                   color: '#27272780',
-                                   fontWeight: '500', 
-                                   marginTop: 2,
-                                   fontSize:13
-                                }}>5:00 AM</Text>
+                                    color: '#27272780',
+                                    fontWeight: '500',
+                                    marginTop: 2,
+                                    fontSize: 13
+                                }}>{carDetails && carDetails.to_date?.slice(10, 16)}</Text>
                             </View>
                         </View>
                     </Cardview>
@@ -596,15 +562,15 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                 <Text style={{
                                     fontSize: 16,
                                     fontWeight: 'bold'
-                                }}>Avinash Naidu</Text>
+                                }}>{carDetails && carDetails.reviews[0].name}</Text>
                                 <View style={{
                                     flexDirection: 'row',
                                     alignItems: 'center'
                                 }}>
-                                    <Text>3.5</Text>
+                                    <Text>{carDetails && carDetails.reviews[0].rating}</Text>
                                     <Rating
                                         readonly
-                                        startingValue={3.4}
+                                        startingValue={carDetails && carDetails.reviews[0].rating}
                                         imageSize={10}
                                         ratingCount={5}
                                         fractions={1}
@@ -680,7 +646,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                     <Text style={{
                                         fontWeight: 'bold',
                                         fontSize: 15
-                                    }}>₹ 350</Text>
+                                    }}>₹ {carDetails && carDetails.trip_charges}</Text>
                                 </View>
                                 <View style={{
                                     flexDirection: 'row',
@@ -705,7 +671,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                     <Text style={{
                                         fontWeight: 'bold',
                                         fontSize: 15
-                                    }}>₹ 10</Text>
+                                    }}>₹ {carDetails && carDetails.taxes}</Text>
                                 </View>
                                 <View style={{
                                     flexDirection: 'row',
@@ -723,7 +689,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                     <Text style={{
                                         fontWeight: 'bold',
                                         fontSize: 15
-                                    }}>₹ 400</Text>
+                                    }}>₹ {carDetails && carDetails.security_deposite}</Text>
                                 </View>
                                 <View style={{
                                     flexDirection: 'row',
@@ -748,7 +714,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                     <Text style={{
                                         fontWeight: 'bold',
                                         fontSize: 15
-                                    }}>₹ 10</Text>
+                                    }}>₹ {carDetails && carDetails.protection_fee}</Text>
                                 </View>
                                 <View style={{
                                     flexDirection: 'row',
@@ -786,7 +752,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                     <Text style={{
                                         fontSize: 16,
                                         fontWeight: 'bold'
-                                    }}>₹ 850</Text>
+                                    }}>₹ {carDetails && carDetails.total_price}</Text>
                                 </View>
                             </View>
                         </Cardview>
@@ -800,8 +766,12 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                     marginHorizontal: wp(5)
                 }}
             >
-                <PrimaryButton title='Pay ₹850'
-                    onclick={() => setTermsAndCondition(true)} />
+                <PrimaryButton
+                    title={`Pay  ₹${carDetails && carDetails.total_price}`}
+                    onclick={() => {
+                        handelModelData()
+                        setTermsAndCondition(true)
+                    }} />
             </View>
         </SafeAreaView>
     )

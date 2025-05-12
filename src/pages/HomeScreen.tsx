@@ -21,6 +21,7 @@ import DatePicker from "react-native-date-picker";
 import Geolocation from "@react-native-community/geolocation";
 import { check, PERMISSIONS, request } from "react-native-permissions";
 import { getCity } from "../storage/AsyncStorage";
+import moment from "moment";
 
 class Componentprops extends Baseprops { }
 
@@ -73,12 +74,15 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
             props.navigation.navigate('SelectVehicleScreen', {
                 lat: latitude,
                 long: longitude,
-                pickdate: pickupDate,
-                drop: dropDate,
+                pickdate: `${moment(pickupDate).format('DD-MM-YYYY')} ${moment(pickupTime).format('HH:mm')}`,
+                drop: `${moment(dropDate).format('DD-MM-YYYY')} ${moment(dropTime).format('HH:mm')}`,
                 picktime: pickupTime,
                 dropuptime: dropTime,
                 addressid: cityname.cityId
             });
+            console.log('date time',
+                `${moment(pickupDate).format('DD-MM-YYYY')} ${moment(pickupTime).format('HH:mm')}`, 
+            `${moment(dropDate).format('DD-MM-YYYY')} ${moment(dropTime).format('HH:mm')}`);
         } else {
             Alert.alert('Alert', 'Drop date must be after the Pickup date');
         }
@@ -295,11 +299,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                                     marginHorizontal: wp(2),
                                                     fontSize: 14,
                                                     fontWeight: '600'
-                                                }}>  {pickupDate.toLocaleDateString('en-US', {
-                                                    year: 'numeric',
-                                                    month: 'short',
-                                                    day: '2-digit',
-                                                })}</Text>
+                                                }}> {moment(pickupDate).format('MMMM D YYYY')}</Text>
                                         </Pressable>
                                     </View>
                                     <View>
@@ -325,8 +325,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                                     marginHorizontal: wp(2),
                                                     fontSize: 14,
                                                     fontWeight: '600'
-                                                }}>{pickupTime.toLocaleTimeString([],
-                                                    { hour: '2-digit', minute: '2-digit' })}</Text>
+                                                }}>{moment(pickupTime).format('h:mm A')}</Text>
                                         </Pressable>
                                     </View>
                                 </View>
@@ -362,11 +361,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                                     marginHorizontal: wp(2),
                                                     fontSize: 14,
                                                     fontWeight: '600'
-                                                }}>{dropDate.toLocaleDateString('en-US', {
-                                                    year: 'numeric',
-                                                    month: 'short',
-                                                    day: '2-digit',
-                                                })}</Text>
+                                                }}>{moment(dropDate).format('MMMM D YYYY')}</Text>
                                         </Pressable>
                                     </View>
                                     <View>
@@ -392,8 +387,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                                     marginHorizontal: wp(2),
                                                     fontSize: 14,
                                                     fontWeight: '600'
-                                                }}>{dropTime.toLocaleTimeString([],
-                                                    { hour: '2-digit', minute: '2-digit' })}</Text>
+                                                }}>{moment(dropTime).format('h:mm A')}</Text>
                                         </Pressable>
                                     </View>
                                 </View>
