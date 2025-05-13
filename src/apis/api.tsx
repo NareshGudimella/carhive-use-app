@@ -64,6 +64,13 @@ export const CarsList = async (from_date: any, to_date: any,
         user_latitude, user_longitude
     })
 }
+export const LoginCarsList = async (from_date: any, to_date: any,
+    city_id: any, user_latitude: any, user_longitude: any) => {
+    return excuteResponse('secure/cars', {
+        from_date, to_date, city_id,
+        user_latitude, user_longitude
+    })
+}
 export const carDetails = async (carid: any, from_date: any, to_date: any) => {
     return excuteResponse(`auth/cars/details/${carid}`, { from_date, to_date })
 }
@@ -75,13 +82,30 @@ export const summery = async (carid: any, from_date: any, to_date: any,
     return excuteResponse(`secure/cars/details/${carid}`,
         { from_date, to_date, latitude, longitude })
 }
-export const updateProfile = async (name: any, email: any, gender: any,
+export const UpdateProfile = async (name: any, email: any, gender: any, dob: any,
     aadhar_front_image: any, aadhar_back_image: any,
-    driving_licence_front: any,driving_licence_back:any) => {
+    driving_licence_front: any, driving_licence_back: any) => {
     return excuteResponse(`secure/profile/update`, {
-        name, email, gender,
+        name, email, gender, dob,
         aadhar_front_image, aadhar_back_image,
         driving_licence_front,
         driving_licence_back
     })
+}
+export const KycDetails = async (aadhar_front_image: any,
+    aadhar_back_image: any,
+    driving_licence_front: any,
+    driving_licence_back: any) => {
+    return excuteResponse(`secure/documents`, {
+        aadhar_front_image,
+        aadhar_back_image,
+        driving_licence_front,
+        driving_licence_back
+    })
+}
+export const wishlist = async(carid:any)=>{
+    return excuteGetResponse(`secure/cars/favorite/add/${carid}`)
+}
+export const removeWishlist =async(carid:any)=>{
+    return excuteGetResponse(`secure/cars/favorite/remove/${carid}`)
 }

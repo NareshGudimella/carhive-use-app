@@ -1,6 +1,7 @@
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Baseprops } from "../utils/navigation";
 import {
+    Alert,
     Image, Modal, Pressable, ScrollView, Text,
     TextInput, View
 } from "react-native";
@@ -15,8 +16,13 @@ import PrimaryButton from "../components/PrimaryButton";
 import { Rating } from "react-native-ratings";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useFocusEffect } from "@react-navigation/native";
-import { CarsList } from "../apis/api";
+import { CarsList, excuteGetResponse, Login, LoginCarsList, removeWishlist, wishlist } from "../apis/api";
 import LinearGradient from "react-native-linear-gradient";
+import moment from "moment";
+import Textinput from "../components/TextInput";
+import { OtpInput } from "react-native-otp-entry";
+import { style } from "../styles/OtpStyle";
+import { useSelector } from "react-redux";
 
 class Componentprops extends Baseprops { }
 
@@ -51,34 +57,282 @@ const short = [
     { id: 2, type: 'High to Low' }
 ]
 const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
-
     const ref = React.useRef<ICarouselInstance>(null);
     const [filterModel, setFilterModal] = useState(false);
     const [selectfilter, setSelectfilter] = useState<any>('')
     const [carsList, setCarsList] = useState<any>(null)
+    const [mobileNumberModal, setMobileNumberModal] = useState(false)
+    const [otpModal, setOtpModal] = useState(false)
+    const [otp, setOtp] = useState<any>('')
+    const [phoneNumber, setPhoneNumber] = useState<any>('')
 
     useFocusEffect(
         useCallback(() => {
-            handelCarList()
+            usergetprofile()
         }, [])
     )
-
-    const handelCarList = async () => {
-        const response = await CarsList(
-            props.route.params.pickdate,
-            props.route.params.drop,
-            props.route.params.addressid,
-            props.route.params.lat,
-            props.route.params.long)
-        console.log('carresponse', response)
+    const usergetprofile = async () => {
+        const response = await excuteGetResponse('secure/profile')
+        console.log('myuser', response.data)
         if (response.code == 0) {
-            setCarsList(response.data)
+            if (response.data && response.data != '') {
+                const response = await LoginCarsList(
+                    props.route.params.pickdate,
+                    props.route.params.drop,
+                    props.route.params.addressid,
+                    props.route.params.lat,
+                    props.route.params.long)
+
+                console.log('logincarresponse', response)
+
+                if (response.code == 0) {
+                    setCarsList(response.data)
+                } else {
+                    Alert.alert('Alert', 'Unable to get Login details')
+                }
+            } else {
+                const response = await CarsList(
+                    props.route.params.pickdate,
+                    props.route.params.drop,
+                    props.route.params.addressid,
+                    props.route.params.lat,
+                    props.route.params.long)
+
+                console.log('carresponse', response)
+
+                if (response.code == 0) {
+                    setCarsList(response.data)
+                } else {
+                    Alert.alert('Alert', 'unable to get details of unlogin')
+                }
+            }
+        } else {
+            Alert.alert('Alert', 'unable to get details')
+        }
+    }
+
+    const handelWishlist = async (carId: any) => {
+        const response = await wishlist(carId)
+        console.log('fav', response)
+        if (response.code == 0) {
+            usergetprofile()
+        } else {
+            Alert.alert('Alert', 'unable to get wishlist details')
+        }
+    }
+    const removeWishlistbutton = async (carId: any) => {
+        const response = await removeWishlist(carId)
+        console.log('remove', response)
+        if (response.code == 0) {
+            usergetprofile()
+        } else {
+            Alert.alert('Alert', 'unable to get remove wishlist details')
+        }
+
+    }
+    const handelLogin = async () => {
+        if (phoneNumber.trim().length == 0 &&
+            phoneNumber.trim().length != 10) {
+            Alert.alert('Alert', 'Invalid mobile number')
+            return
+        }
+        const response = await Login(phoneNumber)
+        console.log('Login', response)
+        if (response.code == 0) {
+            setOtpModal(true)
+        }else{
+            Alert.alert('Alert','Unable to get details of Login')
         }
     }
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
             <SafeAreaView style={{ flex: 1 }}>
+                {mobileNumberModal &&
+                    <View>
+                        <Modal
+                            animationType="slide"
+                            transparent={true}
+                            visible={mobileNumberModal}
+                            onRequestClose={() => {
+                                setMobileNumberModal(!mobileNumberModal);
+                            }}>
+                            <BottomModelView onclick={() => setMobileNumberModal(false)}>
+                                <View style={{
+                                    marginHorizontal: wp(5),
+                                    marginVertical: hp(2)
+                                }}>
+                                    <Pressable
+                                        onPress={() => setMobileNumberModal(false)}
+                                        style={{
+                                            backgroundColor: '#EEEEEE80',
+                                            borderRadius: 20,
+                                            width: 35,
+                                            height: 35,
+                                            justifyContent: 'center',
+                                            alignItems: 'center'
+                                        }}>
+                                        <Image
+                                            source={require('../assets/close.png')}
+                                            style={{
+                                                height: 15,
+                                                width: 15
+                                            }} />
+                                    </Pressable>
+                                    <Text style={{
+                                        fontSize: 24,
+                                        fontWeight: 'bold',
+                                        marginTop: hp(2),
+
+                                    }}>User Login</Text>
+                                    <Text
+                                        style={{
+                                            fontSize: 17,
+                                            fontWeight: '400',
+                                            color: '#64748B',
+                                            marginTop: hp(1),
+                                            marginBottom: hp(1.5)
+                                        }}
+                                    >Please enter a your mobile number
+                                        to login into your account</Text>
+                                    <Textinput
+                                        image={require('../assets/call.png')}
+                                        placeholder='Enter your mobile number'
+                                        keyboardtype='numeric'
+                                        value={phoneNumber}
+                                        onChangeText={setPhoneNumber}
+                                    />
+                                    <Text
+                                        style={{
+                                            fontSize: 15,
+                                            lineHeight: hp(2.5),
+                                            color: '#64748B',
+                                            marginVertical: hp(1),
+                                            marginHorizontal: wp(2)
+                                        }}
+                                    >By continuing you agree
+                                        to our <Text
+                                            style={{
+                                                color: '#FBC41D'
+                                            }}> Terms of service
+                                        </Text> ,   &
+                                        <Text
+                                            style={{
+                                                color: '#FBC41D'
+                                            }}>  Privacy policy</Text>
+                                    </Text>
+                                    <View style={{ marginVertical: hp(2) }}>
+                                        <PrimaryButton title='Request OTP'
+                                            onclick={() => {
+                                                setMobileNumberModal(false),
+                                                    handelLogin()
+                                            }}
+                                        />
+                                    </View>
+                                </View>
+                            </BottomModelView>
+                        </Modal>
+                    </View>
+                }
+                {
+                    otpModal &&
+                    <View>
+                        <Modal
+                            animationType="slide"
+                            transparent={true}
+                            visible={otpModal}
+                            onRequestClose={() => {
+                                setOtpModal(!otpModal);
+                            }}>
+                            <BottomModelView onclick={() => setOtpModal(false)}>
+                                <View style={{
+                                    marginHorizontal: wp(5),
+                                    marginVertical: hp(2)
+                                }}>
+                                    <Pressable
+                                        onPress={() => setMobileNumberModal(false)}
+                                        style={{
+                                            backgroundColor: '#EEEEEE80',
+                                            borderRadius: 20,
+                                            width: 35,
+                                            height: 35,
+                                            justifyContent: 'center',
+                                            alignItems: 'center'
+                                        }}>
+                                        <Image
+                                            source={require('../assets/close.png')}
+                                            style={{
+                                                height: 15,
+                                                width: 15
+                                            }} />
+                                    </Pressable>
+                                    <Text style={{
+                                        fontSize: 24,
+                                        fontWeight: 'bold',
+                                        marginTop: hp(2),
+
+                                    }}>Enter Otp</Text>
+                                    <Text
+                                        style={{
+                                            fontSize: 17,
+                                            fontWeight: '400',
+                                            color: '#64748B',
+                                            marginTop: hp(1),
+                                            marginBottom: hp(1.5),
+                                            width: wp(80)
+                                        }}
+                                    >We’ve sent an SMS with an activation
+                                        code to your phone
+                                        <Text
+                                            style={{
+                                                color: '#FBC41D',
+                                                fontSize: 16
+                                            }}>  +91 9704611443</Text>
+                                    </Text>
+                                    <OtpInput
+                                        numberOfDigits={4}
+                                        focusColor="#E8ECF4"
+                                        focusStickBlinkingDuration={500}
+                                        onTextChange={(text) => setOtp(text)}
+                                        onFilled={(text) => console.log(`OTP is ${text}`)}
+                                        textInputProps={{
+                                            accessibilityLabel: "One-Time Password",
+                                        }}
+                                        theme={{
+                                            containerStyle: style.otpContainer,
+                                            pinCodeContainerStyle: style.otp,
+                                            pinCodeTextStyle: style.otpText,
+                                        }}
+                                    />
+                                    <View style={{
+                                        flexDirection: 'row',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        marginVertical: hp(3)
+                                    }}>
+                                        <Text style={{
+                                            fontSize: 16,
+                                            color: '#64748B'
+                                        }}>I didn’t receive a code</Text>
+                                        <Text style={{
+                                            color: '#FBC41D',
+                                            marginHorizontal: wp(2),
+                                            fontSize: 16
+                                        }}>Resend</Text>
+                                    </View>
+                                    <View style={{ marginBottom: hp(2) }}>
+                                        <PrimaryButton
+                                            title='Verify'
+                                            onclick={() => {
+                                                setOtpModal(false)
+                                            }}
+                                        />
+                                    </View>
+                                </View>
+                            </BottomModelView>
+                        </Modal>
+                    </View>
+                }
                 {
                     filterModel && <View style={{}}>
                         <Modal
@@ -296,7 +550,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                 <Text style={{
                                     fontSize: 16,
                                     fontWeight: 'bold'
-                                }}> {carsList && carsList.from_date?.slice(0, 10)}</Text>
+                                }}> {carsList && moment(carsList.from_date).format('DD-MM-YYYY')}</Text>
                                 <Text style={{
                                     color: '#13131380',
                                     fontSize: 13,
@@ -314,7 +568,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                     style={{
                                         fontSize: 16,
                                         fontWeight: 'bold'
-                                    }}>{carsList && carsList.to_date?.slice(0, 10)}</Text>
+                                    }}>{carsList && moment(carsList.to_date).format('DD-MM-YYYY')}</Text>
                                 <Text
                                     style={{
                                         color: '#13131380',
@@ -377,11 +631,13 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                 marginHorizontal: wp(5),
                                 marginBottom: hp(2)
                             }}>
+
+
                             {carsList && carsList.cars.map((e: any, index: any) => (
                                 <Pressable
                                     onPress={() =>
                                         props.navigation.navigate('VehicleDetailsScreen',
-                                            {fromdate:carsList.from_date,todate:carsList.to_date,id:e.carid})}
+                                            { fromdate: carsList.from_date, todate: carsList.to_date, id: e.carid })}
                                     key={index}>
                                     <Carousel
                                         ref={ref}
@@ -413,24 +669,50 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                             top: hp(4)
                                         }}>
                                             <View />
-                                            <Pressable
-                                                style={{
-                                                    justifyContent: 'center',
-                                                    backgroundColor: '#ffffff',
-                                                    alignItems: 'center',
-                                                    height: hp(4),
-                                                    width: hp(4),
-                                                    borderRadius: 20,
-                                                }}
-                                            >
-                                                <Image
-                                                    source={require('../assets/shop1.png')}
-                                                    style={BottomTabstyles.nonselectedstyle}
-                                                />
-                                            </Pressable>
+                                            {e.favorite_flag == 1
+                                                ?
+                                                <Pressable
+                                                    onPress={() => {
+                                                        removeWishlistbutton(e.carid)
+                                                        console.log('flag', e.favorite_flag)
+                                                    }}
+                                                    style={{
+                                                        justifyContent: 'center',
+                                                        backgroundColor: '#ffffff',
+                                                        alignItems: 'center',
+                                                        height: hp(4),
+                                                        width: hp(4),
+                                                        borderRadius: 20,
+                                                    }}
+                                                >
+                                                    <Image
+                                                        source={require('../assets/shop.png')}
+                                                        style={BottomTabstyles.nonselectedstyle}
+                                                        tintColor='red'
+                                                    />
+                                                </Pressable> :
+                                                <Pressable
+                                                    onPress={() => {
+                                                        handelWishlist(e.carid)
+                                                        console.log('flag', e.favorite_flag)
+                                                    }}
+                                                    style={{
+                                                        justifyContent: 'center',
+                                                        backgroundColor: '#ffffff',
+                                                        alignItems: 'center',
+                                                        height: hp(4),
+                                                        width: hp(4),
+                                                        borderRadius: 20,
+                                                    }}
+                                                >
+                                                    <Image
+                                                        source={require('../assets/shop1.png')}
+                                                        style={BottomTabstyles.nonselectedstyle}
+                                                    />
+                                                </Pressable>}
                                         </View>
                                         <View style={{
-                                           
+
                                             justifyContent: 'flex-end'
                                         }}>
                                             <LinearGradient

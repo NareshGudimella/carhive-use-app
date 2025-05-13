@@ -13,7 +13,7 @@ import Textinput from "../components/TextInput";
 import { OtpInput } from "react-native-otp-entry";
 import { style } from "../styles/OtpStyle";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { carDetails, excuteGetResponse, excuteResponse, Login, Otp } from "../apis/api";
+import { carDetails, excuteGetResponse, excuteResponse, Login, Otp, removeWishlist, wishlist } from "../apis/api";
 import { getToken, setToken } from "../storage/AsyncStorage";
 import { useFocusEffect } from "@react-navigation/native";
 import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
@@ -30,7 +30,6 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
     const [phoneNumber, setPhoneNumber] = useState<any>('')
     const [carData, setCarData] = useState<any>(null)
     const ref = React.useRef<ICarouselInstance>(null);
-    const dispatch = useDispatch()
     useFocusEffect(
         useCallback(() => {
             if (props.route.params && props.route.params?.id) {
@@ -42,15 +41,26 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
         const token = await getToken()
         console.log('token', token)
         if (token && token != '') {
-
-            props.navigation.navigate('CarSummaryScreen',
-                {
-                    carid: carData.carid,
-                    fromDate: carData.from_date,
-                    toDate: carData.to_date,
-                    lat: carData.latitude,
-                    long: carData.longitude
-                })
+            const response = await excuteGetResponse('secure/profile')
+            console.log('usertoken', response)
+            if (response.data.profile_flag == 0) {
+                props.navigation.navigate('SignupScreen')
+            } else if (response.data.documents.aadhar_back == null ||
+                response.data.documents.aadhar_front == null ||
+                response.data.documents.license_back == null ||
+                response.data.documents.license_front == null
+            ) {
+                props.navigation.navigate('KycDetailsScreen')
+            } else {
+                props.navigation.navigate('CarSummaryScreen',
+                    {
+                        carid: carData.carid,
+                        fromDate: carData.from_date,
+                        toDate: carData.to_date,
+                        lat: carData.latitude,
+                        long: carData.longitude
+                    })
+            }
         } else {
             setMobileNumberModal(true)
         }
@@ -65,6 +75,8 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
         console.log('Login', response)
         if (response.code == 0) {
             setOtpModal(true)
+        } else {
+            Alert.alert('Alert', 'Unable to get Phone number')
         }
     }
     const handelOtp = async () => {
@@ -79,6 +91,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
             console.log('token', response.data.token)
             if (response.data.profile_flag == 0) {
                 console.log('yes', response.data.profile_flag)
+                props.navigation.navigate('SignupScreen')
                 setOtpModal(false)
             } else if (response.data.profile_flag == 1) {
                 console.log('no', response.data.profile_flag)
@@ -91,6 +104,8 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                         long: carData.longitude
                     })
             }
+        } else {
+            Alert.alert('Alert', 'Unable to get OTP')
         }
     }
     const handelVicheDetails = async (carid: any) => {
@@ -102,7 +117,28 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
         if (response.code == 0) {
             setCarData(response.data)
             console.log('hello', carData)
+        } else {
+            Alert.alert('Alert', 'Unable to get Vechile details')
         }
+    }
+    const handelWishlist = async (carId: any) => {
+        const response = await wishlist(carId)
+        console.log('fav', response)
+        if (response.code == 0) {
+            handelVicheDetails(props.route.params?.id)
+        } else {
+            Alert.alert('Alert', 'unable to get wishlist details')
+        }
+    }
+    const removeWishlistbutton = async (carId: any) => {
+        const response = await removeWishlist(carId)
+        console.log('remove', response)
+        if (response.code == 0) {
+            handelVicheDetails(props.route.params?.id)
+        } else {
+            Alert.alert('Alert', 'unable to get remove wishlist details')
+        }
+
     }
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -116,7 +152,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                             onRequestClose={() => {
                                 setMobileNumberModal(!mobileNumberModal);
                             }}>
-                            <BottomModelView onclick={()=>setMobileNumberModal(false)}>
+                            <BottomModelView onclick={() => setMobileNumberModal(false)}>
                                 <View style={{
                                     marginHorizontal: wp(5),
                                     marginVertical: hp(2)
@@ -203,7 +239,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                             onRequestClose={() => {
                                 setOtpModal(!otpModal);
                             }}>
-                            <BottomModelView onclick={()=>setOtpModal(false)}>
+                            <BottomModelView onclick={() => setOtpModal(false)}>
                                 <View style={{
                                     marginHorizontal: wp(5),
                                     marginVertical: hp(2)
@@ -343,14 +379,49 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                             }}
                         >Vehicle details</Text>
                     </View>
-                    <Pressable style={{
-                        backgroundColor: '#ffffff',
-                        padding: wp(1.5),
-                        borderRadius: 20
-                    }}>
-                        <Image source={require('../assets/shop1.png')}
-                            style={BottomTabstyles.selectedstyle} />
-                    </Pressable>
+                    {/* <View>
+                        {carData.favorite_flag == 1
+                            ?
+                            <Pressable
+                                onPress={() => {
+                                    removeWishlistbutton(carData.carid)
+                                    console.log('flag', carData.favorite_flag)
+                                }}
+                                style={{
+                                    justifyContent: 'center',
+                                    backgroundColor: '#ffffff',
+                                    alignItems: 'center',
+                                    height: hp(4),
+                                    width: hp(4),
+                                    borderRadius: 20,
+                                }}
+                            >
+                                <Image
+                                    source={require('../assets/shop.png')}
+                                    style={BottomTabstyles.nonselectedstyle}
+                                    tintColor='red'
+                                />
+                            </Pressable> :
+                            <Pressable
+                                onPress={() => {
+                                    handelWishlist(carData.carid)
+                                    console.log('flag', carData.favorite_flag)
+                                }}
+                                style={{
+                                    justifyContent: 'center',
+                                    backgroundColor: '#ffffff',
+                                    alignItems: 'center',
+                                    height: hp(4),
+                                    width: hp(4),
+                                    borderRadius: 20,
+                                }}
+                            >
+                                <Image
+                                    source={require('../assets/shop1.png')}
+                                    style={BottomTabstyles.nonselectedstyle}
+                                />
+                            </Pressable>}
+                    </View> */}
                 </View>
                 <ScrollView
                     showsVerticalScrollIndicator={false}

@@ -1,6 +1,6 @@
 import { Image, Linking, Modal, PermissionsAndroid, Platform, Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { Asset, launchCamera, launchImageLibrary } from "react-native-image-picker";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { check, PERMISSIONS, request } from "react-native-permissions";
 import { Baseprops } from "../utils/navigation";
 import { hp, wp } from "../utils/ResponsiveScreen";
@@ -10,7 +10,8 @@ class Componentprops extends Baseprops {
     cameraModal?: boolean;
     close: any;
     selectedImage?: any
-    onclick?:any;
+    onclick?: any;
+    setImages?: any
 }
 
 const CameraModalScreen: React.FC<Componentprops> = (props) => {
@@ -137,7 +138,8 @@ const CameraModalScreen: React.FC<Componentprops> = (props) => {
                                 onclick={() => {
                                     setImage(image),
                                         props.close()
-                                        props.onclick()
+                                    props.setImages(image)
+                                    setImage(null)
                                 }} />
                             <PrimaryButton
                                 title='Cancle'

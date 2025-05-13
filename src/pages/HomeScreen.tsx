@@ -55,6 +55,8 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
             const city: any = await getCity()
             const citiedata: any = JSON.parse(city)
             setCityname(citiedata)
+        }else{
+            Alert.alert('ALert','unable to get banner')
         }
     }
     const handelCheckDate = () => {
@@ -67,24 +69,28 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
             return;
         }
 
+
         const pickupDay = new Date(pickupDate.getFullYear(), pickupDate.getMonth(), pickupDate.getDate());
         const dropDay = new Date(dropDate.getFullYear(), dropDate.getMonth(), dropDate.getDate());
-
-        if (dropDay >= pickupDay) {
-            props.navigation.navigate('SelectVehicleScreen', {
-                lat: latitude,
-                long: longitude,
-                pickdate: `${moment(pickupDate).format('DD-MM-YYYY')} ${moment(pickupTime).format('HH:mm')}`,
-                drop: `${moment(dropDate).format('DD-MM-YYYY')} ${moment(dropTime).format('HH:mm')}`,
-                picktime: pickupTime,
-                dropuptime: dropTime,
-                addressid: cityname.cityId
-            });
-            console.log('date time',
-                `${moment(pickupDate).format('DD-MM-YYYY')} ${moment(pickupTime).format('HH:mm')}`, 
-            `${moment(dropDate).format('DD-MM-YYYY')} ${moment(dropTime).format('HH:mm')}`);
+        if (cityname && cityname.cityId != '') {
+            if (dropDay >= pickupDay) {
+                props.navigation.navigate('SelectVehicleScreen', {
+                    lat: latitude,
+                    long: longitude,
+                    pickdate: `${moment(pickupDate).format('DD-MM-YYYY')} ${moment(pickupTime).format('HH:mm')}`,
+                    drop: `${moment(dropDate).format('DD-MM-YYYY')} ${moment(dropTime).format('HH:mm')}`,
+                    picktime: pickupTime,
+                    dropuptime: dropTime,
+                    addressid: cityname.cityId
+                });
+                console.log('date time',
+                    `${moment(pickupDate).format('DD-MM-YYYY')} ${moment(pickupTime).format('HH:mm')}`,
+                    `${moment(dropDate).format('DD-MM-YYYY')} ${moment(dropTime).format('HH:mm')}`);
+            } else {
+                Alert.alert('Alert', 'Drop date must be after the Pickup date');
+            }
         } else {
-            Alert.alert('Alert', 'Drop date must be after the Pickup date');
+            Alert.alert('Alert', 'Alert Select the City')
         }
     };
     const VerifyLocationPermission = async () => {

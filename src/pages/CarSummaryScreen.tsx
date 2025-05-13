@@ -47,6 +47,8 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
         console.log('t&c', response)
         if (response.code == 0) {
             setModelcancelData(response.data)
+        } else {
+            Alert.alert('Alert', 'Unable to get details')
         }
     }
     return (
@@ -153,7 +155,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                                 marginHorizontal: wp(3),
                                                 marginVertical: hp(1)
                                             }}>
-                                             {ModelcancelData && ModelcancelData.modification}
+                                                {ModelcancelData && ModelcancelData.modification}
                                             </Text>
                                             <View style={{
                                                 flexDirection: 'row',
@@ -195,7 +197,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                                     marginHorizontal: wp(3),
                                                     marginVertical: hp(1)
                                                 }}>
-                                                   {ModelcancelData && ModelcancelData.cancellation}
+                                                    {ModelcancelData && ModelcancelData.cancellation}
                                                 </Text>
                                                 <View style={{
                                                     flexDirection: 'row',
@@ -237,7 +239,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                                         marginHorizontal: wp(3),
                                                         marginVertical: hp(1)
                                                     }}>
-                                                      {ModelcancelData && ModelcancelData.modification}
+                                                        {ModelcancelData && ModelcancelData.modification}
                                                     </Text>
                                                     <View style={{
                                                         flexDirection: 'row',
@@ -285,7 +287,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                         transparent={true}
                         visible={eligiabilityModal}
                     >
-                        <BottomModelView onclick={()=>setEligiabilityModal(false)}>
+                        <BottomModelView onclick={() => setEligiabilityModal(false)}>
                             <View style={{
                                 marginHorizontal: wp(5),
                                 marginVertical: hp(2)

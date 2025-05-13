@@ -1,4 +1,4 @@
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Alert, Pressable, ScrollView, Text, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import Textinput from "../components/TextInput";
 import { wp, hp } from "../utils/ResponsiveScreen";
@@ -28,6 +28,8 @@ const SelectCityScreen: React.FC<Componentprops> = (props) => {
         console.log('citiesdata', response)
         if (response.code == 0) {
             setCitys(response.data)
+        }else{
+            Alert.alert('Alert','Unable to cities details')
         }
     }
 

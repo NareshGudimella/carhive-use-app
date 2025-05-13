@@ -1,4 +1,5 @@
 import {
+    Alert,
     Image, Modal, Pressable, StyleSheet,
     Text, View
 } from "react-native";
@@ -11,31 +12,72 @@ import { useEffect, useState } from "react";
 import CameraModalScreen from "../components/CameraModel";
 import { CenterModalView } from "../components/CenterModelView";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Asset } from "react-native-image-picker";
+import { KycDetails } from "../apis/api";
 
 class Componentprops extends Baseprops { }
 
 const KycDetailsScreen: React.FC<Componentprops> = (props) => {
     const [cameraModal, SetCaremaModal] = useState(false)
     const [successKycModal, setSuccessKycModal] = useState(false)
+    const [aadharfront, setAadharfront] = useState<Asset | null>(null)
+    const [aadharback, setAadharBack] = useState<Asset | null>(null)
+    const [licenseback, setlicenseBack] = useState<Asset | null>(null)
+    const [licensefront, setlicensefront] = useState<Asset | null>(null)
+    const [targetType, setTargetType] = useState('');
 
-    useEffect(() => {
-        if (successKycModal) {
-            const timer = setTimeout(() => {
-                setSuccessKycModal(false);
-            }, 2000);
-            return () => clearTimeout(timer);
+    const handelPhotosSubmit = async () => {
+        if (aadharfront == null) {
+            Alert.alert('Alert', 'Upload the Aadhar Front side photo')
+            return
         }
-    }, [successKycModal]);
+        if (aadharback == null) {
+            Alert.alert('Alert', 'Upload the Aadhar Back side photo')
+            return
+        }
+        if (licensefront == null) {
+            Alert.alert('Alert', 'Upload the License front side photo')
+            return
+        }
+        if (licenseback == null) {
+            Alert.alert('Alert', 'Upload the License front side photo')
+            return
+        }
+        const response = await KycDetails(aadharfront, aadharback, licensefront, licenseback)
+        console.log(response)
+        if (response.code == 0) {
+            setSuccessKycModal(true)
+        }else{
+            Alert.alert('Alert','unable to get KYC details')
+        }
+    }
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            {
-                cameraModal &&
+            {cameraModal && (
                 <CameraModalScreen
                     close={() => SetCaremaModal(false)}
                     cameraModal={cameraModal}
-                    onclick={() => setSuccessKycModal(true)}
-                />}
+                    setImages={(image: Asset) => {
+                        switch (targetType) {
+                            case 'aadharfront':
+                                setAadharfront(image);
+                                break;
+                            case 'aadharback':
+                                setAadharBack(image);
+                                break;
+                            case 'licensefront':
+                                setlicensefront(image);
+                                break;
+                            case 'licenseback':
+                                setlicenseBack(image);
+                                break;
+                        }
+
+                        SetCaremaModal(false);
+                    }}
+                />
+            )}
             {
                 successKycModal &&
                 <View>
@@ -77,6 +119,12 @@ const KycDetailsScreen: React.FC<Componentprops> = (props) => {
                                 >Your account is ready to use.
                                     You will be redirected to
                                     the Home page in a few seconds.</Text>
+                                <View style={{width:wp(40),
+                                    marginTop:hp(2)
+                                }}>
+                                    <PrimaryButton title='Back'
+                                        onclick={() => props.navigation.navigate('HomeScreen')} />
+                                </View>
                             </View>
                         </CenterModalView>
                     </Modal>
@@ -134,22 +182,67 @@ const KycDetailsScreen: React.FC<Componentprops> = (props) => {
                             justifyContent: 'space-between',
                             marginVertical: hp(1)
                         }}>
-                            <View style={{ width: wp(38) }}>
+                            <View style={{
+                                width: wp(38)
+                            }}>
                                 <Cardview>
-                                    <CameraView
-                                        image={require('../assets/Huge.png')}
-                                        title='Upload Front'
-                                        onclick={() => SetCaremaModal(true)}
-                                    />
+                                    {aadharfront ?
+                                        <View style={{
+                                            justifyContent: 'center', alignItems: 'center',
+                                            paddingVertical: hp(2)
+                                        }}>
+                                            <Image
+                                                source={{ uri: aadharfront?.uri }}
+                                                style={{
+                                                    width: 110,
+                                                    height: 75,
+                                                    resizeMode: 'cover',
+                                                    borderRadius: 10
+                                                }}
+                                            />
+                                        </View>
+                                        :
+                                        <CameraView
+                                            image={require('../assets/Huge.png')}
+                                            title="Upload Front"
+                                            onclick={() => {
+                                                setTargetType('aadharfront');
+                                                SetCaremaModal(true);
+                                            }}
+
+
+                                        />}
                                 </Cardview>
                             </View>
-                            <View style={{ width: wp(38) }}>
+                            <View style={{
+                                width: wp(38)
+                            }}>
                                 <Cardview>
-                                    <CameraView
-                                        image={require('../assets/Huge.png')}
-                                        title='Upload Back'
-                                        onclick={() => SetCaremaModal(true)}
-                                    />
+                                    {aadharback ?
+                                        <View style={{
+                                            justifyContent: 'center', alignItems: 'center',
+                                            paddingVertical: hp(2)
+                                        }}>
+                                            <Image
+                                                source={{ uri: aadharback?.uri }}
+                                                style={{
+                                                    width: 110,
+                                                    height: 75,
+                                                    resizeMode: 'cover',
+                                                    borderRadius: 10
+                                                }}
+                                            />
+                                        </View>
+                                        :
+                                        <CameraView
+                                            image={require('../assets/Huge.png')}
+                                            title="Upload Front"
+                                            onclick={() => {
+                                                setTargetType('aadharback');
+                                                SetCaremaModal(true);
+                                            }}
+
+                                        />}
                                 </Cardview>
                             </View>
                         </View>
@@ -166,20 +259,58 @@ const KycDetailsScreen: React.FC<Componentprops> = (props) => {
                         }}>
                             <View style={{ width: wp(38) }}>
                                 <Cardview>
-                                    <CameraView
-                                        image={require('../assets/Huge.png')}
-                                        title='Upload Front'
-                                        onclick={() => SetCaremaModal(true)}
-                                    />
+                                    {licensefront ?
+                                        <View style={{
+                                            justifyContent: 'center', alignItems: 'center',
+                                            paddingVertical: hp(2)
+                                        }}>
+                                            <Image
+                                                source={{ uri: licensefront?.uri }}
+                                                style={{
+                                                    width: 110,
+                                                    height: 75,
+                                                    resizeMode: 'cover',
+                                                    borderRadius: 10
+                                                }}
+                                            />
+                                        </View>
+                                        :
+                                        <CameraView
+                                            image={require('../assets/Huge.png')}
+                                            title="Upload Front"
+                                            onclick={() => {
+                                                SetCaremaModal(true);
+                                                setTargetType('licensefront')
+                                            }}
+                                        />}
                                 </Cardview>
                             </View>
                             <View style={{ width: wp(38) }}>
                                 <Cardview>
-                                    <CameraView
-                                        image={require('../assets/Huge.png')}
-                                        title='Upload Back'
-                                        onclick={() => SetCaremaModal(true)}
-                                    />
+                                    {licenseback ?
+                                        <View style={{
+                                            justifyContent: 'center', alignItems: 'center',
+                                            paddingVertical: hp(2)
+                                        }}>
+                                            <Image
+                                                source={{ uri: licenseback?.uri }}
+                                                style={{
+                                                    width: 110,
+                                                    height: 75,
+                                                    resizeMode: 'cover',
+                                                    borderRadius: 10
+                                                }}
+                                            />
+                                        </View>
+                                        :
+                                        <CameraView
+                                            image={require('../assets/Huge.png')}
+                                            title="Upload Front"
+                                            onclick={() => {
+                                                SetCaremaModal(true);
+                                                setTargetType('licenseback')
+                                            }}
+                                        />}
                                 </Cardview>
                             </View>
                         </View>
@@ -190,7 +321,7 @@ const KycDetailsScreen: React.FC<Componentprops> = (props) => {
                     justifyContent: 'flex-end', marginVertical: hp(3)
                 }}>
                     <PrimaryButton title='Submit'
-                        onclick={() => props.navigation.navigate('CarSummaryScreen')} />
+                        onclick={() => handelPhotosSubmit()} />
                     <View style={{
                         justifyContent: "center",
                         alignItems: "center"

@@ -6,13 +6,16 @@ import { CameraView } from "../components/CameraView";
 import { useCallback, useState } from "react";
 import { BottomModelView } from "../components/BottomModelView";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { excuteGetResponse, updateProfile } from "../apis/api";
+import { excuteGetResponse, UpdateProfile } from "../apis/api";
 import { useFocusEffect } from "@react-navigation/native";
 import { Dropdown } from "react-native-element-dropdown";
 import { input } from "../styles/TextInputStyle";
 import DatePicker from "react-native-date-picker";
 import moment from "moment";
 import CameraModalScreen from "../components/CameraModel";
+import { Asset } from "react-native-image-picker";
+import { useDispatch } from "react-redux";
+import { updateProfile } from "../storage/redux";
 
 class Componentprops extends Baseprops { }
 
@@ -24,7 +27,15 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
     const [open, setOpen] = useState(false)
     const [cameraModal, SetCaremaModal] = useState(false)
     const [successKycModal, setSuccessKycModal] = useState(false)
-
+    const [userName, setUserName] = useState('')
+    const [userEmail, setUserEmail] = useState('')
+    const [aadharfront, setAadharfront] = useState<Asset | null>(null)
+    const [aadharback, setAadharBack] = useState<Asset | null>(null)
+    const [licenseback, setlicenseBack] = useState<Asset | null>(null)
+    const [licensefront, setlicensefront] = useState<Asset | null>(null)
+    const [images, setImages] = useState<Asset | null>(null)
+    const [targetType, setTargetType] = useState('');
+    const dispatch = useDispatch()
     useFocusEffect(
         useCallback(() => {
             handelProfileDetails()
@@ -41,26 +52,54 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
         console.log('profile', response)
         if (response.code == 0) {
             setProfileDetails(response.data)
+            dispatch(updateProfile(response.data));
             setDate(new Date(response.data.dob))
         } else {
             Alert.alert('Alert', 'Unable to get details')
         }
     }
-    const handelUpdateProfile = async() => {
-      
+    const handelUpdateProfile = async () => {
+        const response = await UpdateProfile(userName, userEmail, gender, date,
+            aadharfront, aadharback, licensefront, licenseback)
+        console.log('updateprofile', response)
+        if (response.code == 0) {
+            dispatch(updateProfile(response.data));
+        }else{
+            Alert.alert('Alert','unable to get update the data')
+        }
     }
 
     return (
         <SafeAreaView style={{
             flex: 1
         }}>
-            {
-                CameraModalScreen &&
+            {cameraModal && (
                 <CameraModalScreen
                     close={() => SetCaremaModal(false)}
                     cameraModal={cameraModal}
                     onclick={() => setSuccessKycModal(true)}
-                />}
+                    setImages={(image: Asset) => {
+                        setImages(image);
+
+                        switch (targetType) {
+                            case 'aadharfront':
+                                setAadharfront(image);
+                                break;
+                            case 'aadharback':
+                                setAadharBack(image);
+                                break;
+                            case 'licensefront':
+                                setlicensefront(image);
+                                break;
+                            case 'licenseback':
+                                setlicenseBack(image);
+                                break;
+                        }
+
+                        SetCaremaModal(false);
+                    }}
+                />
+            )}
             <ScrollView style={{ flex: 1 }}>
                 <View style={{
                     flexDirection: 'row',
@@ -104,7 +143,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                         fontSize: 16,
                                         fontWeight: 'bold'
                                     }}>Personal details</Text>
-                                <Pressable>
+                                <Pressable onPress={() => handelUpdateProfile()}>
                                     <Image
                                         source={require('../assets/edit1.png')}
                                         style={{
@@ -117,6 +156,8 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                 <TextInput
                                     placeholder={profilDetails && profilDetails.name}
                                     placeholderTextColor='#000000'
+                                    onChangeText={setUserName}
+                                    value={userName}
                                     style={{
                                         height: hp(6),
                                         marginHorizontal: wp(4),
@@ -129,6 +170,8 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                 <TextInput
                                     placeholder={profilDetails && profilDetails.email}
                                     placeholderTextColor='#000000'
+                                    onChangeText={setUserEmail}
+                                    value={userEmail}
                                     style={{
                                         height: hp(6),
                                         marginHorizontal: wp(4),
@@ -245,22 +288,63 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                         width: wp(38)
                                     }}>
                                         <Cardview>
-                                            <CameraView
-                                                image={require('../assets/Huge.png')}
-                                                title='Upload Front'
-                                                onclick={() => SetCaremaModal(true)}
-                                            />
+                                            {aadharfront ?
+                                                <View style={{
+                                                    justifyContent: 'center', alignItems: 'center',
+                                                    paddingVertical: hp(2)
+                                                }}>
+                                                    <Image
+                                                        source={{ uri: aadharfront?.uri }}
+                                                        style={{
+                                                            width: 110,
+                                                            height: 75,
+                                                            resizeMode: 'cover',
+                                                            borderRadius: 10
+                                                        }}
+                                                    />
+                                                </View>
+                                                :
+                                                <CameraView
+                                                    image={require('../assets/Huge.png')}
+                                                    title="Upload Front"
+                                                    onclick={() => {
+                                                        setTargetType('aadharfront');
+                                                        SetCaremaModal(true);
+                                                    }}
+
+
+                                                />}
                                         </Cardview>
                                     </View>
                                     <View style={{
                                         width: wp(38)
                                     }}>
                                         <Cardview>
-                                            <CameraView
-                                                image={require('../assets/Huge.png')}
-                                                title='Upload Back'
-                                                onclick={() => SetCaremaModal(true)}
-                                            />
+                                            {aadharback ?
+                                                <View style={{
+                                                    justifyContent: 'center', alignItems: 'center',
+                                                    paddingVertical: hp(2)
+                                                }}>
+                                                    <Image
+                                                        source={{ uri: aadharback?.uri }}
+                                                        style={{
+                                                            width: 110,
+                                                            height: 75,
+                                                            resizeMode: 'cover',
+                                                            borderRadius: 10
+                                                        }}
+                                                    />
+                                                </View>
+                                                :
+                                                <CameraView
+                                                    image={require('../assets/Huge.png')}
+                                                    title="Upload Front"
+                                                    onclick={() => {
+                                                        setTargetType('aadharback');
+                                                        SetCaremaModal(true);
+                                                    }}
+
+                                                />}
                                         </Cardview>
                                     </View>
                                 </View>
@@ -277,20 +361,58 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                 }}>
                                     <View style={{ width: wp(38) }}>
                                         <Cardview>
-                                            <CameraView
-                                                image={require('../assets/Huge.png')}
-                                                title='Upload Front'
-                                                onclick={() => SetCaremaModal(true)}
-                                            />
+                                            {licensefront ?
+                                                <View style={{
+                                                    justifyContent: 'center', alignItems: 'center',
+                                                    paddingVertical: hp(2)
+                                                }}>
+                                                    <Image
+                                                        source={{ uri: licensefront?.uri }}
+                                                        style={{
+                                                            width: 110,
+                                                            height: 75,
+                                                            resizeMode: 'cover',
+                                                            borderRadius: 10
+                                                        }}
+                                                    />
+                                                </View>
+                                                :
+                                                <CameraView
+                                                    image={require('../assets/Huge.png')}
+                                                    title="Upload Front"
+                                                    onclick={() => {
+                                                        SetCaremaModal(true);
+                                                        setTargetType('licensefront')
+                                                    }}
+                                                />}
                                         </Cardview>
                                     </View>
                                     <View style={{ width: wp(38) }}>
                                         <Cardview>
-                                            <CameraView
-                                                image={require('../assets/Huge.png')}
-                                                title='Upload Back'
-                                                onclick={() => SetCaremaModal(true)}
-                                            />
+                                            {licenseback ?
+                                                <View style={{
+                                                    justifyContent: 'center', alignItems: 'center',
+                                                    paddingVertical: hp(2)
+                                                }}>
+                                                    <Image
+                                                        source={{ uri: licenseback?.uri }}
+                                                        style={{
+                                                            width: 110,
+                                                            height: 75,
+                                                            resizeMode: 'cover',
+                                                            borderRadius: 10
+                                                        }}
+                                                    />
+                                                </View>
+                                                :
+                                                <CameraView
+                                                    image={require('../assets/Huge.png')}
+                                                    title="Upload Front"
+                                                    onclick={() => {
+                                                        SetCaremaModal(true);
+                                                        setTargetType('licenseback')
+                                                    }}
+                                                />}
                                         </Cardview>
                                     </View>
                                 </View>

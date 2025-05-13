@@ -1,4 +1,4 @@
-import { Image, Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { Alert, Image, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { hp, wp } from "../utils/ResponsiveScreen";
 import Textinput from "../components/TextInput";
@@ -7,10 +7,29 @@ import BottomTabNavigation from "../components/BottomTab";
 import { Cardview } from "../components/Cardview";
 import { Rating } from "react-native-ratings";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { excuteGetResponse } from "../apis/api";
+import { useCallback, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 
 class Componentprops extends Baseprops { }
 
 const FavoritesScreen: React.FC<Componentprops> = (props) => {
+    const [favoriteList, setFavoriteList] = useState<any>([])
+    useFocusEffect(
+        useCallback(() => {
+            handelFavorites()
+        }, [])
+    )
+    const handelFavorites = async () => {
+        const response = await excuteGetResponse(`secure/cars/favorite`)
+        console.log('favorites',response)
+        if (response.code == 0) {
+            setFavoriteList(response.data)
+        }else{
+            Alert.alert('Alert','Unable to get details of Favorites')
+        }
+    }
+
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <View style={{
@@ -56,7 +75,7 @@ const FavoritesScreen: React.FC<Componentprops> = (props) => {
                     marginVertical: hp(1)
                 }}>
                 {
-                    [1, 2, 3,].map((e: any, index: any) => (
+                    favoriteList && favoriteList.map((e: any, index: any) => (
                         <Pressable key={index}
                             style={{ marginVertical: hp(1) }}>
                             <Cardview>
@@ -67,17 +86,18 @@ const FavoritesScreen: React.FC<Componentprops> = (props) => {
                                             alignItems: 'center'
                                         }}>
                                             <Image
-                                                source={require('../assets/pngegg1.png')}
+                                                source={{uri:e.image_path}}
                                                 style={{
                                                     height: 70,
-                                                    width: 85
+                                                    width: 85,
+                                                    borderRadius:10
                                                 }} />
                                             <Text
                                                 style={{
                                                     fontSize: 17,
                                                     fontWeight: 'bold',
                                                     marginHorizontal: wp(3)
-                                                }}>Range Rover</Text>
+                                                }}>{e.brand} {e.model}</Text>
                                         </View>
                                         <View style={{
                                             backgroundColor: '#0000000A',
@@ -107,11 +127,11 @@ const FavoritesScreen: React.FC<Componentprops> = (props) => {
                                                 fontWeight: '500',
                                                 color: '#666666',
                                             }}>
-                                            3.5
+                                           {e.car_rating}
                                         </Text>
                                         <Rating
                                             readonly
-                                            startingValue={3.4}
+                                            startingValue= {e.car_rating}
                                             imageSize={12}
                                             ratingCount={5}
                                             fractions={1}
@@ -122,13 +142,13 @@ const FavoritesScreen: React.FC<Componentprops> = (props) => {
                                                 fontSize: 15,
                                                 fontWeight: '500',
                                                 color: '#666666'
-                                            }}>2017
+                                            }}>{e.make_year}
                                             </Text> - <Text
                                                 style={{
                                                     fontSize: 15,
                                                     fontWeight: '500',
                                                     color: '#666666'
-                                                }}>4 seats - Manual
+                                                }}>{e.car_seating} seats - {e.car_transmission}
                                             </Text>
                                         </Text>
                                     </View>
