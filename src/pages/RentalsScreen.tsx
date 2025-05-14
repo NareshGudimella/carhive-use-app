@@ -1,6 +1,7 @@
 import {
-    Image, Modal, Pressable,
-    ScrollView, Text, TextInput, View
+    Alert,
+    Image, Linking, Modal, Pressable,
+    ScrollView, Settings, Text, TextInput, View
 } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { hp, wp } from "../utils/ResponsiveScreen";
@@ -8,38 +9,39 @@ import { input } from "../styles/TextInputStyle";
 import BottomTabNavigation from "../components/BottomTab";
 import { Cardview } from "../components/Cardview";
 import { RadioButton } from "react-native-paper";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import PrimaryButton from "../components/PrimaryButton";
 import { BottomModelView } from "../components/BottomModelView";
 import { CenterModalView } from "../components/CenterModelView";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { excuteGetResponse } from "../apis/api";
+import { useFocusEffect } from "@react-navigation/native";
+import moment from "moment";
 
 class Componentprops extends Baseprops { }
-const data = [{
-    id: 1, type: 'Pending', Bookingid: '134123',
-    carname: 'Range Rover - AP40 AB 1234',
-    date: '29th April 2025, 10:00AM - 31st April 2025, 10:00AM'
-},
-{
-    id: 2, type: 'Accepted', Bookingid: '134123',
-    carname: 'Range Rover - AP40 AB 1234',
-    date: '29th April 2025, 10:00AM'
-},
-{
-    id: 3, type: 'On-going', Bookingid: '134123',
-    carname: 'Range Rover - AP40 AB 1234',
-    date: '29th April 2025, 10:00AM'
-},
-{
-    id: 4, type: 'Completed', Bookingid: '134123',
-    carname: 'Range Rover - AP40 AB 1234',
-    date: '29th April 2025, 10:00AM - 31st April 2025, 10:00AM'
-},
-]
 
 const RentalsScreen: React.FC<Componentprops> = (props) => {
     const [addressChecked, setAddressChecked] = useState('address');
     const [extendServiceModal, setExtendServiceModal] = useState(false)
+    const [rentalData, setRentalData] = useState<any>([])
+    const [price, setPrice] = useState<any>('')
+    const [carId, setCarId] = useState<any>('')
+
+    useFocusEffect(
+        useCallback(() => {
+            handelRentalDetails()
+        }, [])
+    )
+
+    const handelRentalDetails = async () => {
+        const response = await excuteGetResponse(`secure/cars/bookings`)
+        console.log('Rental details', response)
+        if (response.code == 0) {
+            setRentalData(response.data)
+        } else {
+            Alert.alert('Alert', 'Unable to get Rental Details')
+        }
+    }
     return (
         <SafeAreaView style={{ flex: 1 }}>
             {
@@ -70,7 +72,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                     fontSize: 22,
                                     fontWeight: '500',
                                     marginVertical: hp(2)
-                                }}>₹35<Text
+                                }}>₹{price}<Text
                                     style={{ color: '#64748B' }}>/Km</Text></Text>
                                 <View style={{
                                     flexDirection: 'row',
@@ -93,7 +95,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                     </Pressable>
                                     <Pressable
                                         onPress={() => {
-                                            props.navigation.navigate('ExtendServiceRequestScreen'),
+                                            props.navigation.navigate('ExtendServiceRequestScreen', { id: carId }),
                                                 setExtendServiceModal(false)
                                         }}
                                         style={{
@@ -157,10 +159,10 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                     marginHorizontal: wp(5),
                     marginVertical: hp(1)
                 }}>
-                {data.map((e: any, index: any) => (
+                {rentalData && rentalData.map((e: any, index: any) => (
                     <View key={index}>
                         {
-                            e.type == 'Pending' ?
+                            e.status == 'PENDING' ?
                                 <Pressable
                                     onPress={() => props.navigation.navigate('OrderDetailsScreen')}
                                     style={{ marginVertical: hp(1.5) }}>
@@ -182,7 +184,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                         fontSize: 13,
                                                         fontWeight: 'bold'
                                                     }}
-                                                >{e.type}</Text>
+                                                >{e.status}</Text>
                                             </View>
                                             <View style={{
                                                 flexDirection: 'row',
@@ -190,7 +192,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                 marginHorizontal: wp(4)
                                             }}>
                                                 <Image
-                                                    source={require('../assets/pngegg1.png')}
+                                                    source={{ uri: e.car_image }}
                                                     style={{
                                                         height: 50,
                                                         width: 70
@@ -202,15 +204,14 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                         fontSize: 16,
                                                         fontWeight: 'bold'
                                                     }}>
-                                                        Booking ID :
-                                                        {e.Bookingid}</Text>
+                                                        Booking ID : {e.booking_id}</Text>
                                                     <Text
                                                         style={{
                                                             color: '#64748B',
                                                             fontSize: 13,
                                                             fontWeight: '500',
                                                             marginTop: 2
-                                                        }}>{e.carname}</Text>
+                                                        }}>{e.brand} {e.model} - {e.registeration_number}</Text>
                                                 </View>
                                             </View>
                                             <Text
@@ -220,11 +221,12 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                     marginHorizontal: wp(5),
                                                     marginVertical: hp(2),
                                                     textAlign: 'center'
-                                                }}>{e.date}</Text>
+                                                }}>{moment(e.from_date).format('DD MMM YYYY HH:DD A')} -
+                                                {moment(e.to_date).format('DD MMM YYYY HH:DD A')}</Text>
                                         </View>
                                     </Cardview>
                                 </Pressable> :
-                                e.type == 'Accepted' ?
+                                e.status == 'ACCEPTED' ?
                                     <Pressable>
                                         <Cardview>
                                             <View>
@@ -244,7 +246,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                             fontSize: 13,
                                                             fontWeight: 'bold'
                                                         }}
-                                                    >{e.type}</Text>
+                                                    >{e.status}</Text>
                                                 </View>
                                                 <View style={{
                                                     flexDirection: 'row',
@@ -252,7 +254,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                     marginHorizontal: wp(4)
                                                 }}>
                                                     <Image
-                                                        source={require('../assets/pngegg1.png')}
+                                                        source={{ uri: e.car_image }}
                                                         style={{
                                                             height: 50,
                                                             width: 70
@@ -264,14 +266,14 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                             fontSize: 16,
                                                             fontWeight: 'bold'
                                                         }}>Booking ID :
-                                                            {e.Bookingid}</Text>
+                                                            {e.booking_id}</Text>
                                                         <Text
                                                             style={{
                                                                 color: '#64748B',
                                                                 fontSize: 13,
                                                                 fontWeight: '500',
                                                                 marginTop: 2
-                                                            }}>{e.carname}
+                                                            }}>{e.brand} {e.model} - {e.registeration_number}
                                                         </Text>
                                                     </View>
                                                 </View>
@@ -287,7 +289,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                             fontWeight: 'bold',
                                                             color: '#64748B'
                                                         }}>
-                                                        Delivery date :
+                                                        Delivery date :{moment(e.to_date).format('DD MMM YYYY HH:DD A')}
                                                     </Text>
                                                     <Text
                                                         style={{
@@ -325,9 +327,10 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                                     fontSize: 16,
                                                                     fontWeight: 'bold',
                                                                     marginHorizontal: wp(4)
-                                                                }}>Avinash Naidu</Text>
+                                                                }}>{e.vendor_name
+                                                                }</Text>
                                                         </View>
-                                                        <Pressable>
+                                                        <Pressable onPress={() => Linking.openURL(`tel${e.vendor_mobile}`)}>
                                                             <Image
                                                                 source={require('../assets/call1.png')}
                                                                 style={{
@@ -362,14 +365,13 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                                 width: wp(60),
                                                                 fontSize: 13,
                                                                 fontWeight: '500'
-                                                            }}>Spline Arcade, Aayyappa
-                                                            Society, Madhapur,
-                                                            Telangana (500081)</Text>
+                                                            }}>{e.location}</Text>
                                                     </Pressable>
                                                 </View>
                                             </View>
                                         </Cardview>
-                                    </Pressable> : e.type == 'On-going' ?
+                                    </Pressable> :
+                                    e.status == 'ONGOING' ?
                                         <Pressable style={{
                                             marginVertical: hp(1.5)
                                         }}>
@@ -391,7 +393,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                                 fontSize: 13,
                                                                 fontWeight: 'bold'
                                                             }}
-                                                        >{e.type}</Text>
+                                                        >{e.status}</Text>
                                                     </View>
                                                     <View style={{
                                                         flexDirection: 'row',
@@ -399,7 +401,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                         marginHorizontal: wp(4)
                                                     }}>
                                                         <Image
-                                                            source={require('../assets/pngegg1.png')}
+                                                            source={{ uri: e.car_image }}
                                                             style={{
                                                                 height: 50,
                                                                 width: 70
@@ -412,7 +414,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                                 fontWeight: 'bold'
                                                             }}>
                                                                 Booking ID :
-                                                                {e.Bookingid}
+                                                                {e.booking_id}
                                                             </Text>
                                                             <Text
                                                                 style={{
@@ -420,7 +422,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                                     fontSize: 13,
                                                                     fontWeight: '500',
                                                                     marginTop: 2
-                                                                }}>{e.carname}
+                                                                }}>{e.brand} {e.model} - {e.registeration_number}
                                                             </Text>
                                                         </View>
                                                     </View>
@@ -443,7 +445,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                                 fontSize: 12,
                                                                 fontWeight: 'bold',
 
-                                                            }}> {e.date}
+                                                            }}> {moment(e.to_date).format('DD MMM YYYY HH:DD A')}
                                                         </Text>
                                                     </View>
                                                     <View style={{
@@ -452,12 +454,16 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                     }}>
                                                         <PrimaryButton
                                                             title='Extend Service'
-                                                            onclick={() => setExtendServiceModal(true)} />
+                                                            onclick={() => {
+                                                                setExtendServiceModal(true)
+                                                                setCarId(e.car_booking_id)
+                                                                setPrice(e.pirce_per_hour)
+                                                            }} />
                                                     </View>
                                                 </View>
                                             </Cardview>
                                         </Pressable>
-                                        : e.type == 'Completed' ?
+                                        : e.status == 'COMPLETED' ?
                                             <Pressable style={{ marginVertical: hp(1.5) }}>
                                                 <Cardview>
                                                     <View>
@@ -477,7 +483,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                                     fontSize: 13,
                                                                     fontWeight: 'bold'
                                                                 }}
-                                                            >{e.type}</Text>
+                                                            >{e.status}</Text>
                                                         </View>
                                                         <View style={{
                                                             flexDirection: 'row',
@@ -485,7 +491,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                             marginHorizontal: wp(4)
                                                         }}>
                                                             <Image
-                                                                source={require('../assets/pngegg1.png')}
+                                                                source={{ uri: e.car_image }}
                                                                 style={{
                                                                     height: 50,
                                                                     width: 70
@@ -498,14 +504,14 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                                     fontWeight: 'bold'
                                                                 }}>
                                                                     Booking ID :
-                                                                    {e.Bookingid}</Text>
+                                                                    {e.booking_id}</Text>
                                                                 <Text
                                                                     style={{
                                                                         color: '#64748B',
                                                                         fontSize: 13,
                                                                         fontWeight: '500',
                                                                         marginTop: 2
-                                                                    }}>{e.carname}</Text>
+                                                                    }}>{e.brand} {e.model} - {e.registeration_number}</Text>
                                                             </View>
                                                         </View>
                                                         <Text
@@ -515,14 +521,15 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                                 marginHorizontal: wp(5),
                                                                 marginVertical: hp(2),
                                                                 textAlign: 'center'
-                                                            }}>{e.date}</Text>
+                                                            }}>{moment(e.from_date).format('DD MMM YYYY HH:DD A')}
+                                                            - {moment(e.to_date).format('DD MMM YYYY HH:DD A')}</Text>
                                                         <View style={{
                                                             marginBottom: hp(2),
                                                             marginHorizontal: wp(10)
                                                         }}>
                                                             <PrimaryButton
                                                                 title='Rate your Experience'
-                                                                onclick={() => props.navigation.navigate('SelectVehicleScreen')} />
+                                                                onclick={() => props.navigation.navigate('HomeScreen')} />
                                                         </View>
                                                     </View>
                                                 </Cardview>

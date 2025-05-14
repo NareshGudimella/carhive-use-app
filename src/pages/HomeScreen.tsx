@@ -55,8 +55,8 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
             const city: any = await getCity()
             const citiedata: any = JSON.parse(city)
             setCityname(citiedata)
-        }else{
-            Alert.alert('ALert','unable to get banner')
+        } else {
+            Alert.alert('ALert', 'unable to get banner')
         }
     }
     const handelCheckDate = () => {
@@ -69,11 +69,12 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
             return;
         }
 
-
         const pickupDay = new Date(pickupDate.getFullYear(), pickupDate.getMonth(), pickupDate.getDate());
         const dropDay = new Date(dropDate.getFullYear(), dropDate.getMonth(), dropDate.getDate());
+        const picktime = new Date(pickupTime.getHours())
+        const droptime = new Date(dropTime.getHours())
         if (cityname && cityname.cityId != '') {
-            if (dropDay >= pickupDay) {
+            if (dropDay >= pickupDay ) {
                 props.navigation.navigate('SelectVehicleScreen', {
                     lat: latitude,
                     long: longitude,
@@ -305,7 +306,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                                     marginHorizontal: wp(2),
                                                     fontSize: 14,
                                                     fontWeight: '600'
-                                                }}> {moment(pickupDate).format('MMMM D YYYY')}</Text>
+                                                }}> {moment(pickupDate).format('MMM D YYYY')}</Text>
                                         </Pressable>
                                     </View>
                                     <View>
@@ -367,7 +368,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                                     marginHorizontal: wp(2),
                                                     fontSize: 14,
                                                     fontWeight: '600'
-                                                }}>{moment(dropDate).format('MMMM D YYYY')}</Text>
+                                                }}>{moment(dropDate).format('MMM D YYYY')}</Text>
                                         </Pressable>
                                     </View>
                                     <View>

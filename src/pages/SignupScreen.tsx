@@ -23,14 +23,14 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
     const [userEmail, setUserEmail] = useState('');
 
     const genderData = [
-        { label: "Male", value: "male" },
-        { label: "Female", value: "female" },
-        { label: "Other", value: "other" },
+        { label: "MALE", value: "MALE" },
+        { label: "FEMALE", value: "FEMALE" },
+        { label: "OTHERS", value: "OTHERS" },
     ];
 
     const handelSignup = async () => {
-        const response = await SignUp(userName, userEmail, gender, date);
-        console.log('Signupresponse', response);
+        const response = await SignUp(userName, userEmail, gender, moment(date).format('YYYY-MM-DD'));
+        console.log('Signupresponse', response,userName, userEmail, gender, moment(date).format('DD-MM-YYYY'));
         if (response.code == 0) {
             props.navigation.navigate('KycDetailsScreen');
         } else {

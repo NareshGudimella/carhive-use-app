@@ -16,13 +16,14 @@ import PrimaryButton from "../components/PrimaryButton";
 import { Rating } from "react-native-ratings";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useFocusEffect } from "@react-navigation/native";
-import { CarsList, excuteGetResponse, Login, LoginCarsList, removeWishlist, wishlist } from "../apis/api";
+import { CarsList, excuteGetResponse, Login, LoginCarsList, Otp, removeWishlist, wishlist } from "../apis/api";
 import LinearGradient from "react-native-linear-gradient";
 import moment from "moment";
 import Textinput from "../components/TextInput";
 import { OtpInput } from "react-native-otp-entry";
 import { style } from "../styles/OtpStyle";
 import { useSelector } from "react-redux";
+import { getToken, setToken } from "../storage/AsyncStorage";
 
 class Componentprops extends Baseprops { }
 
@@ -65,6 +66,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
     const [otpModal, setOtpModal] = useState(false)
     const [otp, setOtp] = useState<any>('')
     const [phoneNumber, setPhoneNumber] = useState<any>('')
+    const [search, SetSearch] = useState('')
 
     useFocusEffect(
         useCallback(() => {
@@ -72,52 +74,54 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
         }, [])
     )
     const usergetprofile = async () => {
-        const response = await excuteGetResponse('secure/profile')
-        console.log('myuser', response.data)
-        if (response.code == 0) {
-            if (response.data && response.data != '') {
-                const response = await LoginCarsList(
-                    props.route.params.pickdate,
-                    props.route.params.drop,
-                    props.route.params.addressid,
-                    props.route.params.lat,
-                    props.route.params.long)
+        const token = await getToken()
+        console.log('myuser', token)
 
-                console.log('logincarresponse', response)
+        if (token && token != '') {
+            const response = await LoginCarsList(
+                props.route.params.pickdate,
+                props.route.params.drop,
+                props.route.params.addressid,
+                props.route.params.lat,
+                props.route.params.long)
 
-                if (response.code == 0) {
-                    setCarsList(response.data)
-                } else {
-                    Alert.alert('Alert', 'Unable to get Login details')
-                }
+            console.log('logincarresponse', response)
+
+            if (response.code == 0) {
+                setCarsList(response.data)
             } else {
-                const response = await CarsList(
-                    props.route.params.pickdate,
-                    props.route.params.drop,
-                    props.route.params.addressid,
-                    props.route.params.lat,
-                    props.route.params.long)
-
-                console.log('carresponse', response)
-
-                if (response.code == 0) {
-                    setCarsList(response.data)
-                } else {
-                    Alert.alert('Alert', 'unable to get details of unlogin')
-                }
+                Alert.alert('Alert', 'Unable to get Login details')
             }
         } else {
-            Alert.alert('Alert', 'unable to get details')
+            const response = await CarsList(
+                props.route.params.pickdate,
+                props.route.params.drop,
+                props.route.params.addressid,
+                props.route.params.lat,
+                props.route.params.long)
+
+            console.log('carresponse', response)
+
+            if (response.code == 0) {
+                setCarsList(response.data)
+            } else {
+                Alert.alert('Alert', 'unable to get details of unlogin')
+            }
         }
     }
 
     const handelWishlist = async (carId: any) => {
-        const response = await wishlist(carId)
-        console.log('fav', response)
-        if (response.code == 0) {
-            usergetprofile()
+        const token = await getToken()
+        if (token && token != '') {
+            const response = await wishlist(carId)
+            console.log('fav', response)
+            if (response.code == 0) {
+                usergetprofile()
+            } else {
+                Alert.alert('Alert', 'unable to get wishlist details')
+            }
         } else {
-            Alert.alert('Alert', 'unable to get wishlist details')
+            setMobileNumberModal(true)
         }
     }
     const removeWishlistbutton = async (carId: any) => {
@@ -140,8 +144,27 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
         console.log('Login', response)
         if (response.code == 0) {
             setOtpModal(true)
-        }else{
-            Alert.alert('Alert','Unable to get details of Login')
+        } else {
+            Alert.alert('Alert', 'Unable to get details of Login')
+        }
+    }
+
+    const handelOTP = async () => {
+        if (!otp || otp.length !== 4) {
+            Alert.alert('Alert!', 'Enter a valid 4-digit OTP.');
+            return;
+        }
+        const response = await Otp(phoneNumber, otp)
+        console.log('otp', response)
+        if (response.code == 0) {
+            setToken(response.data.token)
+            if (response.data.profile_flag == 0) {
+                console.log('yes', response.data.profile_flag)
+                props.navigation.navigate('SignupScreen')
+                setOtpModal(false)
+            } else if (response.data.profile_flag == 1) {
+                usergetprofile()
+            }
         }
     }
 
@@ -287,7 +310,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                             style={{
                                                 color: '#FBC41D',
                                                 fontSize: 16
-                                            }}>  +91 9704611443</Text>
+                                            }}>  +91 {phoneNumber}</Text>
                                     </Text>
                                     <OtpInput
                                         numberOfDigits={4}
@@ -325,6 +348,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                             title='Verify'
                                             onclick={() => {
                                                 setOtpModal(false)
+                                                handelOTP()
                                             }}
                                         />
                                     </View>
@@ -356,16 +380,6 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                 fontSize: 20,
                                                 fontWeight: 'bold'
                                             }}>Filter</Text>
-                                        <Pressable onPress={() => setFilterModal(false)}>
-                                            <Image
-                                                source={require('../assets/close.png')}
-                                                style={{
-                                                    height: 30,
-                                                    width: 30,
-                                                    tintColor: '#FBC41D'
-                                                }}
-                                            />
-                                        </Pressable>
                                     </View>
                                     <View style={{
                                         borderWidth: 0.5,
@@ -550,7 +564,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                 <Text style={{
                                     fontSize: 16,
                                     fontWeight: 'bold'
-                                }}> {carsList && moment(carsList.from_date).format('DD-MM-YYYY')}</Text>
+                                }}> {carsList && moment(carsList.from_date).format('DD MMM YYYY')}</Text>
                                 <Text style={{
                                     color: '#13131380',
                                     fontSize: 13,
@@ -568,7 +582,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                     style={{
                                         fontSize: 16,
                                         fontWeight: 'bold'
-                                    }}>{carsList && moment(carsList.to_date).format('DD-MM-YYYY')}</Text>
+                                    }}>{carsList && moment(carsList.to_date).format('DD MMM YYYY')}</Text>
                                 <Text
                                     style={{
                                         color: '#13131380',
@@ -612,6 +626,8 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                 <TextInput
                                     placeholder="Search any car..."
                                     placeholderTextColor='#000000'
+                                    onChangeText={SetSearch}
+                                    value={search}
                                     style={{
                                         marginHorizontal: wp(2),
                                         width: wp(60)
@@ -633,256 +649,259 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                             }}>
 
 
-                            {carsList && carsList.cars.map((e: any, index: any) => (
-                                <Pressable
-                                    onPress={() =>
-                                        props.navigation.navigate('VehicleDetailsScreen',
-                                            { fromdate: carsList.from_date, todate: carsList.to_date, id: e.carid })}
-                                    key={index}>
-                                    <Carousel
-                                        ref={ref}
-                                        width={wp(90)}
-                                        style={{ marginTop: hp(2) }}
-                                        height={hp(28)}
-                                        data={e.images}
-                                        renderItem={({ item }: { item: any }) => (
-                                            <View>
-                                                <Image
-                                                    source={{ uri: item.image }}
-                                                    style={{
-                                                        justifyContent: "center",
-                                                        height: hp(28),
-                                                        width: wp(89),
-                                                        alignSelf: 'center',
-                                                        borderRadius: 20,
-
-                                                    }} />
-                                            </View>
-                                        )}
-                                    />
-                                    <View style={{
-                                        position: 'absolute',
-
-                                    }}>
-                                        <View style={{
-                                            left: wp(75),
-                                            top: hp(4)
-                                        }}>
-                                            <View />
-                                            {e.favorite_flag == 1
-                                                ?
-                                                <Pressable
-                                                    onPress={() => {
-                                                        removeWishlistbutton(e.carid)
-                                                        console.log('flag', e.favorite_flag)
-                                                    }}
-                                                    style={{
-                                                        justifyContent: 'center',
-                                                        backgroundColor: '#ffffff',
-                                                        alignItems: 'center',
-                                                        height: hp(4),
-                                                        width: hp(4),
-                                                        borderRadius: 20,
-                                                    }}
-                                                >
-                                                    <Image
-                                                        source={require('../assets/shop.png')}
-                                                        style={BottomTabstyles.nonselectedstyle}
-                                                        tintColor='red'
-                                                    />
-                                                </Pressable> :
-                                                <Pressable
-                                                    onPress={() => {
-                                                        handelWishlist(e.carid)
-                                                        console.log('flag', e.favorite_flag)
-                                                    }}
-                                                    style={{
-                                                        justifyContent: 'center',
-                                                        backgroundColor: '#ffffff',
-                                                        alignItems: 'center',
-                                                        height: hp(4),
-                                                        width: hp(4),
-                                                        borderRadius: 20,
-                                                    }}
-                                                >
-                                                    <Image
-                                                        source={require('../assets/shop1.png')}
-                                                        style={BottomTabstyles.nonselectedstyle}
-                                                    />
-                                                </Pressable>}
-                                        </View>
-                                        <View style={{
-
-                                            justifyContent: 'flex-end'
-                                        }}>
-                                            <LinearGradient
-                                                colors={['transparent', '#000000', '#000000']}
-                                                start={{ x: 0, y: 0 }}
-                                                end={{ x: 0, y: 1 }}
-                                                style={{
-                                                    top: hp(19.5),
-                                                    width: wp(89.5),
-                                                    flexDirection: 'row',
-                                                    paddingHorizontal: wp(5),
-                                                    paddingVertical: 2,
-                                                    borderBottomLeftRadius: 20,
-                                                    borderBottomRightRadius: 20,
-                                                }}
-                                            >
+                            {carsList && carsList.cars.filter((e1: any) =>
+                                search.trim() === '' || e1.brand_name?.toLowerCase().
+                                    includes(search.toLowerCase())).
+                                map((e: any, index: any) => (
+                                    <Pressable
+                                        onPress={() =>
+                                            props.navigation.navigate('VehicleDetailsScreen',
+                                                { fromdate: carsList.from_date, todate: carsList.to_date, id: e.carid })}
+                                        key={index}>
+                                        <Carousel
+                                            ref={ref}
+                                            width={wp(90)}
+                                            style={{ marginTop: hp(2) }}
+                                            height={hp(28)}
+                                            data={e.images}
+                                            renderItem={({ item }: { item: any }) => (
                                                 <View>
-                                                    <Text
+                                                    <Image
+                                                        source={{ uri: item.image }}
                                                         style={{
-                                                            color: '#FBC41D',
-                                                            fontSize: 24,
-                                                            fontWeight: 'bold',
+                                                            justifyContent: "center",
+                                                            height: hp(28),
+                                                            width: wp(89),
+                                                            alignSelf: 'center',
+                                                            borderRadius: 20,
 
-                                                        }}
-
-                                                    >
-                                                        ₹{e.total_price}
-                                                    </Text>
-                                                    <Text
-                                                        style={{
-                                                            color: '#FFFFFF',
-                                                            fontSize: 18,
-                                                        }}
-                                                    >
-                                                        ₹{e.price}
-                                                    </Text>
+                                                        }} />
                                                 </View>
+                                            )}
+                                        />
+                                        <View style={{
+                                            position: 'absolute',
 
-                                                <View
-                                                    style={{
-                                                        borderWidth: 0.2,
-                                                        borderColor: '#666666',
-                                                        backgroundColor: '#666666',
-                                                        marginHorizontal: wp(5),
-                                                    }}
-                                                />
+                                        }}>
+                                            <View style={{
+                                                left: wp(75),
+                                                top: hp(4)
+                                            }}>
+                                                <View />
+                                                {e.favorite_flag == 1
+                                                    ?
+                                                    <Pressable
+                                                        onPress={() => {
+                                                            removeWishlistbutton(e.carid)
+                                                            console.log('flag', e.favorite_flag)
+                                                        }}
+                                                        style={{
+                                                            justifyContent: 'center',
+                                                            backgroundColor: '#ffffff',
+                                                            alignItems: 'center',
+                                                            height: hp(4),
+                                                            width: hp(4),
+                                                            borderRadius: 20,
+                                                        }}
+                                                    >
+                                                        <Image
+                                                            source={require('../assets/shop.png')}
+                                                            style={BottomTabstyles.nonselectedstyle}
+                                                            tintColor='red'
+                                                        />
+                                                    </Pressable> :
+                                                    <Pressable
+                                                        onPress={() => {
+                                                            handelWishlist(e.carid)
+                                                            console.log('flag', e.favorite_flag)
+                                                        }}
+                                                        style={{
+                                                            justifyContent: 'center',
+                                                            backgroundColor: '#ffffff',
+                                                            alignItems: 'center',
+                                                            height: hp(4),
+                                                            width: hp(4),
+                                                            borderRadius: 20,
+                                                        }}
+                                                    >
+                                                        <Image
+                                                            source={require('../assets/shop1.png')}
+                                                            style={BottomTabstyles.nonselectedstyle}
+                                                        />
+                                                    </Pressable>}
+                                            </View>
+                                            <View style={{
 
-                                                <View
+                                                justifyContent: 'flex-end'
+                                            }}>
+                                                <LinearGradient
+                                                    colors={['transparent', '#000000', '#000000']}
+                                                    start={{ x: 0, y: 0 }}
+                                                    end={{ x: 0, y: 1 }}
                                                     style={{
+                                                        top: hp(19.5),
+                                                        width: wp(89.5),
                                                         flexDirection: 'row',
-                                                        flexWrap: 'wrap',
+                                                        paddingHorizontal: wp(5),
+                                                        paddingVertical: 2,
+                                                        borderBottomLeftRadius: 20,
+                                                        borderBottomRightRadius: 20,
                                                     }}
                                                 >
-                                                    {e.features.map((item: any, index: any) => (
-                                                        <View
-                                                            key={index}
+                                                    <View>
+                                                        <Text
                                                             style={{
-                                                                marginHorizontal: wp(1),
-                                                                alignItems: 'center',
+                                                                color: '#FBC41D',
+                                                                fontSize: 24,
+                                                                fontWeight: 'bold',
+
+                                                            }}
+
+                                                        >
+                                                            ₹{e.total_price}
+                                                        </Text>
+                                                        <Text
+                                                            style={{
+                                                                color: '#FFFFFF',
+                                                                fontSize: 18,
                                                             }}
                                                         >
-                                                            <Image
-                                                                source={{ uri: item.icon }}
+                                                            ₹{e.price}
+                                                        </Text>
+                                                    </View>
+
+                                                    <View
+                                                        style={{
+                                                            borderWidth: 0.2,
+                                                            borderColor: '#666666',
+                                                            backgroundColor: '#666666',
+                                                            marginHorizontal: wp(5),
+                                                        }}
+                                                    />
+
+                                                    <View
+                                                        style={{
+                                                            flexDirection: 'row',
+                                                            flexWrap: 'wrap',
+                                                        }}
+                                                    >
+                                                        {e.features.map((item: any, index: any) => (
+                                                            <View
+                                                                key={index}
                                                                 style={{
-                                                                    height: 20,
-                                                                    width: 20,
-                                                                    tintColor: '#ffffff',
-                                                                }}
-                                                            />
-                                                            <Text
-                                                                style={{
-                                                                    fontSize: 13,
-                                                                    fontWeight: '500',
-                                                                    color: '#ffffff',
-                                                                    top: hp(1.5),
+                                                                    marginHorizontal: wp(1),
+                                                                    alignItems: 'center',
                                                                 }}
                                                             >
-                                                                {item.name}
-                                                            </Text>
-                                                        </View>
-                                                    ))}
-                                                </View>
-                                            </LinearGradient>
-                                        </View>
-                                    </View>
-                                    <View style={{ marginHorizontal: wp(2), }}>
-                                        <View style={{
-                                            flexDirection: 'row',
-                                            justifyContent: 'space-between',
-                                            alignItems: 'center',
-                                            marginVertical: hp(1)
-                                        }}>
-                                            <Text style={{
-                                                fontSize: 17,
-                                                fontWeight: 'bold'
-                                            }}>{e.brand_name}  {e.model_name}</Text>
-                                            <Image
-                                                source={require('../assets/fastag.png')}
-                                                style={{
-                                                    height: hp(2),
-                                                    width: wp(15)
-                                                }}
-                                            />
-                                        </View>
-                                        <View>
-                                            <View style={{
-                                                flexDirection: 'row',
-                                                alignItems: 'center'
-                                            }}>
-                                                <Image
-                                                    source={
-                                                        require('../assets/Location.png')
-                                                    }
-                                                    style={{
-                                                        height: 20,
-                                                        width: 20,
-                                                        tintColor: '#000000'
-                                                    }} />
-                                                <Text style={{
-                                                    marginHorizontal: 1,
-                                                    fontWeight: '500'
-                                                }}>{e.distance} away</Text>
+                                                                <Image
+                                                                    source={{ uri: item.icon }}
+                                                                    style={{
+                                                                        height: 20,
+                                                                        width: 20,
+                                                                        tintColor: '#ffffff',
+                                                                    }}
+                                                                />
+                                                                <Text
+                                                                    style={{
+                                                                        fontSize: 13,
+                                                                        fontWeight: '500',
+                                                                        color: '#ffffff',
+                                                                        top: hp(1.5),
+                                                                    }}
+                                                                >
+                                                                    {item.name}
+                                                                </Text>
+                                                            </View>
+                                                        ))}
+                                                    </View>
+                                                </LinearGradient>
                                             </View>
+                                        </View>
+                                        <View style={{ marginHorizontal: wp(2), }}>
                                             <View style={{
                                                 flexDirection: 'row',
+                                                justifyContent: 'space-between',
                                                 alignItems: 'center',
-                                                marginVertical: wp(1)
+                                                marginVertical: hp(1)
                                             }}>
-                                                <Text
+                                                <Text style={{
+                                                    fontSize: 17,
+                                                    fontWeight: 'bold'
+                                                }}>{e.brand_name}  {e.model_name}</Text>
+                                                <Image
+                                                    source={require('../assets/fastag.png')}
                                                     style={{
-                                                        fontSize: 16,
-                                                        fontWeight: '400',
-                                                        color: '#666666'
-                                                    }}>
-                                                    {e.rating}
-                                                </Text>
-                                                <Rating
-                                                    readonly
-                                                    startingValue={e.rating}
-                                                    imageSize={13}
-                                                    ratingCount={5}
-                                                    fractions={1}
-                                                    style={{ marginLeft: 8 }}
+                                                        height: hp(2),
+                                                        width: wp(15)
+                                                    }}
                                                 />
-                                                <Text>
-                                                    - <Text style={{
-                                                        fontSize: 16,
-                                                        fontWeight: '400',
-                                                        color: '#666666'
-                                                    }}>{e.year_of_registeration}
-                                                    </Text> - <Text
+                                            </View>
+                                            <View>
+                                                <View style={{
+                                                    flexDirection: 'row',
+                                                    alignItems: 'center'
+                                                }}>
+                                                    <Image
+                                                        source={
+                                                            require('../assets/Location.png')
+                                                        }
+                                                        style={{
+                                                            height: 20,
+                                                            width: 20,
+                                                            tintColor: '#000000'
+                                                        }} />
+                                                    <Text style={{
+                                                        marginHorizontal: 1,
+                                                        fontWeight: '500'
+                                                    }}>{e.distance} away</Text>
+                                                </View>
+                                                <View style={{
+                                                    flexDirection: 'row',
+                                                    alignItems: 'center',
+                                                    marginVertical: wp(1)
+                                                }}>
+                                                    <Text
                                                         style={{
                                                             fontSize: 16,
                                                             fontWeight: '400',
                                                             color: '#666666'
-                                                        }}>{e.seating} seats
+                                                        }}>
+                                                        {e.rating}
                                                     </Text>
-                                                </Text>
+                                                    <Rating
+                                                        readonly
+                                                        startingValue={e.rating}
+                                                        imageSize={13}
+                                                        ratingCount={5}
+                                                        fractions={1}
+                                                        style={{ marginLeft: 8 }}
+                                                    />
+                                                    <Text>
+                                                        - <Text style={{
+                                                            fontSize: 16,
+                                                            fontWeight: '400',
+                                                            color: '#666666'
+                                                        }}>{e.year_of_registeration}
+                                                        </Text> - <Text
+                                                            style={{
+                                                                fontSize: 16,
+                                                                fontWeight: '400',
+                                                                color: '#666666'
+                                                            }}>{e.seating} seats
+                                                        </Text>
+                                                    </Text>
+                                                </View>
+                                                <Text style={{ fontWeight: 'bold' }}>
+                                                    <Text
+                                                        style={{
+                                                            color: '#64748B',
+                                                        }}>Note </Text>
+                                                    : For Documents Aadhar,
+                                                    Driving License, Bike</Text>
                                             </View>
-                                            <Text style={{ fontWeight: 'bold' }}>
-                                                <Text
-                                                    style={{
-                                                        color: '#64748B',
-                                                    }}>Note </Text>
-                                                : For Documents Aadhar,
-                                                Driving License, Bike</Text>
                                         </View>
-                                    </View>
-                                </Pressable>
-                            ))}
+                                    </Pressable>
+                                ))}
                         </ScrollView>
                     </View>
                 </View>

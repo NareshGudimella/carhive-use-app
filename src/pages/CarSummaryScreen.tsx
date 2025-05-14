@@ -8,7 +8,7 @@ import { useCallback, useState } from "react";
 import { BottomModelView } from "../components/BottomModelView";
 import { Checkbox } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { excuteGetResponse, excuteResponse, summery } from "../apis/api";
+import { carBookings, excuteGetResponse, excuteResponse, summery } from "../apis/api";
 import { useFocusEffect } from "@react-navigation/native";
 
 class Componentprops extends Baseprops { }
@@ -18,7 +18,10 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
     const [termsAndConditions, setTermsAndCondition] = useState(false)
     const [typeofTandC, setTypeTandC] = useState('t&c')
     const [checked, setChecked] = useState(false);
+    const [eligiabilityCheck, setEligiabilityCheck] = useState(false)
+    const [eligiabilityflag, setEligiabilityflag] = useState('')
     const [eligiabilityModal, setEligiabilityModal] = useState(false)
+    const [terms_condition_flag, setTerms_condition_flag] = useState('')
     const [carDetails, setCarDetails] = useState<any>(null)
     const [ModelcancelData, setModelcancelData] = useState<any>(null)
     useFocusEffect(
@@ -49,6 +52,24 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
             setModelcancelData(response.data)
         } else {
             Alert.alert('Alert', 'Unable to get details')
+        }
+    }
+    const handelPaymentDetails = async () => {
+        const response = await carBookings(terms_condition_flag, eligiabilityflag,
+            carDetails.from_date, carDetails.to_date, carDetails.carid,
+            carDetails.coupon, carDetails.trip_charges, carDetails.taxes,
+            carDetails.convenience_fee, carDetails.security_deposite,
+            carDetails.protection_fee, carDetails.total_price
+        )
+        console.log('paymentDetails', response)
+        if (response.code == 0) {
+            const response1 = await excuteGetResponse(`secure/cars/payment/${response.booking_car_id}`)
+            console.log('SuccessPayment', response1)
+            if (response1.code == 0) {
+                props.navigation.navigate('PaymentSuccessScreen')
+            }
+        } else {
+            Alert.alert('Alert', 'unable to get Booking Payment Details')
         }
     }
     return (
@@ -145,50 +166,9 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                             }}>Modification</Text>
                                     </Pressable>
                                 </View>
-                                {
-                                    typeofTandC == 't&c' ?
-                                        <View style={{ marginHorizontal: wp(5) }}>
-                                            <Text style={{
-                                                color: '#64748B',
-                                                fontWeight: '500',
-                                                lineHeight: hp(2.5),
-                                                marginHorizontal: wp(3),
-                                                marginVertical: hp(1)
-                                            }}>
-                                                {ModelcancelData && ModelcancelData.modification}
-                                            </Text>
-                                            <View style={{
-                                                flexDirection: 'row',
-                                                alignItems: 'center',
-                                                marginHorizontal: wp(1)
-                                            }}>
-                                                <Checkbox
-                                                    status={checked ? 'checked' : 'unchecked'}
-                                                    color="#FBC41D"
-                                                    onPress={() => {
-                                                        setChecked(!checked);
-                                                    }}
-                                                />
-                                                <Text style={{
-                                                    fontSize: 15,
-                                                    fontWeight: 'bold'
-                                                }}>
-                                                    I agree to the Terms & Conditions.
-                                                </Text>
-                                            </View>
-                                            <View style={{
-                                                marginVertical: hp(2),
-                                                marginTop: hp(4)
-                                            }}>
-                                                <PrimaryButton
-                                                    title='Proceed'
-                                                    onclick={() => {
-                                                        setEligiabilityModal(true),
-                                                            setTermsAndCondition(false)
-                                                    }} />
-                                            </View>
-                                        </View> :
-                                        typeofTandC == 'Cancellation' ?
+                                <View>
+                                    {
+                                        typeofTandC == 't&c' ?
                                             <View style={{ marginHorizontal: wp(5) }}>
                                                 <Text style={{
                                                     color: '#64748B',
@@ -197,40 +177,10 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                                     marginHorizontal: wp(3),
                                                     marginVertical: hp(1)
                                                 }}>
-                                                    {ModelcancelData && ModelcancelData.cancellation}
+                                                    {ModelcancelData && ModelcancelData.terms_conditions}
                                                 </Text>
-                                                <View style={{
-                                                    flexDirection: 'row',
-                                                    alignItems: 'center',
-                                                    marginHorizontal: wp(1)
-                                                }}>
-                                                    <Checkbox
-                                                        status={checked ? 'checked' : 'unchecked'}
-                                                        color="#FBC41D"
-                                                        onPress={() => {
-                                                            setChecked(!checked);
-                                                        }}
-                                                    />
-                                                    <Text style={{
-                                                        fontSize: 15,
-                                                        fontWeight: 'bold'
-                                                    }}>
-                                                        I agree to the Terms & Conditions.
-                                                    </Text>
-                                                </View>
-                                                <View style={{
-                                                    marginVertical: hp(2),
-                                                    marginTop: hp(4)
-                                                }}>
-                                                    <PrimaryButton
-                                                        title='Proceed'
-                                                        onclick={() => {
-                                                            setEligiabilityModal(true),
-                                                                setTermsAndCondition(false)
-                                                        }} />
-                                                </View>
                                             </View> :
-                                            typeofTandC == 'Modification' ?
+                                            typeofTandC == 'Cancellation' ?
                                                 <View style={{ marginHorizontal: wp(5) }}>
                                                     <Text style={{
                                                         color: '#64748B',
@@ -239,41 +189,66 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                                         marginHorizontal: wp(3),
                                                         marginVertical: hp(1)
                                                     }}>
-                                                        {ModelcancelData && ModelcancelData.modification}
+                                                        {ModelcancelData && ModelcancelData.cancellation}
                                                     </Text>
-                                                    <View style={{
-                                                        flexDirection: 'row',
-                                                        alignItems: 'center',
-                                                        marginHorizontal: wp(1)
-                                                    }}>
-                                                        <Checkbox
-                                                            status={checked ? 'checked' : 'unchecked'}
-                                                            color="#FBC41D"
-                                                            onPress={() => {
-                                                                setChecked(!checked);
-                                                            }}
-                                                        />
+
+                                                </View> :
+                                                typeofTandC == 'Modification' ?
+                                                    <View style={{ marginHorizontal: wp(5) }}>
                                                         <Text style={{
-                                                            fontSize: 15,
-                                                            fontWeight: 'bold'
+                                                            color: '#64748B',
+                                                            fontWeight: '500',
+                                                            lineHeight: hp(2.5),
+                                                            marginHorizontal: wp(3),
+                                                            marginVertical: hp(1)
                                                         }}>
-                                                            I agree to the Terms & Conditions.
+                                                            {ModelcancelData && ModelcancelData.modification}
                                                         </Text>
-                                                    </View>
-                                                    <View
-                                                        style={{
-                                                            marginVertical: hp(2),
-                                                            marginTop: hp(4)
-                                                        }}>
-                                                        <PrimaryButton
-                                                            title='Proceed'
-                                                            onclick={() => {
-                                                                setEligiabilityModal(true),
-                                                                    setTermsAndCondition(false)
-                                                            }} />
-                                                    </View>
-                                                </View> : <></>
-                                }
+                                                    </View> : <></>
+                                    }
+                                </View>
+                                <View style={{ marginHorizontal: wp(5) }}>
+                                    <View style={{
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        marginHorizontal: wp(1)
+                                    }}>
+                                        <Checkbox
+                                            status={checked ? 'checked' : 'unchecked'}
+                                            color="#FBC41D"
+                                            onPress={() => {
+                                                const value = !checked;
+                                                setChecked(value);
+
+                                                if (value) {
+                                                    setTerms_condition_flag('1');
+                                                    console.log('t&c flag', 1);
+                                                } else {
+                                                    setTerms_condition_flag('0');
+                                                    console.log('t&c flag', 0);
+                                                }
+                                            }}
+                                        />
+                                        <Text style={{
+                                            fontSize: 15,
+                                            fontWeight: 'bold'
+                                        }}>
+                                            I agree to the Terms & Conditions.
+                                        </Text>
+                                    </View>
+                                    <View
+                                        style={{
+                                            marginVertical: hp(3),
+                                            marginTop: hp(2)
+                                        }}>
+                                        <PrimaryButton
+                                            title='Proceed'
+                                            onclick={() => {
+                                                setEligiabilityModal(true),
+                                                    setTermsAndCondition(false)
+                                            }} />
+                                    </View>
+                                </View>
                             </View>
                         </BottomModelView>
                     </Modal>
@@ -388,10 +363,19 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                     marginHorizontal: wp(1)
                                 }}>
                                     <Checkbox
-                                        status={checked ? 'checked' : 'unchecked'}
+                                        status={eligiabilityCheck ? 'checked' : 'unchecked'}
                                         color="#FBC41D"
                                         onPress={() => {
-                                            setChecked(!checked);
+                                            const newValue = !eligiabilityCheck;
+                                            setEligiabilityCheck(newValue);
+
+                                            if (newValue) {
+                                                setEligiabilityflag('1');
+                                                console.log('eligiableflag', eligiabilityflag)
+                                            } else {
+                                                setEligiabilityflag('0');
+                                                console.log('eligiableflag', eligiabilityflag)
+                                            }
                                         }}
                                     />
                                     <Text style={{
@@ -416,8 +400,8 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                     <PrimaryButton
                                         title='Proceed'
                                         onclick={() => {
-                                            props.navigation.navigate('PaymentScreen')
                                             setEligiabilityModal(false)
+                                            handelPaymentDetails()
                                         }} />
                                 </View>
                                 <View style={{

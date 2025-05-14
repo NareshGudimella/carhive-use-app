@@ -13,7 +13,7 @@ import Textinput from "../components/TextInput";
 import { OtpInput } from "react-native-otp-entry";
 import { style } from "../styles/OtpStyle";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { carDetails, excuteGetResponse, excuteResponse, Login, Otp, removeWishlist, wishlist } from "../apis/api";
+import { carDetails, excuteGetResponse, excuteResponse, Login, LoginCarDetails, Otp, removeWishlist, wishlist } from "../apis/api";
 import { getToken, setToken } from "../storage/AsyncStorage";
 import { useFocusEffect } from "@react-navigation/native";
 import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
@@ -109,17 +109,33 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
         }
     }
     const handelVicheDetails = async (carid: any) => {
-        const response = await carDetails(carid,
-            props.route.params.fromdate,
-            props.route.params.todate
-        );
-        console.log('CarDetails', response)
-        if (response.code == 0) {
-            setCarData(response.data)
-            console.log('hello', carData)
+        const token = await getToken()
+        console.log('Vechilelist token', token)
+        if (token && token != '') {
+            const response2 = await LoginCarDetails(carid,
+                props.route.params.fromdate,
+                props.route.params.todate)
+            console.log('LoginCardetails', response2)
+            if (response2.code == 0) {
+                setCarData(response2.data)
+            } else {
+                Alert.alert('Alert', 'Unable to get Login Car Details')
+            }
         } else {
-            Alert.alert('Alert', 'Unable to get Vechile details')
+            const response1 = await carDetails(carid,
+                props.route.params.fromdate,
+                props.route.params.todate
+            );
+            console.log('CarDetails', response1)
+            if (response1.code == 0) {
+                setCarData(response1.data)
+                console.log('hello', carData)
+            } else {
+                Alert.alert('Alert', 'Unable to get Vechile details')
+            }
+
         }
+
     }
     const handelWishlist = async (carId: any) => {
         const response = await wishlist(carId)
@@ -282,7 +298,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                             style={{
                                                 color: '#FBC41D',
                                                 fontSize: 16
-                                            }}>  +91 9704611443</Text>
+                                            }}>  +91 {phoneNumber}</Text>
                                     </Text>
                                     <OtpInput
                                         numberOfDigits={4}
@@ -379,8 +395,8 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                             }}
                         >Vehicle details</Text>
                     </View>
-                    {/* <View>
-                        {carData.favorite_flag == 1
+                    <View>
+                        {carData && carData.favorite_flag == 1
                             ?
                             <Pressable
                                 onPress={() => {
@@ -421,7 +437,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                     style={BottomTabstyles.nonselectedstyle}
                                 />
                             </Pressable>}
-                    </View> */}
+                    </View>
                 </View>
                 <ScrollView
                     showsVerticalScrollIndicator={false}

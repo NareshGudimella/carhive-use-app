@@ -3,7 +3,7 @@ import { Baseprops } from "../utils/navigation";
 import { wp, hp } from "../utils/ResponsiveScreen";
 import { Cardview } from "../components/Cardview";
 import { CameraView } from "../components/CameraView";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { BottomModelView } from "../components/BottomModelView";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { excuteGetResponse, UpdateProfile } from "../apis/api";
@@ -16,6 +16,7 @@ import CameraModalScreen from "../components/CameraModel";
 import { Asset } from "react-native-image-picker";
 import { useDispatch } from "react-redux";
 import { updateProfile } from "../storage/redux";
+import PrimaryButton from "../components/PrimaryButton";
 
 class Componentprops extends Baseprops { }
 
@@ -46,7 +47,9 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
         { label: "Female", value: "female" },
         { label: "Other", value: "other" },
     ];
+    useEffect(() => {
 
+    }, [])
     const handelProfileDetails = async () => {
         const response = await excuteGetResponse('secure/profile')
         console.log('profile', response)
@@ -64,8 +67,8 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
         console.log('updateprofile', response)
         if (response.code == 0) {
             dispatch(updateProfile(response.data));
-        }else{
-            Alert.alert('Alert','unable to get update the data')
+        } else {
+            Alert.alert('Alert', 'unable to get update the data')
         }
     }
 
@@ -304,16 +307,19 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                                     />
                                                 </View>
                                                 :
+
                                                 <CameraView
-                                                    image={require('../assets/Huge.png')}
+                                                    image={profilDetails &&
+                                                        profilDetails.documents.aadhar_front != null ?
+                                                        { uri: profilDetails.documents.aadhar_front } :
+                                                        require('../assets/Huge.png')}
                                                     title="Upload Front"
                                                     onclick={() => {
                                                         setTargetType('aadharfront');
                                                         SetCaremaModal(true);
                                                     }}
-
-
-                                                />}
+                                                />
+                                            }
                                         </Cardview>
                                     </View>
                                     <View style={{
@@ -337,7 +343,11 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                                 </View>
                                                 :
                                                 <CameraView
-                                                    image={require('../assets/Huge.png')}
+                                                    image={profilDetails &&
+                                                        profilDetails.documents.aadhar_back != null ?
+                                                        { uri: profilDetails.documents.aadhar_back }
+                                                        :
+                                                        require('../assets/Huge.png')}
                                                     title="Upload Front"
                                                     onclick={() => {
                                                         setTargetType('aadharback');
@@ -378,7 +388,11 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                                 </View>
                                                 :
                                                 <CameraView
-                                                    image={require('../assets/Huge.png')}
+                                                    image={
+                                                        profilDetails &&
+                                                            profilDetails.documents.license_front != null ?
+                                                            { uri: profilDetails.documents.license_front } :
+                                                            require('../assets/Huge.png')}
                                                     title="Upload Front"
                                                     onclick={() => {
                                                         SetCaremaModal(true);
@@ -406,7 +420,11 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                                 </View>
                                                 :
                                                 <CameraView
-                                                    image={require('../assets/Huge.png')}
+                                                    image={
+                                                        profilDetails &&
+                                                            profilDetails.documents.license_back != null ?
+                                                            { uri: profilDetails.documents.license_back } :
+                                                            require('../assets/Huge.png')}
                                                     title="Upload Front"
                                                     onclick={() => {
                                                         SetCaremaModal(true);
@@ -418,6 +436,14 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                 </View>
                             </View>
                         </Cardview>
+                    </View>
+                    <View style={{
+                        marginHorizontal: wp(5), marginVertical: hp(2)
+                    }}>
+                        <PrimaryButton title='Submit' onclick={() => {
+                            handelUpdateProfile()
+                            props.navigation.navigate('ProfileScreen')
+                        }} />
                     </View>
                 </View>
             </ScrollView>
