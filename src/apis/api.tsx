@@ -96,7 +96,7 @@ export const UpdateProfile = async (name: any, email: any, gender: any, dob: any
     formdata.append('aadhar_front_image', {
         uri: aadhar_front_image.uri,
         type: aadhar_front_image.type,
-        name: aadhar_front_image.fileName ,
+        name: aadhar_front_image.fileName,
     });
 
     formdata.append('aadhar_back_image', {
@@ -132,26 +132,26 @@ export const KycDetails = async (
 
     formdata.append('aadhar_front_image', {
         uri: aadhar_front_image.uri,
-        type: aadhar_front_image.type ,
-        name: aadhar_front_image.fileName ,
+        type: aadhar_front_image.type,
+        name: aadhar_front_image.fileName,
     });
 
     formdata.append('aadhar_back_image', {
         uri: aadhar_back_image.uri,
-        type: aadhar_back_image.type ,
-        name: aadhar_back_image.fileName ,
+        type: aadhar_back_image.type,
+        name: aadhar_back_image.fileName,
     });
 
     formdata.append('driving_licence_front', {
         uri: driving_licence_front.uri,
-        type: driving_licence_front.type ,
-        name: driving_licence_front.fileName ,
+        type: driving_licence_front.type,
+        name: driving_licence_front.fileName,
     });
 
     formdata.append('driving_licence_back', {
         uri: driving_licence_back.uri,
-        type: driving_licence_back.type ,
-        name: driving_licence_back.fileName ,
+        type: driving_licence_back.type,
+        name: driving_licence_back.fileName,
     });
 
     return excuteResponse(`secure/documents`, formdata);
@@ -178,4 +178,7 @@ export const carBookings = async (terms_conditions_flag: any,
 export const extendtime = async (car_booking_id: any, extended_date: any) => {
     return excuteResponse(`secure/cars/bookings/extendrequest/${car_booking_id}`,
         { extended_date })
+}
+export const BecomeHost = async (name: any, email: any, mobile: any, no_of_cars: any, city_id: any) => {
+    return excuteResponse(`secure/host`, { name, email, mobile, no_of_cars, city_id })
 }

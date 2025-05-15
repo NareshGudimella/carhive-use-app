@@ -80,7 +80,9 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                     marginVertical: hp(0.5),
                                     marginTop: hp(2)
                                 }}>
-                                    <Pressable style={{
+                                    <Pressable 
+                                    onPress={()=>setExtendServiceModal(false)}
+                                    style={{
                                         borderWidth: 1,
                                         paddingHorizontal: wp(7),
                                         paddingVertical: hp(1.3),
@@ -164,7 +166,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                         {
                             e.status == 'PENDING' ?
                                 <Pressable
-                                    onPress={() => props.navigation.navigate('OrderDetailsScreen')}
+                                    onPress={() => props.navigation.navigate('OrderDetailsScreen', { Id: e.car_booking_id})}
                                     style={{ marginVertical: hp(1.5) }}>
                                     <Cardview>
                                         <View>

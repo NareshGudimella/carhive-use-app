@@ -28,8 +28,8 @@ const SelectCityScreen: React.FC<Componentprops> = (props) => {
         console.log('citiesdata', response)
         if (response.code == 0) {
             setCitys(response.data)
-        }else{
-            Alert.alert('Alert','Unable to cities details')
+        } else {
+            Alert.alert('Alert', 'Unable to cities details')
         }
     }
 
@@ -39,52 +39,54 @@ const SelectCityScreen: React.FC<Componentprops> = (props) => {
                 flex: 1,
                 marginHorizontal: wp(5)
             }}>
-                <View style={{
-                    marginTop: hp(4)
-                }}>
-                    <Textinput placeholder='Search'
-                        image={require('../assets/search.png')}
-                        keyboardtype='default' />
-                </View>
-                <Text style={{
-                    fontSize: 18,
-                    fontWeight: 'bold',
-                    marginVertical: hp(2)
-                }}>Select City</Text>
-                <View style={{
-                    flexDirection: 'row',
-                    flexWrap: 'wrap'
-                }}>
-                    {citys.map((e: any, index: any) => (
-                        <Pressable
-                            onPress={() => {
-                                setSelectCity(e.cityId)
-                                setOnSelectCity(e.cityname)
-                                setCity(JSON.stringify(e))
-                            }
-                            }
-                            style={{
-                                borderWidth: 1,
-                                width: wp(42),
-                                height: hp(6),
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                borderRadius: 20,
-                                borderColor: '#FBC41D',
-                                marginHorizontal: wp(1),
-                                marginBottom: hp(1.5),
-                                backgroundColor: selectCity == e.cityId ? '#FBC41D' : '#ffffff'
-                            }}
-                            key={index}>
-                            <Text
+                <View style={{flex:1}}>
+                    <View style={{
+                        marginTop: hp(4)
+                    }}>
+                        <Textinput placeholder='Search'
+                            image={require('../assets/search.png')}
+                            keyboardtype='default' />
+                    </View>
+                    <Text style={{
+                        fontSize: 18,
+                        fontWeight: 'bold',
+                        marginVertical: hp(2)
+                    }}>Select City</Text>
+                    <View style={{
+                        flexDirection: 'row',
+                        flexWrap: 'wrap'
+                    }}>
+                        {citys.map((e: any, index: any) => (
+                            <Pressable
+                                onPress={() => {
+                                    setSelectCity(e.cityId)
+                                    setOnSelectCity(e.cityname)
+                                    setCity(JSON.stringify(e))
+                                }
+                                }
                                 style={{
-                                    fontSize: 16,
-                                    fontWeight: 'bold',
-                                    color: selectCity == e.cityId ? '#ffffff' : '#000000'
-                                }}>{e.cityname}</Text>
-                        </Pressable>
-                    ))
-                    }
+                                    borderWidth: 1,
+                                    width: wp(42),
+                                    height: hp(6),
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    borderRadius: 20,
+                                    borderColor: '#FBC41D',
+                                    marginHorizontal: wp(1),
+                                    marginBottom: hp(1.5),
+                                    backgroundColor: selectCity == e.cityId ? '#FBC41D' : '#ffffff'
+                                }}
+                                key={index}>
+                                <Text
+                                    style={{
+                                        fontSize: 16,
+                                        fontWeight: 'bold',
+                                        color: selectCity == e.cityId ? '#ffffff' : '#000000'
+                                    }}>{e.cityname}</Text>
+                            </Pressable>
+                        ))
+                        }
+                    </View>
                 </View>
             </ScrollView>
             {
@@ -96,7 +98,7 @@ const SelectCityScreen: React.FC<Componentprops> = (props) => {
                     <PrimaryButton
                         title='Submit'
                         onclick={() =>
-                            props.navigation.navigate('HomeScreen',{id:selectCity})
+                            props.navigation.navigate('HomeScreen', { id: selectCity })
                         } />
                 </View>
             }

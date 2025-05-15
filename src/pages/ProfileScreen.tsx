@@ -1,4 +1,4 @@
-import { Image, Modal, Pressable, ScrollView, Text, View } from "react-native";
+import { Alert, Image, Modal, Pressable, ScrollView, Text, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import BottomTabNavigation from "../components/BottomTab";
 import { wp, hp } from "../utils/ResponsiveScreen";
@@ -6,11 +6,26 @@ import { Cardview } from "../components/Cardview";
 import { useState } from "react";
 import { BottomModelView } from "../components/BottomModelView";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useDispatch, useSelector } from "react-redux";
+import { removeProfile } from "../storage/redux";
+import { removeToken } from "../storage/AsyncStorage";
 
 class Componentprops extends Baseprops { }
 
 const ProfileScreen: React.FC<Componentprops> = (props) => {
     const [logoutModal, setLogoutModal] = useState(false)
+    const dispatch = useDispatch()
+    const user = useSelector((state: any) => state.profile)
+
+    const handelLogout = async () => {
+        dispatch(removeProfile(null))
+        await removeToken()
+        props.navigation.reset({
+            index: 0,
+            routes: [{ name: 'HomeScreen' }]
+        })
+    }
+
     return (
         <SafeAreaView style={{ flex: 1 }}>
             {
@@ -23,13 +38,12 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                         onRequestClose={() => {
                             setLogoutModal(!logoutModal);
                         }}>
-                        <BottomModelView onclick={()=>setLogoutModal(false)}>
+                        <BottomModelView onclick={() => setLogoutModal(false)}>
                             <View style={{
                                 justifyContent: 'center',
                                 alignItems: 'center',
                                 marginVertical: hp(3)
                             }}>
-                                
                                 <Text style={{
                                     fontSize: 18,
                                     fontWeight: 'bold'
@@ -47,6 +61,7 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                     marginTop: hp(1)
                                 }}>
                                     <Pressable
+                                        onPress={() => handelLogout()}
                                         style={{
                                             borderWidth: 1,
                                             paddingVertical: hp(1.2),
@@ -116,7 +131,7 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                             <Text style={{
                                 fontSize: 20,
                                 fontWeight: 'bold'
-                            }}>Hi, Avinash</Text>
+                            }}>Hi, {user && user.name}</Text>
                             <Text
                                 style={{
                                     color: '#64748B',
@@ -178,12 +193,12 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                         marginVertical: hp(1.5)
                                     }} />
                                 <Pressable
-                                onPress={()=>props.navigation.navigate('HostScreen')}
-                                 style={{
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
+                                    onPress={() => props.navigation.navigate('HostScreen')}
+                                    style={{
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
 
-                                }}>
+                                    }}>
                                     <View style={{
                                         backgroundColor: '#F4F6FA',
                                         padding: hp(1.5),

@@ -10,7 +10,17 @@ export const FilterButtonStyle = StyleSheet.create({
         marginRight: wp(2),
         marginTop: hp(1),
         borderColor: '#64748B',
-       
+
+    },
+    selectedbutton: {
+        backgroundColor: '#FBC41D',
+        borderWidth: 1,
+        borderRadius: 15,
+        paddingVertical: hp(1.5),
+        paddingHorizontal: hp(2),
+        marginRight: wp(2),
+        marginTop: hp(1),
+        borderColor: '#FBC41D'
     },
     onselectbutton: {
         borderWidth: 1,
@@ -20,11 +30,16 @@ export const FilterButtonStyle = StyleSheet.create({
         marginRight: wp(2),
         marginTop: hp(1),
         borderColor: '#FBC41D',
-         backgroundColor:'#FBC41D'
+        backgroundColor: '#FBC41D'
     },
     buttontext: {
         fontSize: 14,
         fontWeight: '500',
         color: '#64748B'
+    },
+    onselecttext:{
+        fontSize: 14,
+        fontWeight: '500',
+        color: '#ffffff'
     }
 })

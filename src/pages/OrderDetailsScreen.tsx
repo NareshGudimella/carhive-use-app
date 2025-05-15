@@ -1,8 +1,12 @@
-import { Image, Pressable, ScrollView, Text, View } from "react-native";
+import { Image, Linking, Pressable, ScrollView, Text, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { wp, hp } from "../utils/ResponsiveScreen";
 import { Cardview } from "../components/Cardview";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { excuteGetResponse } from "../apis/api";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback, useState } from "react";
+import moment from "moment";
 
 class Componentprops extends Baseprops { }
 
@@ -16,6 +20,24 @@ const shippingdata = [
 ]
 
 const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
+
+    const [orderDetails, setOrderDetails] = useState<any>(null)
+    useFocusEffect(
+        useCallback(() => {
+            console.log(props.route.params.Id)
+            if (props.route.params && props.route.params.Id) {
+                handelOrderDetails(props.route.params.Id)
+            }
+        }, [])
+    )
+
+    const handelOrderDetails = async (car_booking_id: any) => {
+        const response = await excuteGetResponse(`secure/cars/bookings/details/${car_booking_id}`)
+        console.log('orderDetails', response)
+        if (response.code == 0) {
+            setOrderDetails(response.data)
+        }
+    }
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <View style={{ flex: 1 }}>
@@ -50,28 +72,29 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                     alignItems: 'center',
 
                                 }}>
-                                    <Image
-                                        source={require('../assets/pngegg1.png')}
+                                    {orderDetails && <Image
+                                        source={{ uri: orderDetails.car_image }}
                                         style={{
                                             position: 'absolute',
                                             height: hp(20),
                                             width: hp(25),
-                                            top: hp(-12)
+                                            top: hp(-12),
+                                            borderRadius: 15
                                         }}
-                                    />
+                                    />}
                                     <Text
                                         style={{
                                             marginTop: hp(8.5),
                                             fontSize: 17,
                                             fontWeight: 'bold'
-                                        }}>Booking ID : 134123</Text>
+                                        }}>Booking ID : {orderDetails && orderDetails.booking_id}</Text>
                                     <Text
                                         style={{
                                             color: '#64748B',
                                             fontSize: 13,
                                             fontWeight: 'bold',
                                             marginVertical: 3
-                                        }}>Range Rover</Text>
+                                        }}>{orderDetails && orderDetails.brand} {orderDetails && orderDetails.model}</Text>
                                     <Text
                                         style={{
                                             color: '#FBC41D',
@@ -100,7 +123,7 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                         style={{
                                             fontSize: 15,
                                             fontWeight: '500'
-                                        }}> Booking Accepted</Text>
+                                        }}> {orderDetails && orderDetails.status}</Text>
                                 </View>
                             </View>
                         </Cardview>
@@ -129,13 +152,13 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                     <Text style={{
                                         fontSize: 15,
                                         fontWeight: 'bold'
-                                    }}>29 April, Mon</Text>
+                                    }}>{orderDetails && moment(orderDetails.from_date).format('DD MMM YYYY')}</Text>
                                     <Text style={{
                                         color: '#27272780',
                                         fontWeight: '500',
                                         marginTop: 2,
                                         fontSize: 13
-                                    }}>5:00 AM</Text>
+                                    }}>{orderDetails && moment(orderDetails.from_date).format('HH:MM A')}</Text>
                                 </View>
                                 <Image
                                     source={require('../assets/arrow.png')}
@@ -148,13 +171,13 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                     <Text style={{
                                         fontSize: 15,
                                         fontWeight: 'bold'
-                                    }}>29 April, Mon</Text>
+                                    }}>{orderDetails && moment(orderDetails.to_date).format('DD MMM YYYY')}</Text>
                                     <Text style={{
                                         color: '#27272780',
                                         fontWeight: '500',
                                         marginTop: 2,
                                         fontSize: 13
-                                    }}>5:00 AM</Text>
+                                    }}>{orderDetails && moment(orderDetails.to_date).format('HH:MM A')}</Text>
                                 </View>
                             </View>
                         </Cardview>
@@ -194,16 +217,16 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                         <Text style={{
                                             fontSize: 16,
                                             fontWeight: 'bold'
-                                        }}>Avinash Naidu</Text>
+                                        }}>{orderDetails && orderDetails.vendor_name}</Text>
                                         <Text
                                             style={{
                                                 fontWeight: '500',
                                                 color: '#64748B',
                                                 fontSize: 13
-                                            }}>AP 16 AB 1234</Text>
+                                            }}>{orderDetails && orderDetails.registeration_number}</Text>
                                     </View>
                                 </View>
-                                <Pressable>
+                                <Pressable onPress={() => Linking.openURL(`tel:${orderDetails.vendor_mobile}`)}>
                                     <Image
                                         source={require('../assets/call1.png')}
                                         style={{
@@ -250,7 +273,7 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                     <Text style={{
                                         fontWeight: 'bold',
                                         fontSize: 15
-                                    }}>₹ 350</Text>
+                                    }}>₹ {orderDetails && orderDetails.trip_charges}</Text>
                                 </View>
                                 <View style={{
                                     flexDirection: 'row',
@@ -275,7 +298,7 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                     <Text style={{
                                         fontWeight: 'bold',
                                         fontSize: 15
-                                    }}>₹ 10</Text>
+                                    }}>₹ {orderDetails && orderDetails.taxes}</Text>
                                 </View>
                                 <View style={{
                                     flexDirection: 'row',
@@ -300,7 +323,7 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                     <Text style={{
                                         fontWeight: 'bold',
                                         fontSize: 15
-                                    }}>₹ 10</Text>
+                                    }}>₹ {orderDetails && orderDetails.convenience_fee}</Text>
                                 </View>
                                 <View style={{
                                     flexDirection: 'row',
@@ -318,7 +341,7 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                     <Text style={{
                                         fontWeight: 'bold',
                                         fontSize: 15
-                                    }}>₹ 400</Text>
+                                    }}>₹ {orderDetails && orderDetails.security_deposite}</Text>
                                 </View>
                                 <View style={{
                                     flexDirection: 'row',
@@ -343,7 +366,7 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                     <Text style={{
                                         fontWeight: 'bold',
                                         fontSize: 15
-                                    }}>₹ 10</Text>
+                                    }}>₹ {orderDetails && orderDetails.protection_fee}</Text>
                                 </View>
                                 <View style={{
                                     flexDirection: 'row',
@@ -356,7 +379,7 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                         }}>Coupon</Text>
                                         <Text style={{
                                             color: '#0D9D32'
-                                        }}>(ABCD1234)</Text>
+                                        }}>({orderDetails && orderDetails.offercode})</Text>
                                     </View>
                                     <Text style={{
                                         fontWeight: 'bold',
@@ -381,7 +404,7 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                     <Text style={{
                                         fontSize: 16,
                                         fontWeight: 'bold'
-                                    }}>₹ 850</Text>
+                                    }}>₹ {orderDetails && orderDetails.total_price}</Text>
                                 </View>
                             </View>
                         </Cardview>
@@ -395,29 +418,29 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                 padding: hp(2),
                                 marginVertical: hp(1)
                             }}>
-                                {shippingdata.map((e: any, index: any) => (
+                                {orderDetails && orderDetails.timeline.map((e: any, index: any) => (
                                     <View key={index} style={{
                                         flexDirection: 'row',
                                         marginHorizontal: wp(4)
                                     }}>
                                         <View style={{ width: 30, alignItems: 'center' }}>
-                                            {index !== shippingdata.length - 1 && (
+                                            {index !== orderDetails.timeline.length - 1 && (
                                                 <View
                                                     style={{
                                                         top: hp(1.5),
                                                         height: hp(7),
                                                         width: 2,
                                                         backgroundColor:
-                                                            shippingdata[index + 1]?.state === 'yes' ? '#FBC41D' : '#CBCBCB',
+                                                        orderDetails.timeline[index + 1]?.active_flag === 1 ? '#FBC41D' : '#CBCBCB',
                                                     }}
                                                 />
                                             )}
 
                                             <Image
-                                                source={e.state == 'yes' ?
+                                                source={e.active_flag == 1 ?
                                                     require('../assets/true2.png') :
                                                     require('../assets/dot.png')}
-                                                style={e.state == 'yes' ?
+                                                style={e.active_flag == 1 ?
                                                     {
                                                         height: 35,
                                                         width: 35,
@@ -437,12 +460,12 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                                 style={{
                                                     fontSize: 16,
                                                     fontWeight: 'bold'
-                                                }}>{e.txt}</Text>
+                                                }}>{e.booking_status}</Text>
                                             <Text style={{
                                                 color: '#64748B',
                                                 fontSize: 13,
                                                 fontWeight: '500'
-                                            }}>{e.date}</Text>
+                                            }}>{e.booking_time}</Text>
                                         </View>
                                     </View>
                                 ))}

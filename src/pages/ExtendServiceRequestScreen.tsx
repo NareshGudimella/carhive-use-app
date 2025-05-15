@@ -1,4 +1,4 @@
-import { Image, Pressable, ScrollView, Text, View } from "react-native";
+import { Alert, Image, Pressable, ScrollView, Text, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { hp, wp } from "../utils/ResponsiveScreen";
 import { Cardview } from "../components/Cardview";
@@ -36,11 +36,21 @@ const ExtendServiceRequestScreen: React.FC<Componentprops> = (props) => {
             setCarData(response.data)
             setDropDate(new Date(response.data.to_date))
             setDropTime(new Date(response.data.to_date))
+        } else {
+            Alert.alert('Alert', 'Unable to get CarDetils')
         }
     }
 
-    const requestExtendtime = async () => {
-
+    const requestExtendtime = async (bookingID: any) => {
+        const response = await extendtime(bookingID,
+            `${moment(dropDate).format('YYYY-MM-DD')} 
+             ${moment(dropTime).format('HH:mm')}`)
+        console.log('request Success', response, `${moment(dropDate).format('YYYY-MM-DD')} ${moment(dropTime).format('HH:mm')}`)
+        if (response.code == 0) {
+            props.navigation.navigate('RentalsScreen')
+        } else {
+            Alert.alert('Alert', 'Unable to extend time')
+        }
     }
 
     return (
@@ -226,7 +236,10 @@ const ExtendServiceRequestScreen: React.FC<Componentprops> = (props) => {
 
             <View style={{ marginHorizontal: wp(5), marginVertical: hp(3) }}>
                 <PrimaryButton title='Request Now'
-                    onclick={() => props.navigation.navigate('RentalsScreen')} />
+                    onclick={() => {
+                        requestExtendtime(carData.car_booking_id)
+                        console.log('carid', carData.car_booking_id)
+                    }} />
             </View>
         </SafeAreaView>
     );

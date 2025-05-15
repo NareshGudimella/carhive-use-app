@@ -167,7 +167,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
             }
         }
     }
-
+    
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
             <SafeAreaView style={{ flex: 1 }}>
@@ -366,7 +366,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                             onRequestClose={() => {
                                 setFilterModal(!filterModel);
                             }}>
-                            <BottomModelView>
+                            <BottomModelView onclick={() => setFilterModal(false)}>
                                 <View style={{
                                     marginHorizontal: wp(5),
                                     marginVertical: hp(2)
@@ -400,32 +400,12 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                             {
                                                 short.map((e: any, index: any) => (
                                                     <FilterButton
+                                                        key={index}
                                                         title={e.type}
-                                                        onclick={() => setSelectfilter(e.id)} />
+                                                        onclick={() => setSelectfilter(e.type)}
+                                                        selected={selectfilter === e.type} />
                                                 ))
                                             }
-                                        </View>
-                                        <View>
-                                            <Text
-                                                style={{
-                                                    color: '#64748B',
-                                                    fontSize: 17,
-                                                    fontWeight: 'bold'
-                                                }}
-                                            >Segment</Text>
-                                            <View
-                                                style={{
-                                                    flexWrap: 'wrap',
-                                                    flexDirection: 'row',
-                                                }}>
-                                                {
-                                                    segment.map((e: any, index: any) => (
-                                                        <FilterButton
-                                                            title={e.model}
-                                                            onclick={() => setSelectfilter(e.id)} />
-                                                    ))
-                                                }
-                                            </View>
                                         </View>
                                         <View>
                                             <Text
@@ -443,8 +423,10 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                 {
                                                     Brand.map((e: any, index: any) => (
                                                         <FilterButton
+                                                            key={index}
                                                             title={e.model}
-                                                            onclick={() => setSelectfilter(e.id)} />
+                                                            onclick={() => setSelectfilter(e.model)}
+                                                            selected={selectfilter === e.model} />
                                                     ))
                                                 }
                                             </View>
@@ -465,8 +447,10 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                 {
                                                     FuelType.map((e: any, index: any) => (
                                                         <FilterButton
+                                                            key={index}
                                                             title={e.type}
-                                                            onclick={() => setSelectfilter(e.id)} />
+                                                            onclick={() => setSelectfilter(e.type)}
+                                                            selected={selectfilter === e.type} />
                                                     ))
                                                 }
                                             </View>
@@ -487,8 +471,10 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                 {
                                                     TransmissionType.map((e: any, index: any) => (
                                                         <FilterButton
+                                                            key={index}
                                                             title={e.type}
-                                                            onclick={() => setSelectfilter(e.id)} />
+                                                            onclick={() => setSelectfilter(e.type)} 
+                                                            selected={selectfilter === e.type}/>
                                                     ))
                                                 }
                                             </View>
@@ -509,8 +495,10 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                 {
                                                     SeatingCapacity.map((e: any, index: any) => (
                                                         <FilterButton
+                                                            key={index}
                                                             title={e.type}
-                                                            onclick={() => setSelectfilter(e.id)} />
+                                                            onclick={() => setSelectfilter(e.type)} 
+                                                            selected={selectfilter === e.type}/>
                                                     ))
                                                 }
                                             </View>
@@ -569,7 +557,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                     color: '#13131380',
                                     fontSize: 13,
                                     fontWeight: '500'
-                                }}>{carsList && carsList.from_date?.slice(10, 16)}</Text>
+                                }}>{carsList && moment(carsList.from_date).format('HH:MM A')}</Text>
                             </View>
                             <Image
                                 source={require('../assets/arrow.png')}
@@ -588,14 +576,10 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                         color: '#13131380',
                                         fontSize: 13,
                                         fontWeight: '500'
-                                    }}>{carsList && carsList.to_date?.slice(10, 16)}</Text>
+                                    }}>{carsList && moment(carsList.to_date).format('HH:MM A')}</Text>
                             </View>
                         </View>
-                        <Pressable>
-                            <Image source={require('../assets/edit.png')}
-                                style={{ height: 25, width: 25 }}
-                            />
-                        </Pressable>
+
                     </View>
                     <View style={{
                         backgroundColor: '#ffffff',

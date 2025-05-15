@@ -7,14 +7,23 @@ import BottomTabNavigation from "../components/BottomTab";
 import { Cardview } from "../components/Cardview";
 import { Rating } from "react-native-ratings";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { excuteGetResponse } from "../apis/api";
+import { excuteGetResponse, removeWishlist } from "../apis/api";
 import { useCallback, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
+import { BottomTabstyles } from "../styles/BottomTabstyles";
+import DatePicker from "react-native-date-picker";
+import moment from "moment";
 
 class Componentprops extends Baseprops { }
 
 const FavoritesScreen: React.FC<Componentprops> = (props) => {
     const [favoriteList, setFavoriteList] = useState<any>([])
+    const [searchData, setSearchData] = useState<any>('')
+    const [date, setDate] = useState(new Date())
+    const [open, setOpen] = useState(false)
+    const [pickupTime, setPickupTime] = useState(new Date());
+    const [dropTime, setDropTime] = useState(new Date())
+    const [dateType, setDateType] = useState<'pickup' | 'drop' | ''>('');
     useFocusEffect(
         useCallback(() => {
             handelFavorites()
@@ -22,12 +31,24 @@ const FavoritesScreen: React.FC<Componentprops> = (props) => {
     )
     const handelFavorites = async () => {
         const response = await excuteGetResponse(`secure/cars/favorite`)
-        console.log('favorites',response)
+        console.log('favorites', response)
         if (response.code == 0) {
             setFavoriteList(response.data)
-        }else{
-            Alert.alert('Alert','Unable to get details of Favorites')
+        } else if (response.error) {
+            Alert.alert('Alert', 'Login your account')
+        } else {
+            Alert.alert('Alert', 'Unable to get details of Favorites')
         }
+    }
+    const removeWishlistbutton = async (carId: any) => {
+        const response = await removeWishlist(carId)
+        console.log('remove', response)
+        if (response.code == 0) {
+            handelFavorites()
+        } else {
+            Alert.alert('Alert', 'unable to get remove wishlist details')
+        }
+
     }
 
     return (
@@ -43,6 +64,86 @@ const FavoritesScreen: React.FC<Componentprops> = (props) => {
                     fontWeight: 'bold',
                     marginVertical: hp(1)
                 }}>Favorites</Text>
+            </View>
+            <View style={{
+                marginTop: hp(1),
+                justifyContent: 'center',
+                alignItems: 'center'
+            }}>
+                <View style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+
+                }}>
+                    <View>
+                        <DatePicker
+                            modal
+                            mode="datetime"
+                            open={open}
+                            date={dateType === 'pickup' ? pickupTime : dropTime}
+                            onConfirm={(selectedDate) => {
+                                setOpen(false);
+                                if (dateType === 'pickup') {
+                                    setPickupTime(selectedDate);
+                                } else if (dateType === 'drop') {
+                                    setDropTime(selectedDate);
+                                }
+                                setDateType('');
+                            }}
+                            onCancel={() => {
+                                setOpen(false);
+                                setDateType('');
+                            }}
+                        />
+                    </View>
+                    <View style={{
+                        backgroundColor: '#FFFFFF',
+                        borderRadius: 10,
+                        padding: hp(2),
+                        elevation: 1,
+                        justifyContent: 'space-between',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        width: wp(90)
+                    }}>
+                        <Pressable
+                            onPress={() => setOpen(true)}
+                            style={{ alignItems: 'center' }}>
+                            <Text style={{
+                                fontSize: 16,
+                                fontWeight: 'bold'
+                            }}> {moment(pickupTime).format('DD MMM YYYY')}</Text>
+                            <Text style={{
+                                color: '#13131380',
+                                fontSize: 13,
+                                fontWeight: '500'
+                            }}>{moment(pickupTime).format('HH:MM A')}</Text>
+                        </Pressable>
+                        <Image
+                            source={require('../assets/arrow.png')}
+                            style={[BottomTabstyles.selectedstyle, {
+                                marginHorizontal: wp(6)
+                            }]}
+                        />
+                        <Pressable
+                            onPress={() => setOpen(true)}
+                            style={{ alignItems: 'center' }}>
+                            <Text
+                                style={{
+                                    fontSize: 16,
+                                    fontWeight: 'bold'
+                                }}>{moment(dropTime).format('DD MMM YYYY')}</Text>
+                            <Text
+                                style={{
+                                    color: '#13131380',
+                                    fontSize: 13,
+                                    fontWeight: '500'
+                                }}>{moment(dropTime).format('HH:MM A')}</Text>
+                        </Pressable>
+                    </View>
+
+                </View>
             </View>
             <View style={{
                 backgroundColor: '#ffffff',
@@ -76,7 +177,9 @@ const FavoritesScreen: React.FC<Componentprops> = (props) => {
                 }}>
                 {
                     favoriteList && favoriteList.map((e: any, index: any) => (
-                        <Pressable key={index}
+                        <Pressable
+
+                            key={index}
                             style={{ marginVertical: hp(1) }}>
                             <Cardview>
                                 <View style={{ padding: hp(2) }}>
@@ -86,11 +189,11 @@ const FavoritesScreen: React.FC<Componentprops> = (props) => {
                                             alignItems: 'center'
                                         }}>
                                             <Image
-                                                source={{uri:e.image_path}}
+                                                source={{ uri: e.image_path }}
                                                 style={{
                                                     height: 70,
                                                     width: 85,
-                                                    borderRadius:10
+                                                    borderRadius: 10
                                                 }} />
                                             <Text
                                                 style={{
@@ -99,14 +202,16 @@ const FavoritesScreen: React.FC<Componentprops> = (props) => {
                                                     marginHorizontal: wp(3)
                                                 }}>{e.brand} {e.model}</Text>
                                         </View>
-                                        <View style={{
-                                            backgroundColor: '#0000000A',
-                                            height: hp(4),
-                                            width: hp(4),
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                            borderRadius: 20
-                                        }}>
+                                        <Pressable
+                                            onPress={() => removeWishlistbutton(e.carid)}
+                                            style={{
+                                                backgroundColor: '#0000000A',
+                                                height: hp(4),
+                                                width: hp(4),
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                borderRadius: 20
+                                            }}>
                                             <Image
                                                 source={require('../assets/shop.png')}
                                                 style={{
@@ -114,7 +219,7 @@ const FavoritesScreen: React.FC<Componentprops> = (props) => {
                                                     width: 20,
                                                     tintColor: '#FF0000'
                                                 }} />
-                                        </View>
+                                        </Pressable>
                                     </View>
                                     <View style={{
                                         flexDirection: 'row',
@@ -127,11 +232,11 @@ const FavoritesScreen: React.FC<Componentprops> = (props) => {
                                                 fontWeight: '500',
                                                 color: '#666666',
                                             }}>
-                                           {e.car_rating}
+                                            {e.car_rating}
                                         </Text>
                                         <Rating
                                             readonly
-                                            startingValue= {e.car_rating}
+                                            startingValue={e.car_rating}
                                             imageSize={12}
                                             ratingCount={5}
                                             fractions={1}

@@ -347,21 +347,25 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                 }
             </View>
             <View style={{ flex: 1 }}>
-                <View>
+                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                     {carData && <Carousel
                         autoPlay={false}
                         ref={ref}
-                        width={wp(100)}
+                        width={wp(94)}
                         style={{}}
-                        height={hp(25)}
+                        height={hp(26)}
                         data={carData.gallery}
                         renderItem={({ item }: { item: any }) => (
-                            <View>
+                            <View style={{
+                                justifyContent: 'center',
+                                alignItems: 'center'
+                            }}>
                                 <Image source={{ uri: item.image }}
                                     style={{
-                                        height: hp(25), width: wp(100),
-                                        borderBottomLeftRadius: 20,
-                                        borderBottomRightRadius: 20
+                                        height: hp(25),
+                                        width: wp(92),
+                                        borderRadius: 20,
+                                        marginTop: hp(1)
                                     }} />
                             </View>
                         )}
@@ -370,11 +374,11 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                 <View style={{
                     position: 'absolute',
                     top: hp(3),
-                    marginHorizontal: wp(5),
+                    marginHorizontal: wp(7),
                     flexDirection: 'row',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    width: wp(90)
+                    width: wp(86)
                 }}>
                     <View style={{
                         flexDirection: 'row',

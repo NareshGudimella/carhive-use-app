@@ -74,7 +74,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
         const picktime = new Date(pickupTime.getHours())
         const droptime = new Date(dropTime.getHours())
         if (cityname && cityname.cityId != '') {
-            if (dropDay >= pickupDay ) {
+            if (dropDay >= pickupDay || picktime < droptime) {
                 props.navigation.navigate('SelectVehicleScreen', {
                     lat: latitude,
                     long: longitude,
@@ -402,20 +402,22 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                     onclick={() => handelCheckDate()} />
                             </View>
                         </Cardview>
-                        <Carousel
-                            autoPlay={true}
-                            ref={ref}
-                            width={wp(90)}
-                            style={{ marginTop: hp(2) }}
-                            height={hp(25)}
-                            data={banner}
-                            renderItem={({ item }: { item: any }) => (
-                                <View>
-                                    <Image source={{ uri: item.banners }}
-                                        style={CarouselimageStyles.style} />
-                                </View>
-                            )}
-                        />
+                        <View>
+                            <Carousel
+                                autoPlay={true}
+                                ref={ref}
+                                width={wp(90)}
+                                style={{ marginTop: hp(2) }}
+                                height={hp(25)}
+                                data={banner}
+                                renderItem={({ item }: { item: any }) => (
+                                    <View>
+                                        <Image source={{ uri: item.banners }}
+                                            style={CarouselimageStyles.style} />
+                                    </View>
+                                )}
+                            />
+                        </View>
                     </View>
                 </ScrollView>
                 <BottomTabNavigation step={1} navigation={props.navigation} />
