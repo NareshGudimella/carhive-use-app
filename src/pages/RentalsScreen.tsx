@@ -26,6 +26,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
     const [rentalData, setRentalData] = useState<any>([])
     const [price, setPrice] = useState<any>('')
     const [carId, setCarId] = useState<any>('')
+    const [searchData, setSearchData] = useState<any>('')
 
     useFocusEffect(
         useCallback(() => {
@@ -80,16 +81,16 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                     marginVertical: hp(0.5),
                                     marginTop: hp(2)
                                 }}>
-                                    <Pressable 
-                                    onPress={()=>setExtendServiceModal(false)}
-                                    style={{
-                                        borderWidth: 1,
-                                        paddingHorizontal: wp(7),
-                                        paddingVertical: hp(1.3),
-                                        borderRadius: 10,
-                                        borderColor: '#FBC41D',
-                                        marginHorizontal: wp(2)
-                                    }}>
+                                    <Pressable
+                                        onPress={() => setExtendServiceModal(false)}
+                                        style={{
+                                            borderWidth: 1,
+                                            paddingHorizontal: wp(7),
+                                            paddingVertical: hp(1.3),
+                                            borderRadius: 10,
+                                            borderColor: '#FBC41D',
+                                            marginHorizontal: wp(2)
+                                        }}>
                                         <Text style={{
                                             color: '#FBC41D',
                                             fontWeight: 'bold'
@@ -147,6 +148,8 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                 <TextInput
                     placeholder="Search by Vehicle..."
                     placeholderTextColor='#64748B'
+                    onChangeText={setSearchData}
+                    value={searchData}
                     style={{
                         fontSize: 15,
                         fontWeight: '500',
@@ -161,79 +164,18 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                     marginHorizontal: wp(5),
                     marginVertical: hp(1)
                 }}>
-                {rentalData && rentalData.map((e: any, index: any) => (
-                    <View key={index}>
-                        {
-                            e.status == 'PENDING' ?
-                                <Pressable
-                                    onPress={() => props.navigation.navigate('OrderDetailsScreen', { Id: e.car_booking_id})}
-                                    style={{ marginVertical: hp(1.5) }}>
-                                    <Cardview>
-                                        <View>
-                                            <View style={{
-                                                backgroundColor: '#FBC41D',
-                                                width: wp(25),
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                                paddingVertical: hp(1),
-                                                alignSelf: 'flex-end',
-                                                borderTopRightRadius: 15,
-                                                borderBottomLeftRadius: 10
-                                            }}>
-                                                <Text
-                                                    style={{
-                                                        color: '#ffffff',
-                                                        fontSize: 13,
-                                                        fontWeight: 'bold'
-                                                    }}
-                                                >{e.status}</Text>
-                                            </View>
-                                            <View style={{
-                                                flexDirection: 'row',
-                                                alignItems: 'center',
-                                                marginHorizontal: wp(4)
-                                            }}>
-                                                <Image
-                                                    source={{ uri: e.car_image }}
-                                                    style={{
-                                                        height: 50,
-                                                        width: 70
-                                                    }} />
-                                                <View style={{
-                                                    marginHorizontal: wp(3)
-                                                }}>
-                                                    <Text style={{
-                                                        fontSize: 16,
-                                                        fontWeight: 'bold'
-                                                    }}>
-                                                        Booking ID : {e.booking_id}</Text>
-                                                    <Text
-                                                        style={{
-                                                            color: '#64748B',
-                                                            fontSize: 13,
-                                                            fontWeight: '500',
-                                                            marginTop: 2
-                                                        }}>{e.brand} {e.model} - {e.registeration_number}</Text>
-                                                </View>
-                                            </View>
-                                            <Text
-                                                style={{
-                                                    fontSize: 12,
-                                                    fontWeight: 'bold',
-                                                    marginHorizontal: wp(5),
-                                                    marginVertical: hp(2),
-                                                    textAlign: 'center'
-                                                }}>{moment(e.from_date).format('DD MMM YYYY HH:DD A')} -
-                                                {moment(e.to_date).format('DD MMM YYYY HH:DD A')}</Text>
-                                        </View>
-                                    </Cardview>
-                                </Pressable> :
-                                e.status == 'ACCEPTED' ?
-                                    <Pressable>
+                {rentalData && rentalData.filter((e1: any) => searchData.trim === '' ||
+                    e1.brand?.toLowerCase().includes(searchData.toLowerCase())).map((e: any, index: any) => (
+                        <View key={index}>
+                            {
+                                e.status == 'PENDING' ?
+                                    <Pressable
+                                        onPress={() => props.navigation.navigate('OrderDetailsScreen', { Id: e.car_booking_id })}
+                                        style={{ marginVertical: hp(1.5) }}>
                                         <Cardview>
                                             <View>
                                                 <View style={{
-                                                    backgroundColor: '#1D85FB',
+                                                    backgroundColor: '#FBC41D',
                                                     width: wp(25),
                                                     justifyContent: 'center',
                                                     alignItems: 'center',
@@ -267,120 +209,35 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                         <Text style={{
                                                             fontSize: 16,
                                                             fontWeight: 'bold'
-                                                        }}>Booking ID :
-                                                            {e.booking_id}</Text>
+                                                        }}>
+                                                            Booking ID : {e.booking_id}</Text>
                                                         <Text
                                                             style={{
                                                                 color: '#64748B',
                                                                 fontSize: 13,
                                                                 fontWeight: '500',
                                                                 marginTop: 2
-                                                            }}>{e.brand} {e.model} - {e.registeration_number}
-                                                        </Text>
+                                                            }}>{e.brand} {e.model} - {e.registeration_number}</Text>
                                                     </View>
                                                 </View>
-                                                <View style={{
-                                                    flexDirection: 'row',
-                                                    alignItems: 'center',
-                                                    marginHorizontal: wp(5),
-                                                    marginVertical: hp(1.5)
-                                                }}>
-                                                    <Text
-                                                        style={{
-                                                            fontSize: 12,
-                                                            fontWeight: 'bold',
-                                                            color: '#64748B'
-                                                        }}>
-                                                        Delivery date :{moment(e.to_date).format('DD MMM YYYY HH:DD A')}
-                                                    </Text>
-                                                    <Text
-                                                        style={{
-                                                            fontSize: 12,
-                                                            fontWeight: 'bold',
-
-                                                        }}> {e.date}</Text>
-                                                </View>
-                                                <View style={{
-                                                    marginHorizontal: wp(5)
-                                                }}>
-                                                    <Text style={{
-                                                        fontSize: 13,
+                                                <Text
+                                                    style={{
+                                                        fontSize: 12,
                                                         fontWeight: 'bold',
-                                                        color: '#64748B'
-                                                    }}>Host Details</Text>
-                                                    <View style={{
-                                                        flexDirection: 'row',
-                                                        justifyContent: 'space-between',
-                                                        alignItems: 'center',
-                                                        marginVertical: hp(1.5)
-                                                    }}>
-                                                        <View style={{
-                                                            flexDirection: 'row',
-                                                            alignItems: 'center'
-                                                        }}>
-                                                            <Image
-                                                                source={require('../assets/user.png')}
-                                                                style={{
-                                                                    height: 50,
-                                                                    width: 50
-                                                                }} />
-                                                            <Text
-                                                                style={{
-                                                                    fontSize: 16,
-                                                                    fontWeight: 'bold',
-                                                                    marginHorizontal: wp(4)
-                                                                }}>{e.vendor_name
-                                                                }</Text>
-                                                        </View>
-                                                        <Pressable onPress={() => Linking.openURL(`tel${e.vendor_mobile}`)}>
-                                                            <Image
-                                                                source={require('../assets/call1.png')}
-                                                                style={{
-                                                                    height: 40,
-                                                                    width: 40
-                                                                }} />
-                                                        </Pressable>
-                                                    </View>
-                                                    <Text
-                                                        style={{
-                                                            fontSize: 13,
-                                                            fontWeight: '500',
-                                                            color: '#64748B'
-                                                        }}>Pickup Location</Text>
-                                                    <Pressable
-                                                        onPress={() => setAddressChecked('address')}
-                                                        style={{
-                                                            flexDirection: 'row',
-                                                            alignItems: 'center',
-                                                            marginVertical: hp(1),
-                                                            marginBottom: hp(2)
-                                                        }}>
-                                                        <RadioButton
-                                                            value="address"
-                                                            status={addressChecked === 'address' ? 'checked' : 'unchecked'}
-                                                            onPress={() => setAddressChecked('address')}
-                                                            color="#34C759"
-                                                            uncheckedColor="#13131380"
-                                                        />
-                                                        <Text
-                                                            style={{
-                                                                width: wp(60),
-                                                                fontSize: 13,
-                                                                fontWeight: '500'
-                                                            }}>{e.location}</Text>
-                                                    </Pressable>
-                                                </View>
+                                                        marginHorizontal: wp(5),
+                                                        marginVertical: hp(2),
+                                                        textAlign: 'center'
+                                                    }}>{moment(e.from_date).format('DD MMM YYYY HH:DD A')} -
+                                                    {moment(e.to_date).format('DD MMM YYYY HH:DD A')}</Text>
                                             </View>
                                         </Cardview>
                                     </Pressable> :
-                                    e.status == 'ONGOING' ?
-                                        <Pressable style={{
-                                            marginVertical: hp(1.5)
-                                        }}>
+                                    e.status == 'ACCEPTED' ?
+                                        <Pressable>
                                             <Cardview>
                                                 <View>
                                                     <View style={{
-                                                        backgroundColor: '#FF8300',
+                                                        backgroundColor: '#1D85FB',
                                                         width: wp(25),
                                                         justifyContent: 'center',
                                                         alignItems: 'center',
@@ -414,10 +271,8 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                             <Text style={{
                                                                 fontSize: 16,
                                                                 fontWeight: 'bold'
-                                                            }}>
-                                                                Booking ID :
-                                                                {e.booking_id}
-                                                            </Text>
+                                                            }}>Booking ID :
+                                                                {e.booking_id}</Text>
                                                             <Text
                                                                 style={{
                                                                     color: '#64748B',
@@ -432,7 +287,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                         flexDirection: 'row',
                                                         alignItems: 'center',
                                                         marginHorizontal: wp(5),
-                                                        marginVertical: hp(2)
+                                                        marginVertical: hp(1.5)
                                                     }}>
                                                         <Text
                                                             style={{
@@ -440,37 +295,96 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                                 fontWeight: 'bold',
                                                                 color: '#64748B'
                                                             }}>
-                                                            Expected Return on :
+                                                            Delivery date :{moment(e.to_date).format('DD MMM YYYY HH:DD A')}
                                                         </Text>
                                                         <Text
                                                             style={{
                                                                 fontSize: 12,
                                                                 fontWeight: 'bold',
 
-                                                            }}> {moment(e.to_date).format('DD MMM YYYY HH:DD A')}
-                                                        </Text>
+                                                            }}> {e.date}</Text>
                                                     </View>
                                                     <View style={{
-                                                        marginBottom: hp(2),
-                                                        marginHorizontal: wp(10)
+                                                        marginHorizontal: wp(5)
                                                     }}>
-                                                        <PrimaryButton
-                                                            title='Extend Service'
-                                                            onclick={() => {
-                                                                setExtendServiceModal(true)
-                                                                setCarId(e.car_booking_id)
-                                                                setPrice(e.pirce_per_hour)
-                                                            }} />
+                                                        <Text style={{
+                                                            fontSize: 13,
+                                                            fontWeight: 'bold',
+                                                            color: '#64748B'
+                                                        }}>Host Details</Text>
+                                                        <View style={{
+                                                            flexDirection: 'row',
+                                                            justifyContent: 'space-between',
+                                                            alignItems: 'center',
+                                                            marginVertical: hp(1.5)
+                                                        }}>
+                                                            <View style={{
+                                                                flexDirection: 'row',
+                                                                alignItems: 'center'
+                                                            }}>
+                                                                <Image
+                                                                    source={require('../assets/user.png')}
+                                                                    style={{
+                                                                        height: 50,
+                                                                        width: 50
+                                                                    }} />
+                                                                <Text
+                                                                    style={{
+                                                                        fontSize: 16,
+                                                                        fontWeight: 'bold',
+                                                                        marginHorizontal: wp(4)
+                                                                    }}>{e.vendor_name
+                                                                    }</Text>
+                                                            </View>
+                                                            <Pressable onPress={() => Linking.openURL(`tel${e.vendor_mobile}`)}>
+                                                                <Image
+                                                                    source={require('../assets/call1.png')}
+                                                                    style={{
+                                                                        height: 40,
+                                                                        width: 40
+                                                                    }} />
+                                                            </Pressable>
+                                                        </View>
+                                                        <Text
+                                                            style={{
+                                                                fontSize: 13,
+                                                                fontWeight: '500',
+                                                                color: '#64748B'
+                                                            }}>Pickup Location</Text>
+                                                        <Pressable
+                                                            onPress={() => setAddressChecked('address')}
+                                                            style={{
+                                                                flexDirection: 'row',
+                                                                alignItems: 'center',
+                                                                marginVertical: hp(1),
+                                                                marginBottom: hp(2)
+                                                            }}>
+                                                            <RadioButton
+                                                                value="address"
+                                                                status={addressChecked === 'address' ? 'checked' : 'unchecked'}
+                                                                onPress={() => setAddressChecked('address')}
+                                                                color="#34C759"
+                                                                uncheckedColor="#13131380"
+                                                            />
+                                                            <Text
+                                                                style={{
+                                                                    width: wp(60),
+                                                                    fontSize: 13,
+                                                                    fontWeight: '500'
+                                                                }}>{e.location}</Text>
+                                                        </Pressable>
                                                     </View>
                                                 </View>
                                             </Cardview>
-                                        </Pressable>
-                                        : e.status == 'COMPLETED' ?
-                                            <Pressable style={{ marginVertical: hp(1.5) }}>
+                                        </Pressable> :
+                                        e.status == 'ONGOING' ?
+                                            <Pressable style={{
+                                                marginVertical: hp(1.5)
+                                            }}>
                                                 <Cardview>
                                                     <View>
                                                         <View style={{
-                                                            backgroundColor: '#0BB335',
+                                                            backgroundColor: '#FF8300',
                                                             width: wp(25),
                                                             justifyContent: 'center',
                                                             alignItems: 'center',
@@ -506,42 +420,132 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                                     fontWeight: 'bold'
                                                                 }}>
                                                                     Booking ID :
-                                                                    {e.booking_id}</Text>
+                                                                    {e.booking_id}
+                                                                </Text>
                                                                 <Text
                                                                     style={{
                                                                         color: '#64748B',
                                                                         fontSize: 13,
                                                                         fontWeight: '500',
                                                                         marginTop: 2
-                                                                    }}>{e.brand} {e.model} - {e.registeration_number}</Text>
+                                                                    }}>{e.brand} {e.model} - {e.registeration_number}
+                                                                </Text>
                                                             </View>
                                                         </View>
-                                                        <Text
-                                                            style={{
-                                                                fontSize: 12,
-                                                                fontWeight: 'bold',
-                                                                marginHorizontal: wp(5),
-                                                                marginVertical: hp(2),
-                                                                textAlign: 'center'
-                                                            }}>{moment(e.from_date).format('DD MMM YYYY HH:DD A')}
-                                                            - {moment(e.to_date).format('DD MMM YYYY HH:DD A')}</Text>
+                                                        <View style={{
+                                                            flexDirection: 'row',
+                                                            alignItems: 'center',
+                                                            marginHorizontal: wp(5),
+                                                            marginVertical: hp(2)
+                                                        }}>
+                                                            <Text
+                                                                style={{
+                                                                    fontSize: 12,
+                                                                    fontWeight: 'bold',
+                                                                    color: '#64748B'
+                                                                }}>
+                                                                Expected Return on :
+                                                            </Text>
+                                                            <Text
+                                                                style={{
+                                                                    fontSize: 12,
+                                                                    fontWeight: 'bold',
+
+                                                                }}> {moment(e.to_date).format('DD MMM YYYY HH:DD A')}
+                                                            </Text>
+                                                        </View>
                                                         <View style={{
                                                             marginBottom: hp(2),
                                                             marginHorizontal: wp(10)
                                                         }}>
                                                             <PrimaryButton
-                                                                title='Rate your Experience'
-                                                                onclick={() => props.navigation.navigate('HomeScreen')} />
+                                                                title='Extend Service'
+                                                                onclick={() => {
+                                                                    setExtendServiceModal(true)
+                                                                    setCarId(e.car_booking_id)
+                                                                    setPrice(e.pirce_per_hour)
+                                                                }} />
                                                         </View>
                                                     </View>
                                                 </Cardview>
                                             </Pressable>
-                                            : <></>
-                        }
-                    </View>
-                ))}
+                                            : e.status == 'COMPLETED' ?
+                                                <Pressable style={{ marginVertical: hp(1.5) }}>
+                                                    <Cardview>
+                                                        <View>
+                                                            <View style={{
+                                                                backgroundColor: '#0BB335',
+                                                                width: wp(25),
+                                                                justifyContent: 'center',
+                                                                alignItems: 'center',
+                                                                paddingVertical: hp(1),
+                                                                alignSelf: 'flex-end',
+                                                                borderTopRightRadius: 15,
+                                                                borderBottomLeftRadius: 10
+                                                            }}>
+                                                                <Text
+                                                                    style={{
+                                                                        color: '#ffffff',
+                                                                        fontSize: 13,
+                                                                        fontWeight: 'bold'
+                                                                    }}
+                                                                >{e.status}</Text>
+                                                            </View>
+                                                            <View style={{
+                                                                flexDirection: 'row',
+                                                                alignItems: 'center',
+                                                                marginHorizontal: wp(4)
+                                                            }}>
+                                                                <Image
+                                                                    source={{ uri: e.car_image }}
+                                                                    style={{
+                                                                        height: 50,
+                                                                        width: 70
+                                                                    }} />
+                                                                <View style={{
+                                                                    marginHorizontal: wp(3)
+                                                                }}>
+                                                                    <Text style={{
+                                                                        fontSize: 16,
+                                                                        fontWeight: 'bold'
+                                                                    }}>
+                                                                        Booking ID :
+                                                                        {e.booking_id}</Text>
+                                                                    <Text
+                                                                        style={{
+                                                                            color: '#64748B',
+                                                                            fontSize: 13,
+                                                                            fontWeight: '500',
+                                                                            marginTop: 2
+                                                                        }}>{e.brand} {e.model} - {e.registeration_number}</Text>
+                                                                </View>
+                                                            </View>
+                                                            <Text
+                                                                style={{
+                                                                    fontSize: 12,
+                                                                    fontWeight: 'bold',
+                                                                    marginHorizontal: wp(5),
+                                                                    marginVertical: hp(2),
+                                                                    textAlign: 'center'
+                                                                }}>{moment(e.from_date).format('DD MMM YYYY HH:DD A')}
+                                                                - {moment(e.to_date).format('DD MMM YYYY HH:DD A')}</Text>
+                                                            <View style={{
+                                                                marginBottom: hp(2),
+                                                                marginHorizontal: wp(10)
+                                                            }}>
+                                                                <PrimaryButton
+                                                                    title='Rate your Experience'
+                                                                    onclick={() => props.navigation.navigate('HomeScreen')} />
+                                                            </View>
+                                                        </View>
+                                                    </Cardview>
+                                                </Pressable>
+                                                : <></>
+                            }
+                        </View>
+                    ))}
             </ScrollView>
-            <BottomTabNavigation step={3} navigation={props.navigation} />
+            <BottomTabNavigation step={2} navigation={props.navigation} />
         </SafeAreaView>
     )
 }

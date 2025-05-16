@@ -57,20 +57,55 @@ export const Login = async (mobile: any) => {
 export const Otp = async (mobile: any, otp: any) => {
     return excuteResponse('auth/verfy', { mobile, otp })
 }
-export const CarsList = async (from_date: any, to_date: any,
-    city_id: any, user_latitude: any, user_longitude: any) => {
+export const CarsList = async (
+    from_date: any,
+    to_date: any,
+    city_id: any,
+    user_latitude: any,
+    user_longitude: any,
+    price_sort: any,
+    brands: any,
+    fuel_type: any,
+    transmission: any,
+    seating: any
+) => {
     return excuteResponse('auth/cars', {
         from_date,
-        to_date, city_id,
+        to_date,
+        city_id,
         user_latitude,
-        user_longitude
-    })
-}
-export const LoginCarsList = async (from_date: any, to_date: any,
-    city_id: any, user_latitude: any, user_longitude: any) => {
+        user_longitude,
+        filters: {
+            price_sort,
+            brands,
+            fuel_type,
+            transmission,
+            seating,
+        },
+    });
+};
+
+export const LoginCarsList = async (
+    from_date: any,
+    to_date: any,
+    city_id: any,
+    user_latitude: any,
+    user_longitude: any,
+    price_sort: any,
+    brands: any,
+    fuel_type: any,
+    transmission: any,
+    seating: any) => {
     return excuteResponse('secure/cars', {
         from_date, to_date, city_id,
-        user_latitude, user_longitude
+        user_latitude, user_longitude,
+        filters: {
+            price_sort,
+            brands,
+            fuel_type,
+            transmission,
+            seating,
+        },
     })
 }
 export const carDetails = async (carid: any, from_date: any, to_date: any) => {

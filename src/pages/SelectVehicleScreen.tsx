@@ -50,8 +50,8 @@ const TransmissionType = [
     { id: 2, type: 'Manual' }
 ]
 const SeatingCapacity = [
-    { id: 1, type: '5 Seats' },
-    { id: 2, type: '7 Seats' }
+    { id: 1, type: '5 Seats', value: '5' },
+    { id: 2, type: '7 Seats', value: '7' }
 ]
 const short = [
     { id: 1, type: 'Low to High' },
@@ -67,72 +67,46 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
     const [otp, setOtp] = useState<any>('')
     const [phoneNumber, setPhoneNumber] = useState<any>('')
     const [search, SetSearch] = useState('')
-
+    const [carBrand, setCarBrand] = useState<any>([])
+    const [shortBy, setShortBuy] = useState<string>('')
+    const [brand, setBrand] = useState<any[]>([])
+    const [fuel, setFuel] = useState<any[]>([])
+    const [transmission, setTransmission] = useState<any>([])
+    const [seaters, setSeaters] = useState<any[]>([])
     useFocusEffect(
         useCallback(() => {
-            usergetprofile()
+            handelCarList()
+            carsModalList()
         }, [])
     )
-    const usergetprofile = async () => {
-        const token = await getToken()
-        console.log('myuser', token)
+    const handelCarList = async () => {
+        const response = await CarsList(
+            props.route.params.pickdate,
+            props.route.params.drop,
+            props.route.params.addressid,
+            props.route.params.lat,
+            props.route.params.long,
+            shortBy,
+            brand,
+            fuel,
+            transmission,
+            seaters
 
-        if (token && token != '') {
-            const response = await LoginCarsList(
-                props.route.params.pickdate,
-                props.route.params.drop,
-                props.route.params.addressid,
-                props.route.params.lat,
-                props.route.params.long)
+        )
+        console.log('carresponse',
+            response,
+            shortBy,
+            brand,
+            fuel,
+            transmission,
+            seaters)
 
-            console.log('logincarresponse', response)
-
-            if (response.code == 0) {
-                setCarsList(response.data)
-            } else {
-                Alert.alert('Alert', 'Unable to get Login details')
-            }
-        } else {
-            const response = await CarsList(
-                props.route.params.pickdate,
-                props.route.params.drop,
-                props.route.params.addressid,
-                props.route.params.lat,
-                props.route.params.long)
-
-            console.log('carresponse', response)
-
-            if (response.code == 0) {
-                setCarsList(response.data)
-            } else {
-                Alert.alert('Alert', 'unable to get details of unlogin')
-            }
-        }
-    }
-
-    const handelWishlist = async (carId: any) => {
-        const token = await getToken()
-        if (token && token != '') {
-            const response = await wishlist(carId)
-            console.log('fav', response)
-            if (response.code == 0) {
-                usergetprofile()
-            } else {
-                Alert.alert('Alert', 'unable to get wishlist details')
-            }
-        } else {
-            setMobileNumberModal(true)
-        }
-    }
-    const removeWishlistbutton = async (carId: any) => {
-        const response = await removeWishlist(carId)
-        console.log('remove', response)
         if (response.code == 0) {
-            usergetprofile()
+            setCarsList(response.data)
         } else {
-            Alert.alert('Alert', 'unable to get remove wishlist details')
+            Alert.alert('Alert', 'unable to get details of unlogin')
+            return
         }
-
     }
     const handelLogin = async () => {
         if (phoneNumber.trim().length == 0 &&
@@ -163,200 +137,49 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                 props.navigation.navigate('SignupScreen')
                 setOtpModal(false)
             } else if (response.data.profile_flag == 1) {
-                usergetprofile()
+                handelCarList()
             }
         }
     }
-    
+    const carsModalList = async () => {
+        const response = await excuteGetResponse(`secure/cars/brands`)
+        console.log('brand', response)
+        if (response.code == 0) {
+            setCarBrand(response.data)
+        }
+    }
+    const toggleSelection = (item: any) => {
+        if (brand.includes(item)) {
+            setBrand((prev: any[]) => prev.filter(i => i !== item));
+        } else {
+            setBrand((prev: any) => [...prev, item]);
+        }
+    };
+    const toggelFuel = (item: any) => {
+        if (fuel.includes(item)) {
+            setFuel((prev: any[]) => prev.filter(i => i != item))
+        } else {
+            setFuel((prev: any[]) => [...prev, item])
+        }
+    }
+    const toggeltransmission = (item: any) => {
+        if (transmission.includes(item)) {
+            setTransmission((prev: any[]) => prev.filter(i => i !== item));
+        } else {
+            setTransmission((prev: any[]) => [...prev, item])
+        }
+    }
+    const toggelseater = (item: any) => {
+        if (seaters.includes(item)) {
+            setSeaters((prev: any[]) => prev.filter(i => i != item))
+        } else {
+            setSeaters((prev: any[]) => [...prev, item])
+        }
+    }
+
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
             <SafeAreaView style={{ flex: 1 }}>
-                {mobileNumberModal &&
-                    <View>
-                        <Modal
-                            animationType="slide"
-                            transparent={true}
-                            visible={mobileNumberModal}
-                            onRequestClose={() => {
-                                setMobileNumberModal(!mobileNumberModal);
-                            }}>
-                            <BottomModelView onclick={() => setMobileNumberModal(false)}>
-                                <View style={{
-                                    marginHorizontal: wp(5),
-                                    marginVertical: hp(2)
-                                }}>
-                                    <Pressable
-                                        onPress={() => setMobileNumberModal(false)}
-                                        style={{
-                                            backgroundColor: '#EEEEEE80',
-                                            borderRadius: 20,
-                                            width: 35,
-                                            height: 35,
-                                            justifyContent: 'center',
-                                            alignItems: 'center'
-                                        }}>
-                                        <Image
-                                            source={require('../assets/close.png')}
-                                            style={{
-                                                height: 15,
-                                                width: 15
-                                            }} />
-                                    </Pressable>
-                                    <Text style={{
-                                        fontSize: 24,
-                                        fontWeight: 'bold',
-                                        marginTop: hp(2),
-
-                                    }}>User Login</Text>
-                                    <Text
-                                        style={{
-                                            fontSize: 17,
-                                            fontWeight: '400',
-                                            color: '#64748B',
-                                            marginTop: hp(1),
-                                            marginBottom: hp(1.5)
-                                        }}
-                                    >Please enter a your mobile number
-                                        to login into your account</Text>
-                                    <Textinput
-                                        image={require('../assets/call.png')}
-                                        placeholder='Enter your mobile number'
-                                        keyboardtype='numeric'
-                                        value={phoneNumber}
-                                        onChangeText={setPhoneNumber}
-                                    />
-                                    <Text
-                                        style={{
-                                            fontSize: 15,
-                                            lineHeight: hp(2.5),
-                                            color: '#64748B',
-                                            marginVertical: hp(1),
-                                            marginHorizontal: wp(2)
-                                        }}
-                                    >By continuing you agree
-                                        to our <Text
-                                            style={{
-                                                color: '#FBC41D'
-                                            }}> Terms of service
-                                        </Text> ,   &
-                                        <Text
-                                            style={{
-                                                color: '#FBC41D'
-                                            }}>  Privacy policy</Text>
-                                    </Text>
-                                    <View style={{ marginVertical: hp(2) }}>
-                                        <PrimaryButton title='Request OTP'
-                                            onclick={() => {
-                                                setMobileNumberModal(false),
-                                                    handelLogin()
-                                            }}
-                                        />
-                                    </View>
-                                </View>
-                            </BottomModelView>
-                        </Modal>
-                    </View>
-                }
-                {
-                    otpModal &&
-                    <View>
-                        <Modal
-                            animationType="slide"
-                            transparent={true}
-                            visible={otpModal}
-                            onRequestClose={() => {
-                                setOtpModal(!otpModal);
-                            }}>
-                            <BottomModelView onclick={() => setOtpModal(false)}>
-                                <View style={{
-                                    marginHorizontal: wp(5),
-                                    marginVertical: hp(2)
-                                }}>
-                                    <Pressable
-                                        onPress={() => setMobileNumberModal(false)}
-                                        style={{
-                                            backgroundColor: '#EEEEEE80',
-                                            borderRadius: 20,
-                                            width: 35,
-                                            height: 35,
-                                            justifyContent: 'center',
-                                            alignItems: 'center'
-                                        }}>
-                                        <Image
-                                            source={require('../assets/close.png')}
-                                            style={{
-                                                height: 15,
-                                                width: 15
-                                            }} />
-                                    </Pressable>
-                                    <Text style={{
-                                        fontSize: 24,
-                                        fontWeight: 'bold',
-                                        marginTop: hp(2),
-
-                                    }}>Enter Otp</Text>
-                                    <Text
-                                        style={{
-                                            fontSize: 17,
-                                            fontWeight: '400',
-                                            color: '#64748B',
-                                            marginTop: hp(1),
-                                            marginBottom: hp(1.5),
-                                            width: wp(80)
-                                        }}
-                                    >We’ve sent an SMS with an activation
-                                        code to your phone
-                                        <Text
-                                            style={{
-                                                color: '#FBC41D',
-                                                fontSize: 16
-                                            }}>  +91 {phoneNumber}</Text>
-                                    </Text>
-                                    <OtpInput
-                                        numberOfDigits={4}
-                                        focusColor="#E8ECF4"
-                                        focusStickBlinkingDuration={500}
-                                        onTextChange={(text) => setOtp(text)}
-                                        onFilled={(text) => console.log(`OTP is ${text}`)}
-                                        textInputProps={{
-                                            accessibilityLabel: "One-Time Password",
-                                        }}
-                                        theme={{
-                                            containerStyle: style.otpContainer,
-                                            pinCodeContainerStyle: style.otp,
-                                            pinCodeTextStyle: style.otpText,
-                                        }}
-                                    />
-                                    <View style={{
-                                        flexDirection: 'row',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        marginVertical: hp(3)
-                                    }}>
-                                        <Text style={{
-                                            fontSize: 16,
-                                            color: '#64748B'
-                                        }}>I didn’t receive a code</Text>
-                                        <Text style={{
-                                            color: '#FBC41D',
-                                            marginHorizontal: wp(2),
-                                            fontSize: 16
-                                        }}>Resend</Text>
-                                    </View>
-                                    <View style={{ marginBottom: hp(2) }}>
-                                        <PrimaryButton
-                                            title='Verify'
-                                            onclick={() => {
-                                                setOtpModal(false)
-                                                handelOTP()
-                                            }}
-                                        />
-                                    </View>
-                                </View>
-                            </BottomModelView>
-                        </Modal>
-                    </View>
-                }
                 {
                     filterModel && <View style={{}}>
                         <Modal
@@ -402,8 +225,8 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                     <FilterButton
                                                         key={index}
                                                         title={e.type}
-                                                        onclick={() => setSelectfilter(e.type)}
-                                                        selected={selectfilter === e.type} />
+                                                        onclick={() => setShortBuy(e.type)}
+                                                        selected={shortBy === e.type} />
                                                 ))
                                             }
                                         </View>
@@ -421,12 +244,13 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                     flexDirection: 'row',
                                                 }}>
                                                 {
-                                                    Brand.map((e: any, index: any) => (
+                                                    carBrand && carBrand.map((e: any, index: any) => (
                                                         <FilterButton
                                                             key={index}
-                                                            title={e.model}
-                                                            onclick={() => setSelectfilter(e.model)}
-                                                            selected={selectfilter === e.model} />
+                                                            title={e.brand}
+                                                            onclick={() => toggleSelection(e.brand)}
+                                                            selected={brand.includes(e.brand)}
+                                                        />
                                                     ))
                                                 }
                                             </View>
@@ -449,8 +273,8 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                         <FilterButton
                                                             key={index}
                                                             title={e.type}
-                                                            onclick={() => setSelectfilter(e.type)}
-                                                            selected={selectfilter === e.type} />
+                                                            onclick={() => toggelFuel(e.type)}
+                                                            selected={fuel.includes(e.type)} />
                                                     ))
                                                 }
                                             </View>
@@ -473,8 +297,8 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                         <FilterButton
                                                             key={index}
                                                             title={e.type}
-                                                            onclick={() => setSelectfilter(e.type)} 
-                                                            selected={selectfilter === e.type}/>
+                                                            onclick={() => toggeltransmission(e.type)}
+                                                            selected={transmission.includes(e.type)} />
                                                     ))
                                                 }
                                             </View>
@@ -497,14 +321,23 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                         <FilterButton
                                                             key={index}
                                                             title={e.type}
-                                                            onclick={() => setSelectfilter(e.type)} 
-                                                            selected={selectfilter === e.type}/>
+                                                            onclick={() => toggelseater(e.value)}
+                                                            selected={seaters.includes(e.value)} />
                                                     ))
                                                 }
                                             </View>
                                         </View>
                                         <View style={{ marginTop: hp(2) }}>
-                                            <PrimaryButton title='Apply filter' />
+                                            <PrimaryButton title='Apply filter'
+                                                onclick={() => {
+                                                    handelCarList(),
+                                                        setFilterModal(false),
+                                                        console.log('datafilter', shortBy,
+                                                            brand,
+                                                            fuel,
+                                                            transmission,
+                                                            seaters)
+                                                }} />
                                         </View>
                                     </ScrollView>
                                 </View>
@@ -557,7 +390,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                     color: '#13131380',
                                     fontSize: 13,
                                     fontWeight: '500'
-                                }}>{carsList && moment(carsList.from_date).format('HH:MM A')}</Text>
+                                }}>{carsList && moment(carsList.from_date).format('h:mm A')}</Text>
                             </View>
                             <Image
                                 source={require('../assets/arrow.png')}
@@ -576,10 +409,9 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                         color: '#13131380',
                                         fontSize: 13,
                                         fontWeight: '500'
-                                    }}>{carsList && moment(carsList.to_date).format('HH:MM A')}</Text>
+                                    }}>{carsList && moment(carsList.to_date).format('h:mm A')}</Text>
                             </View>
                         </View>
-
                     </View>
                     <View style={{
                         backgroundColor: '#ffffff',
@@ -665,143 +497,92 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                         />
                                         <View style={{
                                             position: 'absolute',
-
+                                            marginLeft: 0.5
                                         }}>
-                                            <View style={{
-                                                left: wp(75),
-                                                top: hp(4)
-                                            }}>
-                                                <View />
-                                                {e.favorite_flag == 1
-                                                    ?
-                                                    <Pressable
-                                                        onPress={() => {
-                                                            removeWishlistbutton(e.carid)
-                                                            console.log('flag', e.favorite_flag)
-                                                        }}
+                                            <LinearGradient
+                                                colors={['transparent', '#000000', '#000000']}
+                                                start={{ x: 0, y: 0 }}
+                                                end={{ x: 0, y: 1 }}
+                                                style={{
+                                                    top: hp(23.6),
+                                                    width: wp(89.6),
+                                                    flexDirection: 'row',
+                                                    paddingHorizontal: wp(5),
+                                                    paddingVertical: 2,
+                                                    borderBottomLeftRadius: 20,
+                                                    borderBottomRightRadius: 20,
+                                                }}
+                                            >
+                                                <View>
+                                                    <Text
                                                         style={{
-                                                            justifyContent: 'center',
-                                                            backgroundColor: '#ffffff',
-                                                            alignItems: 'center',
-                                                            height: hp(4),
-                                                            width: hp(4),
-                                                            borderRadius: 20,
-                                                        }}
-                                                    >
-                                                        <Image
-                                                            source={require('../assets/shop.png')}
-                                                            style={BottomTabstyles.nonselectedstyle}
-                                                            tintColor='red'
-                                                        />
-                                                    </Pressable> :
-                                                    <Pressable
-                                                        onPress={() => {
-                                                            handelWishlist(e.carid)
-                                                            console.log('flag', e.favorite_flag)
-                                                        }}
-                                                        style={{
-                                                            justifyContent: 'center',
-                                                            backgroundColor: '#ffffff',
-                                                            alignItems: 'center',
-                                                            height: hp(4),
-                                                            width: hp(4),
-                                                            borderRadius: 20,
-                                                        }}
-                                                    >
-                                                        <Image
-                                                            source={require('../assets/shop1.png')}
-                                                            style={BottomTabstyles.nonselectedstyle}
-                                                        />
-                                                    </Pressable>}
-                                            </View>
-                                            <View style={{
+                                                            color: '#FBC41D',
+                                                            fontSize: 24,
+                                                            fontWeight: 'bold',
 
-                                                justifyContent: 'flex-end'
-                                            }}>
-                                                <LinearGradient
-                                                    colors={['transparent', '#000000', '#000000']}
-                                                    start={{ x: 0, y: 0 }}
-                                                    end={{ x: 0, y: 1 }}
+                                                        }}
+
+                                                    >
+                                                        ₹{e.total_price}
+                                                    </Text>
+                                                    <Text
+                                                        style={{
+                                                            color: '#FFFFFF',
+                                                            fontSize: 18,
+                                                        }}
+                                                    >
+                                                        ₹{e.price}
+                                                    </Text>
+                                                </View>
+
+                                                <View
                                                     style={{
-                                                        top: hp(19.5),
-                                                        width: wp(89.5),
+                                                        borderWidth: 0.2,
+                                                        borderColor: '#666666',
+                                                        backgroundColor: '#666666',
+                                                        marginHorizontal: wp(5),
+                                                    }}
+                                                />
+
+                                                <View
+                                                    style={{
                                                         flexDirection: 'row',
-                                                        paddingHorizontal: wp(5),
-                                                        paddingVertical: 2,
-                                                        borderBottomLeftRadius: 20,
-                                                        borderBottomRightRadius: 20,
+                                                        flexWrap: 'wrap',
                                                     }}
                                                 >
-                                                    <View>
-                                                        <Text
+                                                    {e.features.map((item: any, index: any) => (
+                                                        <View
+                                                            key={index}
                                                             style={{
-                                                                color: '#FBC41D',
-                                                                fontSize: 24,
-                                                                fontWeight: 'bold',
-
-                                                            }}
-
-                                                        >
-                                                            ₹{e.total_price}
-                                                        </Text>
-                                                        <Text
-                                                            style={{
-                                                                color: '#FFFFFF',
-                                                                fontSize: 18,
+                                                                marginHorizontal: wp(1),
+                                                                alignItems: 'center',
                                                             }}
                                                         >
-                                                            ₹{e.price}
-                                                        </Text>
-                                                    </View>
-
-                                                    <View
-                                                        style={{
-                                                            borderWidth: 0.2,
-                                                            borderColor: '#666666',
-                                                            backgroundColor: '#666666',
-                                                            marginHorizontal: wp(5),
-                                                        }}
-                                                    />
-
-                                                    <View
-                                                        style={{
-                                                            flexDirection: 'row',
-                                                            flexWrap: 'wrap',
-                                                        }}
-                                                    >
-                                                        {e.features.map((item: any, index: any) => (
-                                                            <View
-                                                                key={index}
+                                                            <Image
+                                                                source={{ uri: item.icon }}
                                                                 style={{
-                                                                    marginHorizontal: wp(1),
-                                                                    alignItems: 'center',
+                                                                    height: 20,
+                                                                    width: 20,
+                                                                    tintColor: '#ffffff',
+                                                                }}
+                                                            />
+                                                            <Text
+                                                                style={{
+                                                                    fontSize: 13,
+                                                                    fontWeight: '500',
+                                                                    color: '#ffffff',
+                                                                    top: hp(1.5),
                                                                 }}
                                                             >
-                                                                <Image
-                                                                    source={{ uri: item.icon }}
-                                                                    style={{
-                                                                        height: 20,
-                                                                        width: 20,
-                                                                        tintColor: '#ffffff',
-                                                                    }}
-                                                                />
-                                                                <Text
-                                                                    style={{
-                                                                        fontSize: 13,
-                                                                        fontWeight: '500',
-                                                                        color: '#ffffff',
-                                                                        top: hp(1.5),
-                                                                    }}
-                                                                >
-                                                                    {item.name}
-                                                                </Text>
-                                                            </View>
-                                                        ))}
-                                                    </View>
-                                                </LinearGradient>
-                                            </View>
+                                                                {item.name}
+                                                            </Text>
+                                                        </View>
+                                                    ))}
+                                                </View>
+                                            </LinearGradient>
+
                                         </View>
-                                        <View style={{ marginHorizontal: wp(2), }}>
+                                        <View style={{ marginHorizontal: wp(2),marginTop:hp(1) }}>
                                             <View style={{
                                                 flexDirection: 'row',
                                                 justifyContent: 'space-between',

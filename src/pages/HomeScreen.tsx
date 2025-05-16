@@ -72,9 +72,9 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
         const pickupDay = new Date(pickupDate.getFullYear(), pickupDate.getMonth(), pickupDate.getDate());
         const dropDay = new Date(dropDate.getFullYear(), dropDate.getMonth(), dropDate.getDate());
         const picktime = new Date(pickupTime.getHours())
-        const droptime = new Date(dropTime.getHours())
+        const dropedtime = new Date(dropTime.getHours())
         if (cityname && cityname.cityId != '') {
-            if (dropDay >= pickupDay || picktime < droptime) {
+            if (dropDay >= pickupDay && pickupTime.getTime() != dropTime.getTime()) {
                 props.navigation.navigate('SelectVehicleScreen', {
                     lat: latitude,
                     long: longitude,
@@ -88,7 +88,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                     `${moment(pickupDate).format('DD-MM-YYYY')} ${moment(pickupTime).format('HH:mm')}`,
                     `${moment(dropDate).format('DD-MM-YYYY')} ${moment(dropTime).format('HH:mm')}`);
             } else {
-                Alert.alert('Alert', 'Drop date must be after the Pickup date');
+                Alert.alert('Alert', 'Please Select Pick Date and Time');
             }
         } else {
             Alert.alert('Alert', 'Alert Select the City')
@@ -241,6 +241,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                         setOpen(false);
                                         if (dateType === 'pickup') {
                                             setPickupTime(selectedtime);
+                                            setDropTime(new Date(selectedtime.getTime() + 3 * 60 * 60 * 1000))
                                         } else if (dateType === 'drop') {
                                             setDropTime(selectedtime);
                                         }

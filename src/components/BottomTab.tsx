@@ -47,18 +47,18 @@ const BottomTabNavigation: React.FC<Componentprops> = (props) => {
                 }
             </Pressable>
             <Pressable
-                onPress={() => props.navigation.navigate('FavoritesScreen')}
+                onPress={() => props.navigation.navigate('RentalsScreen')}
                 style={{ alignItems: 'center' }}>
                 <View style={{ alignItems: 'center', }}>
                     <Image source={props.step == 2 ?
-                        require('../assets/shop.png') :
-                        require('../assets/shop1.png')}
+                        require('../assets/calendar-add.png') :
+                        require('../assets/calendar-add(1).png')}
                         style={props.step == 2 ?
                             BottomTabstyles.selectedstyle :
                             BottomTabstyles.nonselectedstyle} />
                     <Text style={props.step == 2 ?
                         BottomTabstyles.selectedtextStyle :
-                        BottomTabstyles.nonselectedtextstyle}>Favorites</Text>
+                        BottomTabstyles.nonselectedtextstyle}>Rentals</Text>
                 </View>
                 {
                     props.step == 2 ?
@@ -70,18 +70,18 @@ const BottomTabNavigation: React.FC<Componentprops> = (props) => {
                 }
             </Pressable>
             <Pressable
-                onPress={() => props.navigation.navigate('RentalsScreen')}
+                onPress={() => props.navigation.navigate('ProfileScreen')}
                 style={{ alignItems: 'center' }}>
                 <View style={{ alignItems: 'center', }}>
                     <Image source={props.step == 3 ?
-                        require('../assets/calendar-add.png') :
-                        require('../assets/calendar-add(1).png')}
+                        require('../assets/frame.png') :
+                        require('../assets/frame1.png')}
                         style={props.step == 3 ?
                             BottomTabstyles.selectedstyle :
                             BottomTabstyles.nonselectedstyle} />
                     <Text style={props.step == 3 ?
                         BottomTabstyles.selectedtextStyle :
-                        BottomTabstyles.nonselectedtextstyle}>Rentals</Text>
+                        BottomTabstyles.nonselectedtextstyle}>profile</Text>
                 </View>
                 {
                     props.step == 3 ?
@@ -92,19 +92,19 @@ const BottomTabNavigation: React.FC<Componentprops> = (props) => {
                         : <></>
                 }
             </Pressable>
-            <Pressable 
-            onPress={()=>props.navigation.navigate('ProfileScreen')}
-             style={{ alignItems: 'center' }}>
+            <Pressable
+                onPress={() => props.navigation.navigate('HostScreen')}
+                style={{ alignItems: 'center' }}>
                 <View style={{ alignItems: 'center', }}>
                     <Image source={props.step == 4 ?
-                        require('../assets/frame.png') :
-                        require('../assets/frame1.png')}
+                        require('../assets/gift.png') :
+                        require('../assets/gift.png')}
                         style={props.step == 4 ?
-                            BottomTabstyles.selectedstyle :
-                            BottomTabstyles.nonselectedstyle} />
+                            [BottomTabstyles.selectedstyle, { tintColor: '#FBC41D' }] :
+                            [BottomTabstyles.nonselectedstyle, { tintColor: '#64748B' }]} />
                     <Text style={props.step == 4 ?
                         BottomTabstyles.selectedtextStyle :
-                        BottomTabstyles.nonselectedtextstyle}>profile</Text>
+                        BottomTabstyles.nonselectedtextstyle}>Host</Text>
                 </View>
                 {
                     props.step == 4 ?

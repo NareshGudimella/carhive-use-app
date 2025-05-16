@@ -19,7 +19,6 @@ class Componentprops extends Baseprops { }
 const FavoritesScreen: React.FC<Componentprops> = (props) => {
     const [favoriteList, setFavoriteList] = useState<any>([])
     const [searchData, setSearchData] = useState<any>('')
-    const [date, setDate] = useState(new Date())
     const [open, setOpen] = useState(false)
     const [pickupTime, setPickupTime] = useState(new Date());
     const [dropTime, setDropTime] = useState(new Date())
@@ -86,6 +85,7 @@ const FavoritesScreen: React.FC<Componentprops> = (props) => {
                                 setOpen(false);
                                 if (dateType === 'pickup') {
                                     setPickupTime(selectedDate);
+                                    setDropTime(new Date(selectedDate.getTime() + 3 * 60 * 60 * 1000))
                                 } else if (dateType === 'drop') {
                                     setDropTime(selectedDate);
                                 }
@@ -118,7 +118,7 @@ const FavoritesScreen: React.FC<Componentprops> = (props) => {
                                 color: '#13131380',
                                 fontSize: 13,
                                 fontWeight: '500'
-                            }}>{moment(pickupTime).format('HH:MM A')}</Text>
+                            }}>{moment(pickupTime).format('h:mm A')}</Text>
                         </Pressable>
                         <Image
                             source={require('../assets/arrow.png')}
@@ -139,7 +139,7 @@ const FavoritesScreen: React.FC<Componentprops> = (props) => {
                                     color: '#13131380',
                                     fontSize: 13,
                                     fontWeight: '500'
-                                }}>{moment(dropTime).format('HH:MM A')}</Text>
+                                }}>{moment(dropTime).format('h:mm A')}</Text>
                         </Pressable>
                     </View>
 
@@ -161,6 +161,8 @@ const FavoritesScreen: React.FC<Componentprops> = (props) => {
                 <TextInput
                     placeholder="Search by Vehicle..."
                     placeholderTextColor='#64748B'
+                    onChangeText={setSearchData}
+                    value={searchData}
                     style={{
                         fontSize: 15,
                         fontWeight: '500',
@@ -176,91 +178,92 @@ const FavoritesScreen: React.FC<Componentprops> = (props) => {
                     marginVertical: hp(1)
                 }}>
                 {
-                    favoriteList && favoriteList.map((e: any, index: any) => (
-                        <Pressable
+                    favoriteList && favoriteList.filter((e1: any) => searchData.trim() === ''
+                        || e1.brand?.toLowerCase().includes(searchData.toLowerCase())).map((e: any, index: any) => (
+                            <Pressable
 
-                            key={index}
-                            style={{ marginVertical: hp(1) }}>
-                            <Cardview>
-                                <View style={{ padding: hp(2) }}>
-                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                key={index}
+                                style={{ marginVertical: hp(1) }}>
+                                <Cardview>
+                                    <View style={{ padding: hp(2) }}>
+                                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                            <View style={{
+                                                flexDirection: 'row',
+                                                alignItems: 'center'
+                                            }}>
+                                                <Image
+                                                    source={{ uri: e.image_path }}
+                                                    style={{
+                                                        height: 70,
+                                                        width: 85,
+                                                        borderRadius: 10
+                                                    }} />
+                                                <Text
+                                                    style={{
+                                                        fontSize: 17,
+                                                        fontWeight: 'bold',
+                                                        marginHorizontal: wp(3)
+                                                    }}>{e.brand} {e.model}</Text>
+                                            </View>
+                                            <Pressable
+                                                onPress={() => removeWishlistbutton(e.carid)}
+                                                style={{
+                                                    backgroundColor: '#0000000A',
+                                                    height: hp(4),
+                                                    width: hp(4),
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+                                                    borderRadius: 20
+                                                }}>
+                                                <Image
+                                                    source={require('../assets/shop.png')}
+                                                    style={{
+                                                        height: 20,
+                                                        width: 20,
+                                                        tintColor: '#FF0000'
+                                                    }} />
+                                            </Pressable>
+                                        </View>
                                         <View style={{
                                             flexDirection: 'row',
-                                            alignItems: 'center'
+                                            alignItems: 'center',
+                                            marginVertical: wp(1)
                                         }}>
-                                            <Image
-                                                source={{ uri: e.image_path }}
-                                                style={{
-                                                    height: 70,
-                                                    width: 85,
-                                                    borderRadius: 10
-                                                }} />
                                             <Text
-                                                style={{
-                                                    fontSize: 17,
-                                                    fontWeight: 'bold',
-                                                    marginHorizontal: wp(3)
-                                                }}>{e.brand} {e.model}</Text>
-                                        </View>
-                                        <Pressable
-                                            onPress={() => removeWishlistbutton(e.carid)}
-                                            style={{
-                                                backgroundColor: '#0000000A',
-                                                height: hp(4),
-                                                width: hp(4),
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                                borderRadius: 20
-                                            }}>
-                                            <Image
-                                                source={require('../assets/shop.png')}
-                                                style={{
-                                                    height: 20,
-                                                    width: 20,
-                                                    tintColor: '#FF0000'
-                                                }} />
-                                        </Pressable>
-                                    </View>
-                                    <View style={{
-                                        flexDirection: 'row',
-                                        alignItems: 'center',
-                                        marginVertical: wp(1)
-                                    }}>
-                                        <Text
-                                            style={{
-                                                fontSize: 15,
-                                                fontWeight: '500',
-                                                color: '#666666',
-                                            }}>
-                                            {e.car_rating}
-                                        </Text>
-                                        <Rating
-                                            readonly
-                                            startingValue={e.car_rating}
-                                            imageSize={12}
-                                            ratingCount={5}
-                                            fractions={1}
-                                            style={{ marginLeft: 8 }}
-                                        />
-                                        <Text>
-                                            - <Text style={{
-                                                fontSize: 15,
-                                                fontWeight: '500',
-                                                color: '#666666'
-                                            }}>{e.make_year}
-                                            </Text> - <Text
                                                 style={{
                                                     fontSize: 15,
                                                     fontWeight: '500',
-                                                    color: '#666666'
-                                                }}>{e.car_seating} seats - {e.car_transmission}
+                                                    color: '#666666',
+                                                }}>
+                                                {e.car_rating}
                                             </Text>
-                                        </Text>
+                                            <Rating
+                                                readonly
+                                                startingValue={e.car_rating}
+                                                imageSize={12}
+                                                ratingCount={5}
+                                                fractions={1}
+                                                style={{ marginLeft: 8 }}
+                                            />
+                                            <Text>
+                                                - <Text style={{
+                                                    fontSize: 15,
+                                                    fontWeight: '500',
+                                                    color: '#666666'
+                                                }}>{e.make_year}
+                                                </Text> - <Text
+                                                    style={{
+                                                        fontSize: 15,
+                                                        fontWeight: '500',
+                                                        color: '#666666'
+                                                    }}>{e.car_seating} seats - {e.car_transmission}
+                                                </Text>
+                                            </Text>
+                                        </View>
                                     </View>
-                                </View>
-                            </Cardview>
-                        </Pressable>
-                    ))
+                                </Cardview>
+                            </Pressable>
+                        ))
                 }
             </ScrollView>
             <BottomTabNavigation step={2} navigation={props.navigation} />

@@ -13,12 +13,11 @@ import Textinput from "../components/TextInput";
 import { OtpInput } from "react-native-otp-entry";
 import { style } from "../styles/OtpStyle";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { carDetails, excuteGetResponse, excuteResponse, Login, LoginCarDetails, Otp, removeWishlist, wishlist } from "../apis/api";
+import { carDetails, excuteGetResponse, Login, Otp, } from "../apis/api";
 import { getToken, setToken } from "../storage/AsyncStorage";
 import { useFocusEffect } from "@react-navigation/native";
 import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
-import { useDispatch } from "react-redux";
-import { updateProfile } from "../storage/redux";
+
 
 class Componentprops extends Baseprops { }
 
@@ -109,53 +108,20 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
         }
     }
     const handelVicheDetails = async (carid: any) => {
-        const token = await getToken()
-        console.log('Vechilelist token', token)
-        if (token && token != '') {
-            const response2 = await LoginCarDetails(carid,
-                props.route.params.fromdate,
-                props.route.params.todate)
-            console.log('LoginCardetails', response2)
-            if (response2.code == 0) {
-                setCarData(response2.data)
-            } else {
-                Alert.alert('Alert', 'Unable to get Login Car Details')
-            }
-        } else {
-            const response1 = await carDetails(carid,
-                props.route.params.fromdate,
-                props.route.params.todate
-            );
-            console.log('CarDetails', response1)
-            if (response1.code == 0) {
-                setCarData(response1.data)
-                console.log('hello', carData)
-            } else {
-                Alert.alert('Alert', 'Unable to get Vechile details')
-            }
 
+        const response1 = await carDetails(carid,
+            props.route.params.fromdate,
+            props.route.params.todate
+        );
+        console.log('CarDetails', response1)
+        if (response1.code == 0) {
+            setCarData(response1.data)
+        } else {
+            Alert.alert('Alert', 'Unable to get Vechile details')
         }
 
     }
-    const handelWishlist = async (carId: any) => {
-        const response = await wishlist(carId)
-        console.log('fav', response)
-        if (response.code == 0) {
-            handelVicheDetails(props.route.params?.id)
-        } else {
-            Alert.alert('Alert', 'unable to get wishlist details')
-        }
-    }
-    const removeWishlistbutton = async (carId: any) => {
-        const response = await removeWishlist(carId)
-        console.log('remove', response)
-        if (response.code == 0) {
-            handelVicheDetails(props.route.params?.id)
-        } else {
-            Alert.alert('Alert', 'unable to get remove wishlist details')
-        }
 
-    }
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <View>
@@ -346,7 +312,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                     </View>
                 }
             </View>
-            <View style={{ flex: 1 }}>
+            <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
                 <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                     {carData && <Carousel
                         autoPlay={false}
@@ -399,52 +365,9 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                             }}
                         >Vehicle details</Text>
                     </View>
-                    <View>
-                        {carData && carData.favorite_flag == 1
-                            ?
-                            <Pressable
-                                onPress={() => {
-                                    removeWishlistbutton(carData.carid)
-                                    console.log('flag', carData.favorite_flag)
-                                }}
-                                style={{
-                                    justifyContent: 'center',
-                                    backgroundColor: '#ffffff',
-                                    alignItems: 'center',
-                                    height: hp(4),
-                                    width: hp(4),
-                                    borderRadius: 20,
-                                }}
-                            >
-                                <Image
-                                    source={require('../assets/shop.png')}
-                                    style={BottomTabstyles.nonselectedstyle}
-                                    tintColor='red'
-                                />
-                            </Pressable> :
-                            <Pressable
-                                onPress={() => {
-                                    handelWishlist(carData.carid)
-                                    console.log('flag', carData.favorite_flag)
-                                }}
-                                style={{
-                                    justifyContent: 'center',
-                                    backgroundColor: '#ffffff',
-                                    alignItems: 'center',
-                                    height: hp(4),
-                                    width: hp(4),
-                                    borderRadius: 20,
-                                }}
-                            >
-                                <Image
-                                    source={require('../assets/shop1.png')}
-                                    style={BottomTabstyles.nonselectedstyle}
-                                />
-                            </Pressable>}
-                    </View>
                 </View>
-                <ScrollView
-                    showsVerticalScrollIndicator={false}
+                <View
+
                     style={{
                         flex: 1,
                         marginHorizontal: wp(5),
@@ -751,8 +674,8 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                             </View>
                         </Cardview>
                     </View>
-                </ScrollView>
-            </View>
+                </View>
+            </ScrollView>
         </SafeAreaView>
     )
 }

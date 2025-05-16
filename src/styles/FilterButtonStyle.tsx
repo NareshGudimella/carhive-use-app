@@ -20,7 +20,7 @@ export const FilterButtonStyle = StyleSheet.create({
         paddingHorizontal: hp(2),
         marginRight: wp(2),
         marginTop: hp(1),
-        borderColor: '#FBC41D'
+        borderColor: '#ffffff'
     },
     onselectbutton: {
         borderWidth: 1,
@@ -37,7 +37,7 @@ export const FilterButtonStyle = StyleSheet.create({
         fontWeight: '500',
         color: '#64748B'
     },
-    onselecttext:{
+    onselecttext: {
         fontSize: 14,
         fontWeight: '500',
         color: '#ffffff'

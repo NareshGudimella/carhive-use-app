@@ -348,7 +348,7 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                     </View>
                 </View>
             </ScrollView>
-            <BottomTabNavigation step={4} navigation={props.navigation} />
+            <BottomTabNavigation step={3} navigation={props.navigation} />
         </SafeAreaView>
     )
 }
