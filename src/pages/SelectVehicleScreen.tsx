@@ -79,6 +79,8 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
             carsModalList()
         }, [])
     )
+
+    {/* Car List api */ }
     const handelCarList = async () => {
         const response = await CarsList(
             props.route.params.pickdate,
@@ -108,39 +110,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
             return
         }
     }
-    const handelLogin = async () => {
-        if (phoneNumber.trim().length == 0 &&
-            phoneNumber.trim().length != 10) {
-            Alert.alert('Alert', 'Invalid mobile number')
-            return
-        }
-        const response = await Login(phoneNumber)
-        console.log('Login', response)
-        if (response.code == 0) {
-            setOtpModal(true)
-        } else {
-            Alert.alert('Alert', 'Unable to get details of Login')
-        }
-    }
-
-    const handelOTP = async () => {
-        if (!otp || otp.length !== 4) {
-            Alert.alert('Alert!', 'Enter a valid 4-digit OTP.');
-            return;
-        }
-        const response = await Otp(phoneNumber, otp)
-        console.log('otp', response)
-        if (response.code == 0) {
-            setToken(response.data.token)
-            if (response.data.profile_flag == 0) {
-                console.log('yes', response.data.profile_flag)
-                props.navigation.navigate('SignupScreen')
-                setOtpModal(false)
-            } else if (response.data.profile_flag == 1) {
-                handelCarList()
-            }
-        }
-    }
+    {/* Car model List */ }
     const carsModalList = async () => {
         const response = await excuteGetResponse(`secure/cars/brands`)
         console.log('brand', response)
@@ -148,6 +118,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
             setCarBrand(response.data)
         }
     }
+    {/* Toggel elements */ }
     const toggleSelection = (item: any) => {
         if (brand.includes(item)) {
             setBrand((prev: any[]) => prev.filter(i => i !== item));
@@ -180,6 +151,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
             <SafeAreaView style={{ flex: 1 }}>
+                {/* */}
                 {
                     filterModel && <View style={{}}>
                         <Modal
@@ -203,6 +175,15 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                 fontSize: 20,
                                                 fontWeight: 'bold'
                                             }}>Filter</Text>
+                                        <Pressable onPress={() => setFilterModal(false)}>
+                                            <Image
+                                                style={{
+                                                    height: 25,
+                                                    width: 25,
+                                                    tintColor: '#FBC41D'
+                                                }}
+                                                source={require('../assets/close.png')} />
+                                        </Pressable>
                                     </View>
                                     <View style={{
                                         borderWidth: 0.5,
@@ -470,6 +451,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                     includes(search.toLowerCase())).
                                 map((e: any, index: any) => (
                                     <Pressable
+                                        style={{ marginTop: hp(2) }}
                                         onPress={() =>
                                             props.navigation.navigate('VehicleDetailsScreen',
                                                 { fromdate: carsList.from_date, todate: carsList.to_date, id: e.carid })}
@@ -477,7 +459,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                         <Carousel
                                             ref={ref}
                                             width={wp(90)}
-                                            style={{ marginTop: hp(2) }}
+                                            style={{}}
                                             height={hp(28)}
                                             data={e.images}
                                             renderItem={({ item }: { item: any }) => (
@@ -497,18 +479,18 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                         />
                                         <View style={{
                                             position: 'absolute',
-                                            marginLeft: 0.5
+                                            marginLeft: 0.5,
+                                            height: hp(28),
+                                            justifyContent: 'flex-end'
                                         }}>
                                             <LinearGradient
                                                 colors={['transparent', '#000000', '#000000']}
                                                 start={{ x: 0, y: 0 }}
                                                 end={{ x: 0, y: 1 }}
                                                 style={{
-                                                    top: hp(23.6),
                                                     width: wp(89.6),
                                                     flexDirection: 'row',
                                                     paddingHorizontal: wp(5),
-                                                    paddingVertical: 2,
                                                     borderBottomLeftRadius: 20,
                                                     borderBottomRightRadius: 20,
                                                 }}
@@ -582,7 +564,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                             </LinearGradient>
 
                                         </View>
-                                        <View style={{ marginHorizontal: wp(2),marginTop:hp(1) }}>
+                                        <View style={{ marginHorizontal: wp(2), marginTop: hp(1) }}>
                                             <View style={{
                                                 flexDirection: 'row',
                                                 justifyContent: 'space-between',

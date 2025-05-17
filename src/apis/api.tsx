@@ -118,9 +118,9 @@ export const SignUp = async (name: any, email: any, gender: any, dob: any) => {
     return excuteResponse(`secure/signup`, { name, email, gender, dob })
 }
 export const summery = async (carid: any, from_date: any, to_date: any,
-    latitude: any, longitude: any) => {
+    latitude: any, longitude: any,ofercode:any) => {
     return excuteResponse(`secure/cars/details/${carid}`,
-        { from_date, to_date, latitude, longitude })
+        { from_date, to_date, latitude, longitude,ofercode})
 }
 export const UpdateProfile = async (name: any, email: any, gender: any, dob: any,
     aadhar_front_image: any, aadhar_back_image: any,

@@ -385,7 +385,7 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                         fontWeight: 'bold',
                                         fontSize: 15,
                                         color: '#FF0000'
-                                    }}>-₹ 100</Text>
+                                    }}>-₹ {orderDetails && orderDetails.offer_price}</Text>
                                 </View>
                                 <View style={{
                                     borderWidth: 0.4,
@@ -431,7 +431,7 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                                         height: hp(7),
                                                         width: 2,
                                                         backgroundColor:
-                                                        orderDetails.timeline[index + 1]?.active_flag === 1 ? '#FBC41D' : '#CBCBCB',
+                                                            orderDetails.timeline[index + 1]?.active_flag === 1 ? '#FBC41D' : '#CBCBCB',
                                                     }}
                                                 />
                                             )}

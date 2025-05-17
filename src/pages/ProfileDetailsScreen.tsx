@@ -62,11 +62,29 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
         }
     }
     const handelUpdateProfile = async () => {
-        const response = await UpdateProfile(userName, userEmail, gender, date,
-            aadharfront, aadharback, licensefront, licenseback)
-        console.log('updateprofile', response)
+
+        const response = await UpdateProfile(
+            userName != '' ? userName : profilDetails.name,
+            userEmail != '' ? userEmail : profilDetails.email,
+            gender != null ? gender : profilDetails.gender,
+            date !== null ? date : new Date(profilDetails.dob),
+            aadharfront != null ? aadharfront : profilDetails.documents.aadhar_front,
+            aadharback != null ? aadharback : profilDetails.documents.aadhar_back,
+            licensefront != null ? licensefront : profilDetails.documents.license_front,
+            licenseback != null ? licenseback : profilDetails.documents.license_back)
+        console.log('updateprofile', response,
+            userName != '' ? userName : profilDetails.name,
+            userEmail != '' ? userEmail : profilDetails.email,
+            gender != null ? gender : profilDetails.gender,
+            date !== null ? date : new Date(profilDetails.dob),
+            aadharfront != null ? aadharfront : profilDetails.documents.aadhar_front,
+            aadharback != null ? aadharback : profilDetails.documents.aadhar_back,
+            licensefront != null ? licensefront : profilDetails.documents.license_front,
+            licenseback != null ? licenseback : profilDetails.documents.license_back
+        )
         if (response.code == 0) {
             dispatch(updateProfile(response.data));
+
         } else {
             Alert.alert('Alert', 'unable to get update the data')
         }
@@ -292,10 +310,15 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                     }}>
                                         <Cardview>
                                             {aadharfront ?
-                                                <View style={{
-                                                    justifyContent: 'center', alignItems: 'center',
-                                                    paddingVertical: hp(2)
-                                                }}>
+                                                <Pressable
+                                                    onPress={() => {
+                                                        setTargetType('aadharfront');
+                                                        SetCaremaModal(true);
+                                                    }}
+                                                    style={{
+                                                        justifyContent: 'center', alignItems: 'center',
+                                                        paddingVertical: hp(2)
+                                                    }}>
                                                     <Image
                                                         source={{ uri: aadharfront?.uri }}
                                                         style={{
@@ -305,7 +328,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                                             borderRadius: 10
                                                         }}
                                                     />
-                                                </View>
+                                                </Pressable>
                                                 :
 
                                                 <CameraView
@@ -327,10 +350,15 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                     }}>
                                         <Cardview>
                                             {aadharback ?
-                                                <View style={{
-                                                    justifyContent: 'center', alignItems: 'center',
-                                                    paddingVertical: hp(2)
-                                                }}>
+                                                <Pressable
+                                                    onPress={() => {
+                                                        setTargetType('aadharback');
+                                                        SetCaremaModal(true);
+                                                    }}
+                                                    style={{
+                                                        justifyContent: 'center', alignItems: 'center',
+                                                        paddingVertical: hp(2)
+                                                    }}>
                                                     <Image
                                                         source={{ uri: aadharback?.uri }}
                                                         style={{
@@ -340,7 +368,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                                             borderRadius: 10
                                                         }}
                                                     />
-                                                </View>
+                                                </Pressable>
                                                 :
                                                 <CameraView
                                                     image={profilDetails &&
@@ -372,10 +400,15 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                     <View style={{ width: wp(38) }}>
                                         <Cardview>
                                             {licensefront ?
-                                                <View style={{
-                                                    justifyContent: 'center', alignItems: 'center',
-                                                    paddingVertical: hp(2)
-                                                }}>
+                                                <Pressable
+                                                    onPress={() => {
+                                                        SetCaremaModal(true);
+                                                        setTargetType('licensefront')
+                                                    }}
+                                                    style={{
+                                                        justifyContent: 'center', alignItems: 'center',
+                                                        paddingVertical: hp(2)
+                                                    }}>
                                                     <Image
                                                         source={{ uri: licensefront?.uri }}
                                                         style={{
@@ -385,7 +418,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                                             borderRadius: 10
                                                         }}
                                                     />
-                                                </View>
+                                                </Pressable>
                                                 :
                                                 <CameraView
                                                     image={
@@ -404,7 +437,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                     <View style={{ width: wp(38) }}>
                                         <Cardview>
                                             {licenseback ?
-                                                <View style={{
+                                                <Pressable style={{
                                                     justifyContent: 'center', alignItems: 'center',
                                                     paddingVertical: hp(2)
                                                 }}>
@@ -417,7 +450,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                                             borderRadius: 10
                                                         }}
                                                     />
-                                                </View>
+                                                </Pressable>
                                                 :
                                                 <CameraView
                                                     image={

@@ -586,65 +586,71 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                             </View>
                         </Cardview>
                     </View>
-                    <View>
-                        <Cardview>
-                            <View style={{
-                                paddingVertical: hp(1),
-                                paddingHorizontal: hp(2)
-                            }}>
-                                <Text style={{
-                                    fontSize: 17,
-                                    fontWeight: 'bold',
-                                    marginBottom: hp(1)
-                                }}>Reviews</Text>
-                                <View style={{
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
 
-                                }}>
-                                    <Image
-                                        source={require('../assets/user.png')}
-                                        style={{
-                                            height: 45,
-                                            width: 45,
-                                            borderRadius: 22
-                                        }}
-                                    />
-                                    <View style={{ marginHorizontal: wp(3) }}>
-                                        <Text style={{
-                                            fontSize: 18,
-                                            fontWeight: 'bold'
-                                        }}>{carData && carData.reviews[0].name}</Text>
-                                        <View style={{
-                                            flexDirection: 'row',
-                                            alignItems: 'center'
-                                        }}>
-                                            <Rating
-                                                readonly
-                                                startingValue={carData && carData.reviews[0].rating}
-                                                imageSize={11}
-                                                ratingCount={5}
-                                                fractions={1}
-                                                style={{ marginLeft: 8 }}
-                                            />
+                    {carData && carData.reviews && carData.reviews.length > 0 && (
+                        <View>
+                            <Cardview>
+                                <Carousel
+                                    autoPlay={false}
+                                    ref={ref}
+                                    width={wp(87)}
+                                    height={hp(21)}
+                                    data={carData.reviews}
+                                    renderItem={({ item }: { item: any }) => (
+                                        <View style={{ paddingVertical: hp(1), marginHorizontal: hp(2), width: wp(87) }}>
                                             <Text style={{
-                                                fontSize: 12,
+                                                fontSize: 17,
+                                                fontWeight: 'bold',
+                                                marginBottom: hp(1)
+                                            }}>Reviews</Text>
+
+                                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                <Image
+                                                    source={require('../assets/user.png')}
+                                                    style={{
+                                                        height: 45,
+                                                        width: 45,
+                                                        borderRadius: 22
+                                                    }}
+                                                />
+                                                <View style={{ marginHorizontal: wp(3) }}>
+                                                    <Text style={{
+                                                        fontSize: 18,
+                                                        fontWeight: 'bold'
+                                                    }}>{item.name}</Text>
+                                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                        <Rating
+                                                            readonly
+                                                            startingValue={item.rating}
+                                                            imageSize={11}
+                                                            ratingCount={5}
+                                                            fractions={1}
+                                                            style={{ marginLeft: 8 }}
+                                                        />
+                                                        <Text style={{
+                                                            fontSize: 12,
+                                                            fontWeight: '500',
+                                                            color: '#8A8A8F',
+                                                            marginHorizontal: wp(2)
+                                                        }}>
+                                                            {item.time || '15 minutes ago'}
+                                                        </Text>
+                                                    </View>
+                                                </View>
+                                            </View>
+
+                                            <Text style={{
                                                 fontWeight: '500',
-                                                color: '#8A8A8F', marginHorizontal: wp(2)
-                                            }}>15 minutes ago</Text>
+                                                marginVertical: hp(2)
+                                            }}>{item.review}</Text>
                                         </View>
-                                    </View>
-                                </View>
-                                <Text style={{
-                                    fontWeight: '500',
-                                    marginVertical: hp(2)
-                                }}>{carData && carData.reviews[0].review}</Text>
-                            </View>
-                        </Cardview>
-                    </View>
+                                    )}
+                                />
+                            </Cardview>
+                        </View>
+                    )}
                     <View style={{
-                        marginTop: hp(5),
-                        marginBottom: hp(4)
+                        marginTop: hp(2),
                     }}>
                         <Cardview>
                             <View style={{

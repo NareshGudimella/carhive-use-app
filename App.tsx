@@ -32,11 +32,11 @@ function RootStack() {
     requestfirebasePermissions()
     Foregroundmessage()
   })
-  
+
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="HomeScreen" component={HomeScreen} />
-      <Stack.Screen name='SelectCityScreen' component={SelectCityScreen} /> 
+      <Stack.Screen name='SelectCityScreen' component={SelectCityScreen} />
       <Stack.Screen name='SelectVehicleScreen' component={SelectVehicleScreen} />
       <Stack.Screen name='VehicleDetailsScreen' component={VehicleDetailsScreen} />
       <Stack.Screen name='SignupScreen' component={SignupScreen} />

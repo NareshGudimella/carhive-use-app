@@ -46,7 +46,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
             VerifyLocationPermission()
         }, [])
     )
-
+    {/* Banner image api */ }
     const handelBannerImage = async () => {
         const response = await excuteGetResponse(`auth/banners`)
         console.log('banner', response)
@@ -59,6 +59,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
             Alert.alert('ALert', 'unable to get banner')
         }
     }
+    {/*pickup date and drop date picker*/ }
     const handelCheckDate = () => {
         if (!pickupDate) {
             Alert.alert('Alert', 'Select the Pickup date');
@@ -74,7 +75,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
         const picktime = new Date(pickupTime.getHours())
         const dropedtime = new Date(dropTime.getHours())
         if (cityname && cityname.cityId != '') {
-            if (dropDay >= pickupDay && pickupTime.getTime() != dropTime.getTime()) {
+            if (dropDay > pickupDay ? dropDay >= pickupDay : pickupTime.getTime() != dropTime.getTime()) {
                 props.navigation.navigate('SelectVehicleScreen', {
                     lat: latitude,
                     long: longitude,
@@ -94,6 +95,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
             Alert.alert('Alert', 'Alert Select the City')
         }
     };
+    {/*location fetching */ }
     const VerifyLocationPermission = async () => {
         if (Platform.OS == 'android') {
             const granted = await
@@ -167,6 +169,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                         flexDirection: 'row',
                         marginVertical: hp(4),
                     }}>
+                        {/*select location */}
                         <Pressable
                             onPress={() => props.navigation.navigate('SelectCityScreen')}
                             style={{
@@ -230,6 +233,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                 color: '#64748B'
                             }}>Your journey awaits, book it right away.</Text>
                         </View>
+                        {/* Date Picker and time picker */}
                         <View>
                             {modeltype == 'Time' ?
                                 <DatePicker
@@ -399,9 +403,11 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                         </Pressable>
                                     </View>
                                 </View>
+                                {/* Primary button for navigation cars list */}
                                 <PrimaryButton title="Search"
                                     onclick={() => handelCheckDate()} />
                             </View>
+                            {/* Banner carousel */}
                         </Cardview>
                         <View>
                             <Carousel
@@ -421,6 +427,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                         </View>
                     </View>
                 </ScrollView>
+                {/* Bottom tab navigation */}
                 <BottomTabNavigation step={1} navigation={props.navigation} />
             </SafeAreaView>
         </GestureHandlerRootView>

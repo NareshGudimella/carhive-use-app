@@ -29,8 +29,20 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
     ];
 
     const handelSignup = async () => {
+        if (userName.trim().length == 0) {
+            Alert.alert('Alert', 'Enter your Name')
+            return
+        }
+        if (userEmail.trim().length == 0) {
+            Alert.alert('Alert', 'Enter your Email')
+            return
+        }
+        if (gender == null) {
+            Alert.alert('Alert', 'Enter your Gender')
+            return
+        }
         const response = await SignUp(userName, userEmail, gender, moment(date).format('YYYY-MM-DD'));
-        console.log('Signupresponse', response,userName, userEmail, gender, moment(date).format('DD-MM-YYYY'));
+        console.log('Signupresponse', response, userName, userEmail, gender, moment(date).format('DD-MM-YYYY'));
         if (response.code == 0) {
             props.navigation.navigate('KycDetailsScreen');
         } else {
@@ -173,7 +185,7 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
                     onConfirm={(selectedDate) => {
                         setOpen(false);
                         setDate(selectedDate);
-                        setIsDateSelected(true); 
+                        setIsDateSelected(true);
                     }}
                     onCancel={() => {
                         setOpen(false);

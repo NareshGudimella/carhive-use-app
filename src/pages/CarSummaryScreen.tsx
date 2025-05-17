@@ -1,4 +1,4 @@
-import { Alert, Image, Modal, Pressable, ScrollView, Text, View } from "react-native";
+import { Alert, Image, Modal, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { hp, wp } from "../utils/ResponsiveScreen";
 import { Cardview } from "../components/Cardview";
@@ -24,10 +24,14 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
     const [terms_condition_flag, setTerms_condition_flag] = useState('')
     const [carDetails, setCarDetails] = useState<any>(null)
     const [ModelcancelData, setModelcancelData] = useState<any>(null)
+    const [couponModalScreen, setCoupanModalScreen] = useState(false)
+    const [cuopon, setCoupons] = useState([])
+    const [couponcode, setCouponcode] = useState<any>('')
     useFocusEffect(
         useCallback(() => {
             console.log('id', (props.route.params && props.route.params.carid))
             handelSummeryScreen(props.route.params && props.route.params.carid)
+            handelCouponCode()
         }, [])
     )
 
@@ -36,7 +40,8 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
             props.route.params.fromDate,
             props.route.params.toDate,
             props.route.params.lat,
-            props.route.params.long
+            props.route.params.long,
+            couponcode != '' ? couponcode : ''
         )
         console.log('Summeryresponse', response)
         if (response.code == 0) {
@@ -47,7 +52,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
     }
     const handelModelData = async () => {
         const response = await excuteGetResponse(`secure/cars/policies/${carDetails.carid}`)
-        console.log('t&c', response)
+        console.log('t&c', response, carDetails.carid)
         if (response.code == 0) {
             setModelcancelData(response.data)
         } else {
@@ -57,11 +62,11 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
     const handelPaymentDetails = async () => {
         const response = await carBookings(terms_condition_flag, eligiabilityflag,
             carDetails.from_date, carDetails.to_date, carDetails.carid,
-            carDetails.coupon, carDetails.trip_charges, carDetails.taxes,
+            couponcode != '' ? couponcode : '', carDetails.trip_charges, carDetails.taxes,
             carDetails.convenience_fee, carDetails.security_deposite,
             carDetails.protection_fee, carDetails.total_price
         )
-        console.log('paymentDetails', response)
+        console.log('paymentDetails', response, couponcode)
         if (response.code == 0) {
             const response1 = await excuteGetResponse(`secure/cars/payment/${response.booking_car_id}`)
             console.log('SuccessPayment', response1)
@@ -72,8 +77,161 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
             Alert.alert('Alert', 'unable to get Booking Payment Details')
         }
     }
+    const handelCouponCode = async () => {
+        const response = await excuteGetResponse(`secure/cars/offers`)
+        console.log('cuoponcodes', response)
+        if (response.code == 0) {
+            setCoupons(response.data)
+        }
+    }
     return (
         <SafeAreaView style={{ flex: 1 }}>
+            {
+                couponModalScreen &&
+                <View>
+                    <Modal
+                        animationType="slide"
+                        transparent={true}
+                        visible={couponModalScreen}
+                        onRequestClose={() => {
+                            setCoupanModalScreen(!couponModalScreen);
+                        }}
+                    >
+
+                        <BottomModelView onclick={() => setCoupanModalScreen(false)}>
+                            <View style={{ margin: wp(5) }}>
+                                <View style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+
+                                }}>
+                                    <Pressable onPress={() => setCoupanModalScreen(false)}>
+                                        <Image source={require('../assets/Back.png')}
+                                            style={{
+                                                height: 30,
+                                                width: 30
+                                            }} />
+                                    </Pressable>
+                                    <Text style={{
+                                        fontSize: 16,
+                                        fontWeight: 'bold',
+                                        marginHorizontal: wp(2.5)
+                                    }}>Coupon Code</Text>
+                                </View>
+                                <View style={{
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-between',
+                                    backgroundColor: '#ffffff',
+                                    elevation: 2,
+                                    borderRadius: 10,
+                                    paddingVertical: wp(1.5),
+                                    paddingHorizontal: wp(1.5),
+                                    marginVertical: hp(2)
+                                }}>
+                                    <TextInput
+                                        style={{
+                                            width: wp(62),
+                                            marginHorizontal: wp(2),
+                                            fontWeight: 'bold'
+                                        }}
+                                        onChangeText={setCouponcode}
+                                        value={couponcode}
+                                        placeholder="Enter Coupon code"
+                                        placeholderTextColor='#757575' />
+                                    <Pressable
+                                        onPress={() => {
+                                            handelSummeryScreen(props.route.params && props.route.params.carid)
+                                            setCoupanModalScreen(false)
+                                        }}
+                                        style={{
+                                            backgroundColor: '#FBC41D',
+                                            paddingVertical: 2,
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            paddingHorizontal: wp(6),
+                                            borderRadius: 10
+
+                                        }}>
+                                        <Text
+                                            style={{
+                                                color: '#ffffff',
+                                                fontSize: 14,
+                                                fontWeight: 'bold'
+                                            }}>Apply</Text>
+                                    </Pressable>
+                                </View>
+                                <Text style={{
+                                    fontSize: 14,
+                                    fontWeight: 'bold'
+                                }}>Available</Text>
+                                <View>
+                                    {cuopon && cuopon.map((e: any, index: any) => (
+                                        <View key={index} style={{ marginVertical: hp(1) }}>
+                                            <Cardview>
+                                                <View style={{
+                                                    marginVertical: hp(1.5),
+                                                    marginHorizontal: wp(3)
+                                                }}>
+                                                    <View style={{
+                                                        flexDirection: 'row',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'space-between'
+                                                    }}>
+                                                        <Text
+                                                            style={{
+                                                                fontSize: 16,
+                                                                fontWeight: 'bold'
+                                                            }}>{e.offercode}</Text>
+                                                        <Pressable
+                                                            onPress={() => {
+                                                                handelSummeryScreen(props.route.params && props.route.params.carid)
+                                                                setCouponcode(e.offercode)
+                                                                setCoupanModalScreen(false)
+                                                            }}
+                                                            style={{
+                                                                backgroundColor: '#FBC41D',
+                                                                paddingVertical: 2,
+                                                                justifyContent: 'center',
+                                                                alignItems: 'center',
+                                                                paddingHorizontal: wp(6),
+                                                                borderRadius: 10,
+                                                                height: hp(3.5)
+
+                                                            }}>
+                                                            <Text
+                                                                style={{
+                                                                    color: '#ffffff',
+                                                                    fontSize: 14,
+                                                                    fontWeight: 'bold'
+                                                                }}>Apply</Text>
+                                                        </Pressable>
+                                                    </View>
+                                                    <View style={{
+                                                        borderWidth: 0.5,
+                                                        borderColor: '#75757533',
+                                                        marginVertical: hp(1),
+                                                        borderStyle: 'dashed'
+                                                    }} />
+                                                    <Text
+                                                        style={{
+                                                            fontSize: 13,
+                                                            fontWeight: '500',
+                                                            color: '#64748B',
+                                                            width: wp(70),
+                                                            marginHorizontal: wp(2)
+                                                        }}
+                                                    >Use code firstride & get 60% off
+                                                        on ride maximum discount you get ₹100</Text>
+                                                </View>
+                                            </Cardview>
+                                        </View>
+                                    ))}
+                                </View>
+                            </View>
+                        </BottomModelView>
+                    </Modal>
+                </View>
+            }
             {
                 termsAndConditions &&
                 <View>
@@ -87,6 +245,24 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                     >
                         <BottomModelView onclick={() => setTermsAndCondition(false)}>
                             <View>
+                                <View style={{
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    top: -30
+                                }}>
+                                    <Pressable onPress={() => setTermsAndCondition(false)} style={{
+                                        position: 'absolute',
+                                        backgroundColor: '#ffffff',
+                                        padding: hp(1),
+                                        borderRadius: 20
+                                    }}>
+                                        <Image source={require('../assets/close.png')}
+                                            style={{
+                                                height: 20,
+                                                width: 20
+                                            }} />
+                                    </Pressable>
+                                </View>
                                 <View style={{
                                     flexDirection: 'row',
                                     justifyContent: 'space-between',
@@ -264,9 +440,28 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                     >
                         <BottomModelView onclick={() => setEligiabilityModal(false)}>
                             <View style={{
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                top: -30
+                            }}>
+                                <Pressable onPress={() => setEligiabilityModal(false)} style={{
+                                    position: 'absolute',
+                                    backgroundColor: '#ffffff',
+                                    padding: hp(1),
+                                    borderRadius: 20
+                                }}>
+                                    <Image source={require('../assets/close.png')}
+                                        style={{
+                                            height: 20,
+                                            width: 20
+                                        }} />
+                                </Pressable>
+                            </View>
+                            <View style={{
                                 marginHorizontal: wp(5),
                                 marginVertical: hp(2)
                             }}>
+
                                 <Text
                                     style={{
                                         fontSize: 16,
@@ -525,56 +720,61 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                             </View>
                         </View>
                     </Cardview>
-                    <Text style={{
-                        fontSize: 16,
-                        fontWeight: 'bold',
-                        marginVertical: hp(1.5)
-                    }}>Host Details</Text>
-                    <Cardview>
-                        <View style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            marginHorizontal: wp(4),
-                            marginVertical: hp(1)
-                        }}>
-                            <Image
-                                source={require('../assets/user.png')}
-                                style={{
-                                    height: 50,
-                                    width: 50
-                                }}
-                            />
-                            <View style={{ marginHorizontal: wp(4) }}>
-                                <Text style={{
-                                    fontSize: 16,
-                                    fontWeight: 'bold'
-                                }}>{carDetails && carDetails.reviews[0].name}</Text>
+                    {carDetails && carDetails.reviews.length > 0 &&
+                        <View>
+                            <Text style={{
+                                fontSize: 16,
+                                fontWeight: 'bold',
+                                marginVertical: hp(1.5)
+                            }}>Host Details</Text>
+                            <Cardview>
                                 <View style={{
                                     flexDirection: 'row',
-                                    alignItems: 'center'
+                                    alignItems: 'center',
+                                    marginHorizontal: wp(4),
+                                    marginVertical: hp(1)
                                 }}>
-                                    <Text>{carDetails && carDetails.reviews[0].rating}</Text>
-                                    <Rating
-                                        readonly
-                                        startingValue={carDetails && carDetails.reviews[0].rating}
-                                        imageSize={10}
-                                        ratingCount={5}
-                                        fractions={1}
-                                        style={{ marginLeft: 8 }}
+                                    <Image
+                                        source={require('../assets/user.png')}
+                                        style={{
+                                            height: 50,
+                                            width: 50
+                                        }}
                                     />
+                                    <View style={{ marginHorizontal: wp(4) }}>
+                                        <Text style={{
+                                            fontSize: 16,
+                                            fontWeight: 'bold'
+                                        }}>{carDetails && carDetails.reviews.length > 0 && carDetails.reviews[0].name}</Text>
+                                        <View style={{
+                                            flexDirection: 'row',
+                                            alignItems: 'center'
+                                        }}>
+                                            <Text>{carDetails && carDetails.reviews.length > 0 && carDetails.reviews[0].rating}</Text>
+                                            <Rating
+                                                readonly
+                                                startingValue={carDetails && carDetails.reviews.length > 0 && carDetails.reviews[0].rating}
+                                                imageSize={10}
+                                                ratingCount={5}
+                                                fractions={1}
+                                                style={{ marginLeft: 8 }}
+                                            />
+                                        </View>
+                                    </View>
                                 </View>
-                            </View>
-                        </View>
-                    </Cardview>
+                            </Cardview>
+                        </View>}
                     <View style={{ marginVertical: hp(2) }}>
-                        <Cardview>
-                            <View style={{
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                                marginHorizontal: wp(4),
-                                marginVertical: hp(1)
-                            }}>
+                        <Cardview >
+                            <Pressable
+                                onPress={() => setCoupanModalScreen(true)}
+                                style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    marginHorizontal: wp(4),
+                                    marginVertical: hp(1)
+                                }}>
                                 <View style={{
                                     flexDirection: 'row',
                                     alignItems: 'center'
@@ -585,10 +785,16 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                             height: 40,
                                             width: 40
                                         }} />
-                                    <Text style={{
-                                        color: '#64748B',
-                                        marginHorizontal: wp(3)
-                                    }}>Apply Coupon Code</Text>
+                                    {
+                                        couponcode != 0 ?
+                                            <Text style={{
+                                                color: '#64748B',
+                                                marginHorizontal: wp(3)
+                                            }}>{couponcode}</Text>
+                                            : <Text style={{
+                                                color: '#64748B',
+                                                marginHorizontal: wp(3)
+                                            }}>Apply Coupon Code</Text>}
                                 </View>
                                 <Image source={require('../assets/arrow-left.png')}
                                     style={{
@@ -596,9 +802,10 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                         height: 20,
                                         tintColor: '#FBC41D'
                                     }} />
-                            </View>
+                            </Pressable>
                         </Cardview>
                     </View>
+
                     <View style={{ marginBottom: hp(3) }}>
                         <Text style={{
                             fontSize: 16,
@@ -661,6 +868,31 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                 </View>
                                 <View style={{
                                     flexDirection: 'row',
+                                    justifyContent: 'space-between',
+                                    marginVertical: hp(1)
+                                }}>
+                                    <View style={{ flexDirection: 'row' }}>
+                                        <Text style={{
+                                            color: '#64748B',
+                                            textDecorationLine: 'underline'
+                                        }}>Convenience Fees</Text>
+                                        <Image
+                                            source={require('../assets/info.png')}
+                                            style={{
+                                                height: 10,
+                                                width: 10,
+                                                marginTop: 3,
+                                                marginHorizontal: 3
+                                            }}
+                                        />
+                                    </View>
+                                    <Text style={{
+                                        fontWeight: 'bold',
+                                        fontSize: 15
+                                    }}>₹ {carDetails && carDetails.convenience_fee}</Text>
+                                </View>
+                                <View style={{
+                                    flexDirection: 'row',
                                     justifyContent: 'space-between'
                                 }}>
                                     <View style={{ flexDirection: 'row' }}>
@@ -702,6 +934,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                         fontSize: 15
                                     }}>₹ {carDetails && carDetails.protection_fee}</Text>
                                 </View>
+
                                 <View style={{
                                     flexDirection: 'row',
                                     justifyContent: 'space-between'
@@ -713,13 +946,13 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                         }}>Coupon</Text>
                                         <Text style={{
                                             color: '#0D9D32'
-                                        }}>(ABCD1234)</Text>
+                                        }}>({carDetails && carDetails.Offercode})</Text>
                                     </View>
                                     <Text style={{
                                         fontWeight: 'bold',
                                         fontSize: 15,
                                         color: '#FF0000'
-                                    }}>-₹ 100</Text>
+                                    }}>-₹ {carDetails && carDetails.coupon}</Text>
                                 </View>
                                 <View style={{
                                     borderWidth: 0.4,
