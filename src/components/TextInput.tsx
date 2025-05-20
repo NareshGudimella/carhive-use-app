@@ -5,9 +5,10 @@ import { input } from "../styles/TextInputStyle";
 class Componentprops extends Baseprops {
     placeholder?: any;
     image?: any;
-    keyboardtype:any
-    value?:any
-    onChangeText?:any
+    keyboardtype: any
+    value?: any
+    onChangeText?: any
+    max?: any
 }
 
 const Textinput: React.FC<Componentprops> = (props) => {
@@ -20,9 +21,10 @@ const Textinput: React.FC<Componentprops> = (props) => {
                 placeholder={props.placeholder}
                 placeholderTextColor="#9CA3AF"
                 style={input.textinput}
-                keyboardType={props.keyboardtype} 
+                keyboardType={props.keyboardtype}
                 value={props.value}
                 onChangeText={props.onChangeText}
+                maxLength={props.max}
             />
         </View>
     )

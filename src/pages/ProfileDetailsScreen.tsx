@@ -3,13 +3,11 @@ import { Baseprops } from "../utils/navigation";
 import { wp, hp } from "../utils/ResponsiveScreen";
 import { Cardview } from "../components/Cardview";
 import { CameraView } from "../components/CameraView";
-import { useCallback, useEffect, useState } from "react";
-import { BottomModelView } from "../components/BottomModelView";
+import { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { excuteGetResponse, UpdateProfile } from "../apis/api";
+import { excuteGetResponse, userUpdateProfile } from "../apis/api";
 import { useFocusEffect } from "@react-navigation/native";
 import { Dropdown } from "react-native-element-dropdown";
-import { input } from "../styles/TextInputStyle";
 import DatePicker from "react-native-date-picker";
 import moment from "moment";
 import CameraModalScreen from "../components/CameraModel";
@@ -21,74 +19,68 @@ import PrimaryButton from "../components/PrimaryButton";
 class Componentprops extends Baseprops { }
 
 const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
+
+    const dispatch = useDispatch()
     const [profilDetails, setProfileDetails] = useState<any>(null)
-    const [gender, setGender] = useState(null);
-    const [isFocus, setIsFocus] = useState(false);
     const [date, setDate] = useState<any>(new Date())
     const [open, setOpen] = useState(false)
     const [cameraModal, SetCaremaModal] = useState(false)
     const [successKycModal, setSuccessKycModal] = useState(false)
-    const [userName, setUserName] = useState('')
-    const [userEmail, setUserEmail] = useState('')
     const [aadharfront, setAadharfront] = useState<Asset | null>(null)
     const [aadharback, setAadharBack] = useState<Asset | null>(null)
     const [licenseback, setlicenseBack] = useState<Asset | null>(null)
     const [licensefront, setlicensefront] = useState<Asset | null>(null)
-    const [images, setImages] = useState<Asset | null>(null)
     const [targetType, setTargetType] = useState('');
-    const dispatch = useDispatch()
+    const [userDetailsObj, setUserDetailsObj] = useState<any>({})
+
     useFocusEffect(
         useCallback(() => {
-            handelProfileDetails()
+            loadUserDetails()
         }, [])
     )
     const genderData = [
-        { label: "Male", value: "male" },
-        { label: "Female", value: "female" },
-        { label: "Other", value: "other" },
+        { id: "MALE", value: "MALE" },
+        { id: "FEMALE", value: "FEMALE" },
+        { id: "OTHER", value: "OTHER" },
     ];
-    useEffect(() => {
 
-    }, [])
-    const handelProfileDetails = async () => {
+    const loadUserDetails = async () => {
         const response = await excuteGetResponse('secure/profile')
         console.log('profile', response)
         if (response.code == 0) {
             setProfileDetails(response.data)
             dispatch(updateProfile(response.data));
+            handleInputChangeValue('name', response.data.name)
+            handleInputChangeValue('email', response.data.email)
+            handleInputChangeValue('gender', response.data.gender)
             setDate(new Date(response.data.dob))
         } else {
             Alert.alert('Alert', 'Unable to get details')
         }
     }
-    const handelUpdateProfile = async () => {
 
-        const response = await UpdateProfile(
-            userName != '' ? userName : profilDetails.name,
-            userEmail != '' ? userEmail : profilDetails.email,
-            gender != null ? gender : profilDetails.gender,
-            date !== null ? date : new Date(profilDetails.dob),
-            aadharfront != null ? aadharfront : profilDetails.documents.aadhar_front,
-            aadharback != null ? aadharback : profilDetails.documents.aadhar_back,
-            licensefront != null ? licensefront : profilDetails.documents.license_front,
-            licenseback != null ? licenseback : profilDetails.documents.license_back)
-        console.log('updateprofile', response,
-            userName != '' ? userName : profilDetails.name,
-            userEmail != '' ? userEmail : profilDetails.email,
-            gender != null ? gender : profilDetails.gender,
-            date !== null ? date : new Date(profilDetails.dob),
-            aadharfront != null ? aadharfront : profilDetails.documents.aadhar_front,
-            aadharback != null ? aadharback : profilDetails.documents.aadhar_back,
-            licensefront != null ? licensefront : profilDetails.documents.license_front,
-            licenseback != null ? licenseback : profilDetails.documents.license_back
-        )
-        if (response.code == 0) {
-            dispatch(updateProfile(response.data));
-
-        } else {
-            Alert.alert('Alert', 'unable to get update the data')
-        }
+    const handleInputChangeValue = (key: string, value: any) => {
+        setUserDetailsObj((e: any) => ({ ...e, [key]: value }))
     }
+
+    const handleUpdateBtn = async () => {
+        const object = JSON.parse(JSON.stringify(userDetailsObj))
+        object.dob = moment(date).format('YYYY-MM-DD')
+        object.aadhar_front_image = aadharfront
+        object.aadhar_back_image = aadharback
+        object.driving_licence_front = licensefront
+        object.driving_licence_back = licenseback
+        console.log('profileOBj', object)
+        const response = await userUpdateProfile(object)
+        console.log('profileOBj111', response)
+        if (response.code == 0) {
+            props.navigation.navigate('ProfileScreen')
+        } else {
+            Alert.alert('Alert!', 'Unable to get details.')
+        }
+
+    }
+
 
     return (
         <SafeAreaView style={{
@@ -100,8 +92,6 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                     cameraModal={cameraModal}
                     onclick={() => setSuccessKycModal(true)}
                     setImages={(image: Asset) => {
-                        setImages(image);
-
                         switch (targetType) {
                             case 'aadharfront':
                                 setAadharfront(image);
@@ -164,7 +154,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                         fontSize: 16,
                                         fontWeight: 'bold'
                                     }}>Personal details</Text>
-                                <Pressable onPress={() => handelUpdateProfile()}>
+                                <Pressable>
                                     <Image
                                         source={require('../assets/edit1.png')}
                                         style={{
@@ -177,8 +167,8 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                 <TextInput
                                     placeholder={profilDetails && profilDetails.name}
                                     placeholderTextColor='#000000'
-                                    onChangeText={setUserName}
-                                    value={userName}
+                                    onChangeText={text => handleInputChangeValue('name', text)}
+                                    value={userDetailsObj.name}
                                     style={{
                                         height: hp(6),
                                         marginHorizontal: wp(4),
@@ -191,8 +181,8 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                 <TextInput
                                     placeholder={profilDetails && profilDetails.email}
                                     placeholderTextColor='#000000'
-                                    onChangeText={setUserEmail}
-                                    value={userEmail}
+                                    onChangeText={text => handleInputChangeValue('email', text)}
+                                    value={userDetailsObj.email}
                                     style={{
                                         height: hp(6),
                                         marginHorizontal: wp(4),
@@ -234,27 +224,13 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                 }}
                                 data={genderData}
                                 maxHeight={300}
-                                labelField="label"
-                                valueField="value"
+                                labelField="value"
+                                valueField="id"
                                 placeholder={profilDetails && profilDetails.gender}
-                                value={gender}
-                                onFocus={() => setIsFocus(true)}
-                                onBlur={() => setIsFocus(false)}
+                                value={userDetailsObj.gender}
                                 onChange={(item) => {
-                                    setGender(item.value);
-                                    setIsFocus(false);
+                                    handleInputChangeValue('gender', item.id)
                                 }}
-
-                                renderRightIcon={() => (
-                                    <Image
-                                        source={require("../assets/mingcute_down-fill.png")}
-                                        style={{
-                                            width: 20,
-                                            height: 20,
-                                            tintColor: isFocus ? "#FBC41D" : "#9CA3AF",
-                                        }}
-                                    />
-                                )}
                             />
                             <View style={{ marginVertical: hp(0.8) }} />
                             <Cardview>
@@ -271,7 +247,6 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                     {date ? moment(date).format('YYYY-MM-DD') : 'Date of birth'}
                                 </Text>
                             </Cardview>
-
                             <DatePicker
                                 modal
                                 open={open}
@@ -437,10 +412,15 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                     <View style={{ width: wp(38) }}>
                                         <Cardview>
                                             {licenseback ?
-                                                <Pressable style={{
-                                                    justifyContent: 'center', alignItems: 'center',
-                                                    paddingVertical: hp(2)
-                                                }}>
+                                                <Pressable
+                                                    onPress={() => {
+                                                        SetCaremaModal(true);
+                                                        setTargetType('licenseback')
+                                                    }}
+                                                    style={{
+                                                        justifyContent: 'center', alignItems: 'center',
+                                                        paddingVertical: hp(2)
+                                                    }}>
                                                     <Image
                                                         source={{ uri: licenseback?.uri }}
                                                         style={{
@@ -474,8 +454,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                         marginHorizontal: wp(5), marginVertical: hp(2)
                     }}>
                         <PrimaryButton title='Submit' onclick={() => {
-                            handelUpdateProfile()
-                            props.navigation.navigate('ProfileScreen')
+                            handleUpdateBtn()
                         }} />
                     </View>
                 </View>

@@ -493,6 +493,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                     paddingHorizontal: wp(5),
                                                     borderBottomLeftRadius: 20,
                                                     borderBottomRightRadius: 20,
+                                                    paddingVertical: wp(1.5)
                                                 }}
                                             >
                                                 <View>
@@ -526,10 +527,10 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                     }}
                                                 />
 
-                                                <View
+                                                <ScrollView
+                                                    horizontal
                                                     style={{
                                                         flexDirection: 'row',
-                                                        flexWrap: 'wrap',
                                                     }}
                                                 >
                                                     {e.features.map((item: any, index: any) => (
@@ -538,6 +539,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                             style={{
                                                                 marginHorizontal: wp(1),
                                                                 alignItems: 'center',
+
                                                             }}
                                                         >
                                                             <Image
@@ -560,7 +562,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                             </Text>
                                                         </View>
                                                     ))}
-                                                </View>
+                                                </ScrollView>
                                             </LinearGradient>
 
                                         </View>

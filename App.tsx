@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Alert } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './src/pages/HomeScreen';
@@ -18,20 +18,39 @@ import ProfileScreen from './src/pages/ProfileScreen';
 import ProfileDetailsScreen from './src/pages/ProfileDetailsScreen';
 import HostScreen from './src/pages/HostScreen';
 import BecomeHostScreen from './src/pages/BecomeHostScreen';
-import { Provider } from 'react-redux';
-import { store } from './src/storage/redux';
+import { Provider, useDispatch } from 'react-redux';
+import { store, updateProfile } from './src/storage/redux';
 import SelectCityScreen from './src/pages/SelectCityScreen';
 import { Foregroundmessage, requestfirebasePermissions } from './src/firebase/firebase';
-import { getCity, setCity } from './src/storage/AsyncStorage';
+import { getCity, getToken, setCity } from './src/storage/AsyncStorage';
+import { excuteGetResponse } from './src/apis/api';
 
 
 const Stack = createNativeStackNavigator();
 
 function RootStack() {
+
+  const dispatch = useDispatch()
+
   React.useEffect(() => {
+    loadUserDetails()
     requestfirebasePermissions()
     Foregroundmessage()
   })
+
+  const loadUserDetails = async () => {
+    const token = await getToken()
+    if (token && token != '') {
+      const response = await excuteGetResponse('secure/profile')
+      console.log('profile', response)
+      if (response.code == 0) {
+        dispatch(updateProfile(response.data));
+      } else {
+        Alert.alert('Alert', 'Unable to get details')
+      }
+    }
+
+  }
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>

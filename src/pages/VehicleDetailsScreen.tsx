@@ -178,6 +178,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                         keyboardtype='numeric'
                                         value={phoneNumber}
                                         onChangeText={setPhoneNumber}
+                                        max={10}
                                     />
                                     <Text
                                         style={{

@@ -184,8 +184,8 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                                             }}>{e.offercode}</Text>
                                                         <Pressable
                                                             onPress={() => {
-                                                                handelSummeryScreen(props.route.params && props.route.params.carid)
                                                                 setCouponcode(e.offercode)
+                                                                handelSummeryScreen(props.route.params && props.route.params.carid)
                                                                 setCoupanModalScreen(false)
                                                             }}
                                                             style={{

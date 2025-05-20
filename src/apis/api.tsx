@@ -1,3 +1,4 @@
+import moment from "moment";
 import { getToken } from "../storage/AsyncStorage"
 
 const BASE_URL = 'https://carhive.pengwinsolutions.in/api'
@@ -24,7 +25,7 @@ export const excuteResponse = async (url: string, body: any) => {
     } catch (e) {
         console.log(e)
     }
-    return { code: 1 }
+    return { code: 2 }
 }
 
 export const excuteGetResponse = async (url: string) => {
@@ -118,43 +119,49 @@ export const SignUp = async (name: any, email: any, gender: any, dob: any) => {
     return excuteResponse(`secure/signup`, { name, email, gender, dob })
 }
 export const summery = async (carid: any, from_date: any, to_date: any,
-    latitude: any, longitude: any,ofercode:any) => {
+    latitude: any, longitude: any, ofercode: any) => {
     return excuteResponse(`secure/cars/details/${carid}`,
-        { from_date, to_date, latitude, longitude,ofercode})
+        { from_date, to_date, latitude, longitude, ofercode })
 }
-export const UpdateProfile = async (name: any, email: any, gender: any, dob: any,
-    aadhar_front_image: any, aadhar_back_image: any,
-    driving_licence_front: any, driving_licence_back: any) => {
+export const userUpdateProfile = async (body: any) => {
+    const data = new FormData()
+    for (const [key, value] of Object.entries<any>(body)) {
+        if (key == 'aadhar_front_image') {
+            if (value && value.uri) {
+                data.append(key, {
+                    uri: value.uri,
+                    type: value.type,
+                    name: value.fileName
+                })
+            }
+        } else if (key == 'aadhar_back_image') {
+            if (value && value.uri) {
+                data.append(key, {
+                    uri: value.uri,
+                    type: value.type,
+                    name: value.fileName
+                })
+            }
+        } else if (key == 'driving_licence_front') {
+            if (value && value.uri) {
+                data.append(key, {
+                    uri: value.uri,
+                    type: value.type,
+                    name: value.fileName
+                })
+            }
+        } else if (key == 'driving_licence_back') {
+            if (value && value.uri) {
+                data.append(key, {
+                    uri: value.uri,
+                    type: value.type,
+                    name: value.fileName
+                })
+            }
+        }
+    }
 
-    const formdata = new FormData();
-
-    formdata.append('aadhar_front_image', {
-        uri: aadhar_front_image.uri,
-        type: aadhar_front_image.type,
-        name: aadhar_front_image.fileName,
-    });
-
-    formdata.append('aadhar_back_image', {
-        uri: aadhar_back_image.uri,
-        type: aadhar_back_image.type,
-        name: aadhar_back_image.fileName,
-    });
-
-    formdata.append('driving_licence_front', {
-        uri: driving_licence_front.uri,
-        type: driving_licence_front.type,
-        name: driving_licence_front.fileName,
-    });
-
-    formdata.append('driving_licence_back', {
-        uri: driving_licence_back.uri,
-        type: driving_licence_back.type,
-        name: driving_licence_back.fileName,
-    });
-    return excuteResponse(`secure/profile/update`, {
-        name, email, gender, dob, formdata
-
-    })
+    return excuteResponse(`secure/profile/update`, data)
 }
 
 export const KycDetails = async (

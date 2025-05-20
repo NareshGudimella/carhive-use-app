@@ -44,11 +44,11 @@ const KycDetailsScreen: React.FC<Componentprops> = (props) => {
             return
         }
         const response = await KycDetails(aadharfront, aadharback, licensefront, licenseback)
-        console.log(response)
+        console.log('kyc', response, aadharfront, aadharback, licensefront, licenseback)
         if (response.code == 0) {
             setSuccessKycModal(true)
-        }else{
-            Alert.alert('Alert','unable to get KYC details')
+        } else {
+            Alert.alert('Alert', 'unable to get KYC details')
         }
     }
 
@@ -119,8 +119,9 @@ const KycDetailsScreen: React.FC<Componentprops> = (props) => {
                                 >Your account is ready to use.
                                     You will be redirected to
                                     the Home page in a few seconds.</Text>
-                                <View style={{width:wp(40),
-                                    marginTop:hp(2)
+                                <View style={{
+                                    width: wp(40),
+                                    marginTop: hp(2)
                                 }}>
                                     <PrimaryButton title='Back'
                                         onclick={() => props.navigation.navigate('HomeScreen')} />
@@ -187,10 +188,15 @@ const KycDetailsScreen: React.FC<Componentprops> = (props) => {
                             }}>
                                 <Cardview>
                                     {aadharfront ?
-                                        <View style={{
-                                            justifyContent: 'center', alignItems: 'center',
-                                            paddingVertical: hp(2)
-                                        }}>
+                                        <Pressable
+                                            onPress={() => {
+                                                setTargetType('aadharfront');
+                                                SetCaremaModal(true);
+                                            }}
+                                            style={{
+                                                justifyContent: 'center', alignItems: 'center',
+                                                paddingVertical: hp(2)
+                                            }}>
                                             <Image
                                                 source={{ uri: aadharfront?.uri }}
                                                 style={{
@@ -200,7 +206,7 @@ const KycDetailsScreen: React.FC<Componentprops> = (props) => {
                                                     borderRadius: 10
                                                 }}
                                             />
-                                        </View>
+                                        </Pressable>
                                         :
                                         <CameraView
                                             image={require('../assets/Huge.png')}
@@ -219,10 +225,15 @@ const KycDetailsScreen: React.FC<Componentprops> = (props) => {
                             }}>
                                 <Cardview>
                                     {aadharback ?
-                                        <View style={{
-                                            justifyContent: 'center', alignItems: 'center',
-                                            paddingVertical: hp(2)
-                                        }}>
+                                        <Pressable
+                                            onPress={() => {
+                                                setTargetType('aadharback');
+                                                SetCaremaModal(true);
+                                            }}
+                                            style={{
+                                                justifyContent: 'center', alignItems: 'center',
+                                                paddingVertical: hp(2)
+                                            }}>
                                             <Image
                                                 source={{ uri: aadharback?.uri }}
                                                 style={{
@@ -232,7 +243,7 @@ const KycDetailsScreen: React.FC<Componentprops> = (props) => {
                                                     borderRadius: 10
                                                 }}
                                             />
-                                        </View>
+                                        </Pressable>
                                         :
                                         <CameraView
                                             image={require('../assets/Huge.png')}
@@ -260,10 +271,15 @@ const KycDetailsScreen: React.FC<Componentprops> = (props) => {
                             <View style={{ width: wp(38) }}>
                                 <Cardview>
                                     {licensefront ?
-                                        <View style={{
-                                            justifyContent: 'center', alignItems: 'center',
-                                            paddingVertical: hp(2)
-                                        }}>
+                                        <Pressable
+                                            onPress={() => {
+                                                SetCaremaModal(true);
+                                                setTargetType('licensefront')
+                                            }}
+                                            style={{
+                                                justifyContent: 'center', alignItems: 'center',
+                                                paddingVertical: hp(2)
+                                            }}>
                                             <Image
                                                 source={{ uri: licensefront?.uri }}
                                                 style={{
@@ -273,7 +289,7 @@ const KycDetailsScreen: React.FC<Componentprops> = (props) => {
                                                     borderRadius: 10
                                                 }}
                                             />
-                                        </View>
+                                        </Pressable>
                                         :
                                         <CameraView
                                             image={require('../assets/Huge.png')}
@@ -288,7 +304,10 @@ const KycDetailsScreen: React.FC<Componentprops> = (props) => {
                             <View style={{ width: wp(38) }}>
                                 <Cardview>
                                     {licenseback ?
-                                        <View style={{
+                                        <Pressable onPress={() => {
+                                            SetCaremaModal(true);
+                                            setTargetType('licenseback')
+                                        }} style={{
                                             justifyContent: 'center', alignItems: 'center',
                                             paddingVertical: hp(2)
                                         }}>
@@ -301,7 +320,7 @@ const KycDetailsScreen: React.FC<Componentprops> = (props) => {
                                                     borderRadius: 10
                                                 }}
                                             />
-                                        </View>
+                                        </Pressable>
                                         :
                                         <CameraView
                                             image={require('../assets/Huge.png')}

@@ -45,8 +45,12 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
         console.log('Signupresponse', response, userName, userEmail, gender, moment(date).format('DD-MM-YYYY'));
         if (response.code == 0) {
             props.navigation.navigate('KycDetailsScreen');
+        } else if (response.code == 1 && response.message == 'EMAIL_EXIST') {
+            Alert.alert('Alert', 'Email already exist');
+            return
         } else {
             Alert.alert('Alert', 'Unable to get details');
+            return
         }
     };
 
@@ -96,6 +100,7 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
                     keyboardtype="default"
                     onChangeText={setUserName}
                     value={userName}
+                    max={40}
                 />
                 <Textinput
                     image={require("../assets/sms.png")}
@@ -103,6 +108,7 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
                     keyboardtype="default"
                     onChangeText={setUserEmail}
                     value={userEmail}
+                    max={(50)}
                 />
                 <Dropdown
                     style={{
