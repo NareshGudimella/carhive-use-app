@@ -44,6 +44,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
         useCallback(() => {
             handelBannerImage()
             VerifyLocationPermission()
+            setDropTime(new Date(pickupTime.getTime() + 3 * 60 * 60 * 1000))
         }, [])
     )
     {/* Banner image api */ }
@@ -72,8 +73,6 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
 
         const pickupDay = new Date(pickupDate.getFullYear(), pickupDate.getMonth(), pickupDate.getDate());
         const dropDay = new Date(dropDate.getFullYear(), dropDate.getMonth(), dropDate.getDate());
-        const picktime = new Date(pickupTime.getHours())
-        const dropedtime = new Date(dropTime.getHours())
         if (cityname && cityname.cityId != '') {
             if (dropDay > pickupDay ? dropDay >= pickupDay : pickupTime.getTime() != dropTime.getTime()) {
                 props.navigation.navigate('SelectVehicleScreen', {

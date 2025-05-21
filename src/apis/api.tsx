@@ -1,4 +1,3 @@
-import moment from "moment";
 import { getToken } from "../storage/AsyncStorage"
 
 const BASE_URL = 'https://carhive.pengwinsolutions.in/api'
