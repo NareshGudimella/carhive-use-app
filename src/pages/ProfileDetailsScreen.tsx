@@ -165,7 +165,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                             </View>
                             <Cardview>
                                 <TextInput
-                                    placeholder={profilDetails && profilDetails.name}
+                                    placeholder='Enter Name'
                                     placeholderTextColor='#000000'
                                     onChangeText={text => handleInputChangeValue('name', text)}
                                     value={userDetailsObj.name}
@@ -179,7 +179,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                             <View style={{ marginVertical: hp(0.8) }} />
                             <Cardview>
                                 <TextInput
-                                    placeholder={profilDetails && profilDetails.email}
+                                    placeholder='Enter Email'
                                     placeholderTextColor='#000000'
                                     onChangeText={text => handleInputChangeValue('email', text)}
                                     value={userDetailsObj.email}
@@ -226,7 +226,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                 maxHeight={300}
                                 labelField="value"
                                 valueField="id"
-                                placeholder={profilDetails && profilDetails.gender}
+                                placeholder="Gender"
                                 value={userDetailsObj.gender}
                                 onChange={(item) => {
                                     handleInputChangeValue('gender', item.id)

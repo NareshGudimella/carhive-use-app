@@ -320,7 +320,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                         ref={ref}
                         width={wp(94)}
                         style={{}}
-                        height={hp(26)}
+                        height={hp(23)}
                         data={carData.gallery}
                         renderItem={({ item }: { item: any }) => (
                             <View style={{
@@ -329,7 +329,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                             }}>
                                 <Image source={{ uri: item.image }}
                                     style={{
-                                        height: hp(25),
+                                        height: hp(22),
                                         width: wp(92),
                                         borderRadius: 20,
                                         marginTop: hp(1)

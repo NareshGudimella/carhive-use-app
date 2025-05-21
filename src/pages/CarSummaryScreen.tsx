@@ -4,7 +4,7 @@ import { hp, wp } from "../utils/ResponsiveScreen";
 import { Cardview } from "../components/Cardview";
 import { Rating } from "react-native-ratings";
 import PrimaryButton from "../components/PrimaryButton";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { BottomModelView } from "../components/BottomModelView";
 import { Checkbox } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -27,27 +27,41 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
     const [couponModalScreen, setCoupanModalScreen] = useState(false)
     const [cuopon, setCoupons] = useState([])
     const [couponcode, setCouponcode] = useState<any>('')
+
     useFocusEffect(
         useCallback(() => {
-            console.log('id', (props.route.params && props.route.params.carid))
-            handelSummeryScreen(props.route.params && props.route.params.carid)
+            loadSummeryScreen(props.route.params && props.route.params.carid)
             handelCouponCode()
         }, [])
     )
 
-    const handelSummeryScreen = async (carid: any) => {
+    useEffect(() => {
+        if (couponcode != '')
+            loadSummeryScreen(props.route.params && props.route.params.carid, couponcode)
+    }, [couponcode])
+
+    const loadSummeryScreen = async (carid: any, offercode?: any) => {
         const response = await summery(carid,
             props.route.params.fromDate,
             props.route.params.toDate,
             props.route.params.lat,
             props.route.params.long,
-            couponcode != '' ? couponcode : ''
+            offercode
         )
         console.log('Summeryresponse', response)
         if (response.code == 0) {
             setCarDetails(response.data)
+        } else if (response.code == 1 && response.message == 'Offer_Expired_or_Not_Started') {
+            Alert.alert('Alert', 'Offer Expired')
+            setCouponcode('')
+        } else if (response.code == 1 && response.message == 'Offer_Not_Applicable_minimum_amount') {
+            Alert.alert('Alert', 'Offer not applicable for this ride')
+            setCouponcode('')
+        } else if (response.code == 1 && response.message == 'Offer_Not_Applicable') {
+            Alert.alert('Alert', 'Offer not available')
+            setCouponcode('')
         } else {
-            Alert.alert('Alert', 'Unable to get details')
+            Alert.alert('Alert', 'Unable to getdetails')
         }
     }
     const handelModelData = async () => {
@@ -140,7 +154,6 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                         placeholderTextColor='#757575' />
                                     <Pressable
                                         onPress={() => {
-                                            handelSummeryScreen(props.route.params && props.route.params.carid)
                                             setCoupanModalScreen(false)
                                         }}
                                         style={{
@@ -185,11 +198,8 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                                         <Pressable
                                                             onPress={() => {
                                                                 setCouponcode(e.offercode)
-                                                                handelSummeryScreen(props.route.params && props.route.params.carid)
-                                                                setCoupanModalScreen(false)
                                                             }}
-                                                            style={{
-                                                                backgroundColor: '#FBC41D',
+                                                            style={[couponcode == e.offercode ? { backgroundColor: '#009940' } : { backgroundColor: '#FBC41D' }, {
                                                                 paddingVertical: 2,
                                                                 justifyContent: 'center',
                                                                 alignItems: 'center',
@@ -197,13 +207,13 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                                                 borderRadius: 10,
                                                                 height: hp(3.5)
 
-                                                            }}>
+                                                            }]}>
                                                             <Text
                                                                 style={{
                                                                     color: '#ffffff',
                                                                     fontSize: 14,
                                                                     fontWeight: 'bold'
-                                                                }}>Apply</Text>
+                                                                }}>{couponcode == e.offercode ? 'Applied' : 'Apply'}</Text>
                                                         </Pressable>
                                                     </View>
                                                     <View style={{
