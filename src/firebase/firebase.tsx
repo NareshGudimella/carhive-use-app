@@ -42,6 +42,7 @@ export const Foregroundmessage = async () => {
             id: 'default',
             name: 'Default Channel',
         });
+
         await notifee.displayNotification({
             title: title,
             body: body,

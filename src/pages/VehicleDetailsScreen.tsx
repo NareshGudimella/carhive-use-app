@@ -1,4 +1,4 @@
-import { Alert, Image, Modal, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Image, Modal, Platform, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { hp, wp } from "../utils/ResponsiveScreen";
 import { BackButtonStyle } from "../styles/BackButtonStyle";
@@ -13,10 +13,12 @@ import Textinput from "../components/TextInput";
 import { OtpInput } from "react-native-otp-entry";
 import { style } from "../styles/OtpStyle";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { carDetails, excuteGetResponse, Login, Otp, } from "../apis/api";
+import { carDetails, excuteGetResponse, firebasemessage, Login, Otp, } from "../apis/api";
 import { getToken, setToken } from "../storage/AsyncStorage";
 import { useFocusEffect } from "@react-navigation/native";
 import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
+import DeviceInfo from 'react-native-device-info';
+import messaging from '@react-native-firebase/messaging';
 
 
 class Componentprops extends Baseprops { }
@@ -87,7 +89,14 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
         console.log('otp', response)
         if (response.code == 0) {
             setToken(response.data.token)
+            const token = await getToken()
             console.log('token', response.data.token)
+            if (token && token != '') {
+                const token = await messaging().getToken();
+                const response = await firebasemessage(token, Platform.OS,
+                    await DeviceInfo.getBuildNumber(), Platform.Version,)
+                console.log('firebaser', response)
+            }
             if (response.data.profile_flag == 0) {
                 console.log('yes', response.data.profile_flag)
                 props.navigation.navigate('SignupScreen')

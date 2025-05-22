@@ -167,6 +167,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                     <View style={{
                         flexDirection: 'row',
                         marginVertical: hp(4),
+                        alignItems: 'center'
                     }}>
                         {/*select location */}
                         <Pressable
@@ -195,13 +196,42 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                 style={{ height: 10, width: 25 }}
                             />
                         </Pressable>
-                        <Image
-                            source={require('../assets/Clouds.png')}
-                            style={{
-                                height: hp(3.3),
-                                width: wp(48)
-                            }}
-                        />
+                        <View style={{
+                        }}>
+                            <Image
+                                source={require('../assets/Clouds.png')}
+                                style={{
+                                    height: hp(3.3),
+                                    width: wp(48)
+                                }}
+                            />
+                            <View style={{
+                                alignItems: 'flex-end',
+                                marginHorizontal: wp(5),
+                                top: -10
+                            }}>
+                                <Pressable
+                                    onPress={() => props.navigation.navigate('NotificationScreen')}
+                                    style={{
+                                        backgroundColor: '#ffffff',
+                                        height: 40,
+                                        width: 40,
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        borderRadius: 20,
+                                        elevation: 2,
+                                        position: 'absolute',
+                                        top: -25
+                                    }}>
+                                    <Image
+                                        source={require('../assets/bell2.png')}
+                                        style={{
+                                            height: 15,
+                                            width: 15
+                                        }} />
+                                </Pressable>
+                            </View>
+                        </View>
                     </View>
                     <View style={{ justifyContent: 'flex-end' }}>
                         <Image source={require('../assets/car.png')}

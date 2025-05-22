@@ -229,3 +229,6 @@ export const extendtime = async (car_booking_id: any, extended_date: any) => {
 export const BecomeHost = async (name: any, email: any, mobile: any, no_of_cars: any, city_id: any) => {
     return excuteResponse(`secure/host`, { name, email, mobile, no_of_cars, city_id })
 }
+export const firebasemessage = async (firebasetoken: any, os_type: any, bundle_version: any, os_version: any) => {
+    return excuteResponse(`secure/setfirebasetoken`, { firebasetoken, os_type, bundle_version, os_version })
+}

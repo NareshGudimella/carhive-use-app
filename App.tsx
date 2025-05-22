@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { View, Text, Alert } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { View, Text, Alert, Platform } from 'react-native';
+import { createNavigationContainerRef, NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './src/pages/HomeScreen';
 import SelectVehicleScreen from './src/pages/SelectVehicleScreen';
@@ -23,9 +23,11 @@ import { store, updateProfile } from './src/storage/redux';
 import SelectCityScreen from './src/pages/SelectCityScreen';
 import { Foregroundmessage, requestfirebasePermissions } from './src/firebase/firebase';
 import { getCity, getToken, setCity } from './src/storage/AsyncStorage';
-import { excuteGetResponse } from './src/apis/api';
-
-
+import { excuteGetResponse, firebasemessage } from './src/apis/api';
+import NotificationScreen from './src/pages/notificationScreen';
+import DeviceInfo from 'react-native-device-info';
+import messaging from '@react-native-firebase/messaging';
+export const navigationRef = createNavigationContainerRef();
 const Stack = createNativeStackNavigator();
 
 function RootStack() {
@@ -45,11 +47,18 @@ function RootStack() {
       console.log('profile', response)
       if (response.code == 0) {
         dispatch(updateProfile(response.data));
+        const token = await getToken()
+        console.log('token', response.data.token)
+        if (token && token != '') {
+          const token = await messaging().getToken();
+          const response = await firebasemessage(token, Platform.OS,
+            await DeviceInfo.getBuildNumber(), Platform.Version,)
+          console.log('firebaser', response)
+        }
       } else {
         Alert.alert('Alert', 'Unable to get details')
       }
     }
-
   }
 
   return (
@@ -71,6 +80,7 @@ function RootStack() {
       <Stack.Screen name='ProfileDetailsScreen' component={ProfileDetailsScreen} />
       <Stack.Screen name='HostScreen' component={HostScreen} />
       <Stack.Screen name='BecomeHostScreen' component={BecomeHostScreen} />
+      <Stack.Screen name='NotificationScreen' component={NotificationScreen} />
     </Stack.Navigator>
   );
 }
@@ -78,7 +88,7 @@ function RootStack() {
 export default function App() {
   return (
     <Provider store={store}>
-      <NavigationContainer>
+      <NavigationContainer >
         <RootStack />
       </NavigationContainer>
     </Provider>

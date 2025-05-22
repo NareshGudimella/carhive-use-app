@@ -306,6 +306,47 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                             }}>Need assistance? Call us for support!</Text>
                                     </View>
                                 </Pressable>
+                                <View
+                                    style={{
+                                        borderWidth: 1,
+                                        borderColor: '#F4F6FA',
+                                        marginHorizontal: wp(2),
+                                        marginVertical: hp(1.5)
+                                    }} />
+                                <Pressable 
+                                onPress={()=>props.navigation.navigate('NotificationScreen')}
+                                style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+
+                                }}>
+                                    <View style={{
+                                        backgroundColor: '#F4F6FA',
+                                        padding: hp(1.5),
+                                        borderRadius: 22
+                                    }}>
+                                        <Image
+                                            source={require('../assets/bell1.png')}
+                                            style={{
+                                                height: 22,
+                                                width: 22
+                                            }} />
+                                    </View>
+                                    <View style={{
+                                        marginHorizontal: wp(3)
+                                    }}>
+                                        <Text style={{
+                                            fontSize: 16,
+                                            fontWeight: 'bold'
+                                        }}>Notifications</Text>
+                                        <Text
+                                            style={{
+                                                fontSize: 12,
+                                                fontWeight: '500',
+                                                color: '#64748B'
+                                            }}>Check your Notification</Text>
+                                    </View>
+                                </Pressable>
                             </View>
                         </Cardview>
                     </View>

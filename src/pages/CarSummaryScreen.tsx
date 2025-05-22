@@ -54,8 +54,8 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
         } else if (response.code == 1 && response.message == 'Offer_Expired_or_Not_Started') {
             Alert.alert('Alert', 'Offer Expired')
             setCouponcode('')
-        } else if (response.code == 1 && response.message == 'Offer_Not_Applicable_minimum_amount') {
-            Alert.alert('Alert', 'Offer not applicable for this ride')
+        } else if (response.code == 1 && response.message == 'Offer_Not_Applicable_minimum_amount_1233.00') {
+            Alert.alert('Alert', 'This offer isn’t applicable for this ride, as your minimum balance needs to be above ₹1200.')
             setCouponcode('')
         } else if (response.code == 1 && response.message == 'Offer_Not_Applicable') {
             Alert.alert('Alert', 'Offer not available')
