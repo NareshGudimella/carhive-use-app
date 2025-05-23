@@ -23,7 +23,7 @@ const PaymentSuccessScreen: React.FC<Componentprops> = (props) => {
                 <Text style={{
                     fontSize: 24,
                     fontWeight: 'bold'
-                }}>₹750</Text>
+                }}>₹{props.route.params && props.route.params.price}</Text>
                 <Text style={{
                     fontSize: 24,
                     fontWeight: 'bold',

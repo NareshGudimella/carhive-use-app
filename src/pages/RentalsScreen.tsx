@@ -43,6 +43,16 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
             Alert.alert('Alert', 'Unable to get Rental Details')
         }
     }
+    const handelPayment = async (booking_car_id: any) => {
+        const response = await excuteGetResponse(`secure/cars/payment/${booking_car_id}`)
+        console.log('payment', response)
+        if (response.code == 0) {
+            props.navigation.navigate('PaymentSuccessScreen', { id: response.data.booking_id, price: response.data.total_price })
+        } else {
+            Alert.alert('Alert', 'unable to get Booking Payment Details')
+        }
+
+    }
     return (
         <SafeAreaView style={{ flex: 1 }}>
             {
@@ -454,18 +464,22 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                                 }}> {moment(e.to_date).format('DD MMM YYYY HH:DD A')}
                                                             </Text>
                                                         </View>
-                                                        <View style={{
-                                                            marginBottom: hp(2),
-                                                            marginHorizontal: wp(10)
-                                                        }}>
-                                                            <PrimaryButton
-                                                                title='Extend Service'
-                                                                onclick={() => {
-                                                                    setExtendServiceModal(true)
-                                                                    setCarId(e.car_booking_id)
-                                                                    setPrice(e.pirce_per_hour)
-                                                                }} />
-                                                        </View>
+                                                        {
+                                                            e.submit_flag == 1 ?
+                                                                <View style={{
+                                                                    marginBottom: hp(2),
+                                                                    marginHorizontal: wp(10)
+                                                                }}>
+                                                                    <PrimaryButton
+                                                                        title='Extend Service'
+                                                                        onclick={() => {
+                                                                            setExtendServiceModal(true)
+                                                                            setCarId(e.car_booking_id)
+                                                                            setPrice(e.pirce_per_hour)
+                                                                        }} />
+                                                                </View> : <></>
+
+                                                        }
                                                     </View>
                                                 </Cardview>
                                             </Pressable>
@@ -540,7 +554,193 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                         </View>
                                                     </Cardview>
                                                 </Pressable>
-                                                : <></>
+                                                : e.status == 'EXTEND' ?
+                                                    <Pressable style={{
+                                                        marginVertical: hp(1.5)
+                                                    }}>
+                                                        <Cardview>
+                                                            <View>
+                                                                <View style={{
+                                                                    backgroundColor: '#FF0000',
+                                                                    width: wp(25),
+                                                                    justifyContent: 'center',
+                                                                    alignItems: 'center',
+                                                                    paddingVertical: hp(1),
+                                                                    alignSelf: 'flex-end',
+                                                                    borderTopRightRadius: 15,
+                                                                    borderBottomLeftRadius: 10
+                                                                }}>
+                                                                    <Text
+                                                                        style={{
+                                                                            color: '#ffffff',
+                                                                            fontSize: 13,
+                                                                            fontWeight: 'bold'
+                                                                        }}
+                                                                    >{e.status}</Text>
+                                                                </View>
+                                                                <View style={{
+                                                                    flexDirection: 'row',
+                                                                    alignItems: 'center',
+                                                                    marginHorizontal: wp(4)
+                                                                }}>
+                                                                    <Image
+                                                                        source={{ uri: e.car_image }}
+                                                                        style={{
+                                                                            height: 50,
+                                                                            width: 70
+                                                                        }} />
+                                                                    <View style={{
+                                                                        marginHorizontal: wp(3)
+                                                                    }}>
+                                                                        <Text style={{
+                                                                            fontSize: 16,
+                                                                            fontWeight: 'bold'
+                                                                        }}>
+                                                                            Booking ID :
+                                                                            {e.booking_id}
+                                                                        </Text>
+                                                                        <Text
+                                                                            style={{
+                                                                                color: '#64748B',
+                                                                                fontSize: 13,
+                                                                                fontWeight: '500',
+                                                                                marginTop: 2
+                                                                            }}>{e.brand} {e.model} - {e.registeration_number}
+                                                                        </Text>
+                                                                    </View>
+                                                                </View>
+                                                                <View style={{
+                                                                    flexDirection: 'row',
+                                                                    alignItems: 'center',
+                                                                    marginHorizontal: wp(5),
+                                                                    marginVertical: hp(2)
+                                                                }}>
+                                                                    <Text
+                                                                        style={{
+                                                                            fontSize: 12,
+                                                                            fontWeight: 'bold',
+                                                                            color: '#64748B'
+                                                                        }}>
+                                                                        Extended Time :
+                                                                    </Text>
+                                                                    <Text
+                                                                        style={{
+                                                                            fontSize: 12,
+                                                                            fontWeight: 'bold',
+
+                                                                        }}> {moment(e.extended_date).format('DD MMM YYYY HH:DD A')}
+                                                                    </Text>
+                                                                </View>
+                                                            </View>
+                                                        </Cardview>
+                                                    </Pressable>
+                                                    : e.status == 'EXTENDED' ?
+                                                        <Pressable style={{
+                                                            marginVertical: hp(1.5)
+                                                        }}>
+                                                            <Cardview>
+                                                                <View>
+                                                                    <View style={{
+                                                                        backgroundColor: '#FF8300',
+                                                                        width: wp(25),
+                                                                        justifyContent: 'center',
+                                                                        alignItems: 'center',
+                                                                        paddingVertical: hp(1),
+                                                                        alignSelf: 'flex-end',
+                                                                        borderTopRightRadius: 15,
+                                                                        borderBottomLeftRadius: 10
+                                                                    }}>
+                                                                        <Text
+                                                                            style={{
+                                                                                color: '#ffffff',
+                                                                                fontSize: 13,
+                                                                                fontWeight: 'bold'
+                                                                            }}
+                                                                        >{e.status}</Text>
+                                                                    </View>
+                                                                    <View style={{
+                                                                        flexDirection: 'row',
+                                                                        alignItems: 'center',
+                                                                        marginHorizontal: wp(4)
+                                                                    }}>
+                                                                        <Image
+                                                                            source={{ uri: e.car_image }}
+                                                                            style={{
+                                                                                height: 50,
+                                                                                width: 70
+                                                                            }} />
+                                                                        <View style={{
+                                                                            marginHorizontal: wp(3)
+                                                                        }}>
+                                                                            <Text style={{
+                                                                                fontSize: 16,
+                                                                                fontWeight: 'bold'
+                                                                            }}>
+                                                                                Booking ID :
+                                                                                {e.booking_id}
+                                                                            </Text>
+                                                                            <Text
+                                                                                style={{
+                                                                                    color: '#64748B',
+                                                                                    fontSize: 13,
+                                                                                    fontWeight: '500',
+                                                                                    marginTop: 2
+                                                                                }}>{e.brand} {e.model} - {e.registeration_number}
+                                                                            </Text>
+                                                                        </View>
+                                                                    </View>
+                                                                    <View style={{
+                                                                        flexDirection: 'row',
+                                                                        alignItems: 'center',
+                                                                        marginHorizontal: wp(5),
+                                                                        marginVertical: hp(2)
+                                                                    }}>
+                                                                        <Text
+                                                                            style={{
+                                                                                fontSize: 12,
+                                                                                fontWeight: 'bold',
+                                                                                color: '#64748B'
+                                                                            }}>
+                                                                            Extended Time :
+                                                                        </Text>
+                                                                        <Text
+                                                                            style={{
+                                                                                fontSize: 12,
+                                                                                fontWeight: 'bold',
+
+                                                                            }}> {moment(e.extended_date).format('DD MMM YYYY HH:DD A')}
+                                                                        </Text>
+                                                                    </View>
+                                                                    {
+                                                                        e.submit_flag == 1 ?
+                                                                            <View style={{
+                                                                                marginBottom: hp(2),
+                                                                                marginHorizontal: wp(10)
+                                                                            }}>
+                                                                                <Pressable
+                                                                                    onPress={() => {
+                                                                                        handelPayment(e.car_booking_id)
+                                                                                    }}
+                                                                                    style={{
+                                                                                        backgroundColor: '#FBC41D',
+                                                                                        justifyContent: 'center',
+                                                                                        alignItems: 'center',
+                                                                                        height: hp(6),
+                                                                                        borderRadius: 10
+                                                                                    }}>
+                                                                                    <Text style={{
+                                                                                        color: '#000000',
+                                                                                        fontWeight: 'bold'
+                                                                                    }}>Pay</Text>
+                                                                                </Pressable>
+                                                                            </View> :
+                                                                            <></>
+
+                                                                    }
+
+                                                                </View>
+                                                            </Cardview>
+                                                        </Pressable> : <></>
                             }
                         </View>
                     ))}

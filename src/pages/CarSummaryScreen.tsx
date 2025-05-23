@@ -85,7 +85,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
             const response1 = await excuteGetResponse(`secure/cars/payment/${response.booking_car_id}`)
             console.log('SuccessPayment', response1)
             if (response1.code == 0) {
-                props.navigation.navigate('PaymentSuccessScreen')
+                props.navigation.navigate('PaymentSuccessScreen', { price: response1.data.total_price })
             }
         } else {
             Alert.alert('Alert', 'unable to get Booking Payment Details')

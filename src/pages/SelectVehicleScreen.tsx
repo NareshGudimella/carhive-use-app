@@ -60,12 +60,7 @@ const short = [
 const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
     const ref = React.useRef<ICarouselInstance>(null);
     const [filterModel, setFilterModal] = useState(false);
-    const [selectfilter, setSelectfilter] = useState<any>('')
     const [carsList, setCarsList] = useState<any>(null)
-    const [mobileNumberModal, setMobileNumberModal] = useState(false)
-    const [otpModal, setOtpModal] = useState(false)
-    const [otp, setOtp] = useState<any>('')
-    const [phoneNumber, setPhoneNumber] = useState<any>('')
     const [search, SetSearch] = useState('')
     const [carBrand, setCarBrand] = useState<any>([])
     const [shortBy, setShortBuy] = useState<string>('')
