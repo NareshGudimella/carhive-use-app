@@ -274,52 +274,13 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                         marginHorizontal: wp(2),
                                         marginVertical: hp(1.5)
                                     }} />
-                                <Pressable style={{
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-
-                                }}>
-                                    <View style={{
-                                        backgroundColor: '#F4F6FA',
-                                        padding: hp(1.5),
-                                        borderRadius: 22
-                                    }}>
-                                        <Image
-                                            source={require('../assets/call3.png')}
-                                            style={{
-                                                height: 22,
-                                                width: 22
-                                            }} />
-                                    </View>
-                                    <View style={{
-                                        marginHorizontal: wp(3)
-                                    }}>
-                                        <Text style={{
-                                            fontSize: 16,
-                                            fontWeight: 'bold'
-                                        }}>Call Us</Text>
-                                        <Text
-                                            style={{
-                                                fontSize: 12,
-                                                fontWeight: '500',
-                                                color: '#64748B'
-                                            }}>Need assistance? Call us for support!</Text>
-                                    </View>
-                                </Pressable>
-                                <View
+                                <Pressable
+                                    onPress={() => props.navigation.navigate('NotificationScreen')}
                                     style={{
-                                        borderWidth: 1,
-                                        borderColor: '#F4F6FA',
-                                        marginHorizontal: wp(2),
-                                        marginVertical: hp(1.5)
-                                    }} />
-                                <Pressable 
-                                onPress={()=>props.navigation.navigate('NotificationScreen')}
-                                style={{
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
 
-                                }}>
+                                    }}>
                                     <View style={{
                                         backgroundColor: '#F4F6FA',
                                         padding: hp(1.5),

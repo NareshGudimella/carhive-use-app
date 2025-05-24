@@ -458,12 +458,12 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                         }}>
                                             <Text
                                                 style={{
-                                                    fontSize: 16,
+                                                    fontSize: 15,
                                                     fontWeight: 'bold'
                                                 }}>{e.booking_status}</Text>
                                             <Text style={{
                                                 color: '#64748B',
-                                                fontSize: 13,
+                                                fontSize: 12,
                                                 fontWeight: '500'
                                             }}>{e.booking_time}</Text>
                                         </View>

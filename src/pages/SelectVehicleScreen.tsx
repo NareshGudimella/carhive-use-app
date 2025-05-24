@@ -9,7 +9,7 @@ import { BackButtonStyle } from "../styles/BackButtonStyle";
 import { wp, hp } from "../utils/ResponsiveScreen";
 import { BottomTabstyles } from "../styles/BottomTabstyles";
 import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { BottomModelView } from "../components/BottomModelView";
 import FilterButton from "../components/FilterButton";
 import PrimaryButton from "../components/PrimaryButton";
@@ -71,9 +71,12 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
     useFocusEffect(
         useCallback(() => {
             handelCarList()
-            carsModalList()
+
         }, [])
     )
+    useEffect(() => {
+        carsModalList()
+    })
 
     {/* Car List api */ }
     const handelCarList = async () => {
@@ -107,7 +110,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
     }
     {/* Car model List */ }
     const carsModalList = async () => {
-        const response = await excuteGetResponse(`secure/cars/brands`)
+        const response = await excuteGetResponse(`auth/cars/brands`)
         console.log('brand', response)
         if (response.code == 0) {
             setCarBrand(response.data)
@@ -426,7 +429,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                     }}
                                 />
                             </View>
-                            <Pressable onPress={() => setFilterModal(true)}>
+                            <Pressable onPress={() => { setFilterModal(true), carsModalList() }}>
                                 <Image source={require('../assets/filter-list.png')}
                                     style={BottomTabstyles.selectedstyle}
                                 />
@@ -532,7 +535,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                         <View
                                                             key={index}
                                                             style={{
-                                                                marginHorizontal: wp(1),
+                                                                marginHorizontal: wp(1.5),
                                                                 alignItems: 'center',
 
                                                             }}

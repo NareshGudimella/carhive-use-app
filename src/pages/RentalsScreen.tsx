@@ -243,7 +243,9 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                         </Cardview>
                                     </Pressable> :
                                     e.status == 'ACCEPTED' ?
-                                        <Pressable>
+                                        <Pressable
+                                            onPress={() => props.navigation.navigate('OrderDetailsScreen', { Id: e.car_booking_id })}
+                                        >
                                             <Cardview>
                                                 <View>
                                                     <View style={{
@@ -388,9 +390,11 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                             </Cardview>
                                         </Pressable> :
                                         e.status == 'ONGOING' ?
-                                            <Pressable style={{
-                                                marginVertical: hp(1.5)
-                                            }}>
+                                            <Pressable
+                                                onPress={() => props.navigation.navigate('OrderDetailsScreen', { Id: e.car_booking_id })}
+                                                style={{
+                                                    marginVertical: hp(1.5)
+                                                }}>
                                                 <Cardview>
                                                     <View>
                                                         <View style={{
@@ -484,7 +488,9 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                 </Cardview>
                                             </Pressable>
                                             : e.status == 'COMPLETED' ?
-                                                <Pressable style={{ marginVertical: hp(1.5) }}>
+                                                <Pressable
+                                                    onPress={() => props.navigation.navigate('OrderDetailsScreen', { Id: e.car_booking_id })}
+                                                    style={{ marginVertical: hp(1.5) }}>
                                                     <Cardview>
                                                         <View>
                                                             <View style={{
@@ -549,15 +555,17 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                             }}>
                                                                 <PrimaryButton
                                                                     title='Rate your Experience'
-                                                                    onclick={() => props.navigation.navigate('HomeScreen')} />
+                                                                    onclick={() => props.navigation.navigate('RattingScreen',{id:e.car_booking_id})} />
                                                             </View>
                                                         </View>
                                                     </Cardview>
                                                 </Pressable>
                                                 : e.status == 'EXTEND' ?
-                                                    <Pressable style={{
-                                                        marginVertical: hp(1.5)
-                                                    }}>
+                                                    <Pressable
+                                                        onPress={() => props.navigation.navigate('OrderDetailsScreen', { Id: e.car_booking_id })}
+                                                        style={{
+                                                            marginVertical: hp(1.5)
+                                                        }}>
                                                         <Cardview>
                                                             <View>
                                                                 <View style={{
@@ -635,9 +643,11 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                         </Cardview>
                                                     </Pressable>
                                                     : e.status == 'EXTENDED' ?
-                                                        <Pressable style={{
-                                                            marginVertical: hp(1.5)
-                                                        }}>
+                                                        <Pressable
+                                                            onPress={() => props.navigation.navigate('OrderDetailsScreen', { Id: e.car_booking_id })}
+                                                            style={{
+                                                                marginVertical: hp(1.5)
+                                                            }}>
                                                             <Cardview>
                                                                 <View>
                                                                     <View style={{

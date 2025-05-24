@@ -237,7 +237,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                     marginVertical: hp(2)
                                 }}>
                                     <Pressable
-                                        onPress={() => setMobileNumberModal(false)}
+                                        onPress={() => setOtpModal(false)}
                                         style={{
                                             backgroundColor: '#EEEEEE80',
                                             borderRadius: 20,

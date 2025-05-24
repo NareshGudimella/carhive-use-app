@@ -11,7 +11,7 @@ export const input = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         paddingHorizontal: wp(5),
-       
+
     },
     imgstyle: {
         width: 25,
@@ -21,14 +21,15 @@ export const input = StyleSheet.create({
         color: '#393C47',
         fontSize: 16,
         paddingHorizontal: wp(4),
-        fontWeight: '500'
+        fontWeight: '500',
+        width: wp(80)
     },
     style: {
         width: 20,
         height: 20,
-        tintColor:'#9CA3AF'
+        tintColor: '#9CA3AF'
     },
-    continer:{
+    continer: {
         backgroundColor: '#EEEFF2',
         borderRadius: 10,
         elevation: 1,
@@ -37,6 +38,6 @@ export const input = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         paddingHorizontal: wp(5),
-        justifyContent:'space-between'
+        justifyContent: 'space-between'
     }
 })

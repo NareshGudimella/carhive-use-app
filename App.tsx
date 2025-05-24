@@ -27,6 +27,7 @@ import { excuteGetResponse, firebasemessage } from './src/apis/api';
 import NotificationScreen from './src/pages/notificationScreen';
 import DeviceInfo from 'react-native-device-info';
 import messaging from '@react-native-firebase/messaging';
+import RattingScreen from './src/pages/RattingScreen';
 export const navigationRef = createNavigationContainerRef();
 const Stack = createNativeStackNavigator();
 
@@ -81,6 +82,7 @@ function RootStack() {
       <Stack.Screen name='HostScreen' component={HostScreen} />
       <Stack.Screen name='BecomeHostScreen' component={BecomeHostScreen} />
       <Stack.Screen name='NotificationScreen' component={NotificationScreen} />
+      <Stack.Screen name='RattingScreen' component={RattingScreen} />
     </Stack.Navigator>
   );
 }
