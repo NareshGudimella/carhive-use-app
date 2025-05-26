@@ -32,6 +32,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
     const [licensefront, setlicensefront] = useState<Asset | null>(null)
     const [targetType, setTargetType] = useState('');
     const [userDetailsObj, setUserDetailsObj] = useState<any>({})
+    const [profileImage, setProfileImage] = useState<Asset | null>(null)
 
     useFocusEffect(
         useCallback(() => {
@@ -105,6 +106,9 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                             case 'licenseback':
                                 setlicenseBack(image);
                                 break;
+                            case 'Profile':
+                                setProfileImage(image);
+                                break;
                         }
 
                         SetCaremaModal(false);
@@ -163,6 +167,27 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                         }} />
                                 </Pressable>
                             </View>
+                            <View style={{
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                marginVertical: hp(1)
+                            }}>
+                                <Pressable onPress={() => {
+                                    SetCaremaModal(true),
+                                        setTargetType('Profile')
+                                }}>
+                                    <Image
+                                        source={profileImage != null ?
+                                            { uri: profileImage?.uri }
+                                            : require('../assets/profile.png')}
+                                        style={{
+                                            height: wp(25),
+                                            width: wp(25),
+                                            borderRadius: wp(12)
+                                        }} />
+                                </Pressable>
+
+                            </View>
                             <Cardview>
                                 <TextInput
                                     placeholder='Enter Name'
@@ -198,7 +223,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                     height: hp(6),
                                     borderColor: "#E5E7EB",
                                     borderWidth: 1,
-                                    borderRadius: 8,
+                                    borderRadius: 15,
                                     paddingHorizontal: 15,
                                     backgroundColor: "#ffffff",
                                     flexDirection: "row",

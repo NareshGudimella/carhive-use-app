@@ -27,7 +27,7 @@ export const input = StyleSheet.create({
     style: {
         width: 20,
         height: 20,
-        tintColor: '#9CA3AF'
+        tintColor: '#9CA3AF',
     },
     continer: {
         backgroundColor: '#EEEFF2',

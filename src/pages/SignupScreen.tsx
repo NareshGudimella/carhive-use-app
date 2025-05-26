@@ -10,6 +10,8 @@ import DatePicker from "react-native-date-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { SignUp } from "../apis/api";
 import moment from "moment";
+import CameraModalScreen from "../components/CameraModel";
+import { Asset } from "react-native-image-picker";
 
 class Componentprops extends Baseprops { }
 
@@ -21,6 +23,9 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
     const [isDateSelected, setIsDateSelected] = useState(false);
     const [userName, setUserName] = useState('');
     const [userEmail, setUserEmail] = useState('');
+    const [cameraModal, SetCaremaModal] = useState(false)
+    const [profileImage, setProfileImage] = useState<Asset | null>(null)
+    const [userDetailsObj, setUserDetailsObj] = useState<any>({})
 
     const genderData = [
         { label: "MALE", value: "MALE" },
@@ -41,8 +46,16 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
             Alert.alert('Alert', 'Enter your Gender')
             return
         }
-        const response = await SignUp(userName, userEmail, gender, moment(date).format('YYYY-MM-DD'));
-        console.log('Signupresponse', response, userName, userEmail, gender, moment(date).format('DD-MM-YYYY'));
+
+
+        const object = JSON.parse(JSON.stringify(userDetailsObj))
+        object.name = userName,
+            object.email = userEmail,
+            object.gender = gender,
+            object.dob = moment(date).format('YYYY-MM-DD'),
+            object.profile_pic = profileImage
+        const response = await SignUp(object);
+        console.log('Signupresponse', response, object);
         if (response.code == 0) {
             props.navigation.navigate('KycDetailsScreen');
         } else if (response.code == 1 && response.message == 'EMAIL_EXIST') {
@@ -53,9 +66,19 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
             return
         }
     };
-
+    const handleInputChangeValue = (key: string, value: any) => {
+        setUserDetailsObj((e: any) => ({ ...e, [key]: value }))
+    }
     return (
         <SafeAreaView style={{ flex: 1 }}>
+            {
+                cameraModal && <CameraModalScreen
+                    close={() => SetCaremaModal(false)}
+                    cameraModal={cameraModal}
+                    setImages={(image: Asset) => {
+                        setProfileImage(image)
+                    }} />
+            }
             <Pressable
                 onPress={() => props.navigation.goBack()}
                 style={{
@@ -72,7 +95,8 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
             <View style={{ marginHorizontal: wp(7) }}>
                 <Text style={{
                     fontSize: 28,
-                    fontWeight: "bold"
+                    fontWeight: "bold",
+                    marginTop: hp(2)
                 }}>
                     Sign up to Ride a car
                 </Text>
@@ -89,6 +113,28 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
                     easy!
                 </Text>
             </View>
+            <View style={{
+                justifyContent: 'center',
+                alignItems: 'center'
+            }}>
+                <Pressable onPress={() => SetCaremaModal(true)}>
+                    <Image
+                        source={profileImage != null ?
+                            { uri: profileImage?.uri }
+                            : require('../assets/profile.png')}
+                        style={{
+                            height: wp(25),
+                            width: wp(25),
+                            borderRadius: wp(12)
+                        }} />
+                </Pressable>
+                <Text style={{
+                    fontSize: 16,
+                    fontWeight: 'bold',
+                    marginTop: hp(2)
+                }}>Upload your selfie</Text>
+            </View>
+
 
             <View style={{
                 marginHorizontal: wp(7),
@@ -177,10 +223,7 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
                             {isDateSelected ? moment(date).format('YYYY-MM-DD') : 'Date of birth'}
                         </Text>
                     </View>
-                    <Image
-                        source={require('../assets/mingcute_down-fill.png')}
-                        style={input.style}
-                    />
+
                 </Pressable>
                 <DatePicker
                     modal
@@ -210,7 +253,10 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
             >
                 <PrimaryButton
                     title="Submit"
-                    onclick={() => handelSignup()}
+                    onclick={() => {
+                        handleInputChangeValue
+                        handelSignup()
+                    }}
                 />
                 <View style={{
                     justifyContent: "center",

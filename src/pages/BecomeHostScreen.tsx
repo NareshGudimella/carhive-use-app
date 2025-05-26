@@ -15,6 +15,9 @@ const CarCountData = [
     { label: '1', value: 1 },
     { label: '2', value: 2 },
     { label: '3', value: 3 },
+    { label: '4', value: 4 },
+    { label: '5', value: 5 },
+    { label: '6', value: 6 },
 ];
 const LocationData = [
     { label: 'Hyderabad', value: 'Hyderabad' },
@@ -49,19 +52,23 @@ const BecomeHostScreen: React.FC<Componentprops> = (props) => {
         }
         if (number.trim().length == 0 && number.trim().length != 10) {
             Alert.alert('Alert', 'Enter host Number')
+            return
         }
         if (cars == '') {
             Alert.alert('Alert', 'Select No.of Cars you have')
+            return
         }
         if (selectLocation == '') {
             Alert.alert('Alert', 'Select host location')
+            return
         }
         const response = await BecomeHost(userName, email, number, cars, selectLocation)
-        console.log('host', response,userName, email, number, cars, selectLocation)
+        console.log('host', response, userName, email, number, cars, selectLocation)
         if (response.code == 0) {
             props.navigation.navigate('ProfileScreen')
         } else {
             Alert.alert('Alert', 'Error on Hosting')
+            return
         }
     }
     const handelCity = async () => {
@@ -71,6 +78,7 @@ const BecomeHostScreen: React.FC<Componentprops> = (props) => {
             setSelectcity(response.data)
         } else {
             Alert.alert('Alert', 'Unable to get Cities details')
+            return
         }
     }
 
@@ -152,7 +160,7 @@ const BecomeHostScreen: React.FC<Componentprops> = (props) => {
                                 height: 24,
                             }}
                             data={CarCountData}
-                            maxHeight={300}
+                            maxHeight={180}
                             labelField="label"
                             valueField="value"
                             placeholder="How many Cars you have"

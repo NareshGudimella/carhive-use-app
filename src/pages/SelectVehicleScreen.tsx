@@ -19,11 +19,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { CarsList, excuteGetResponse, Login, LoginCarsList, Otp, removeWishlist, wishlist } from "../apis/api";
 import LinearGradient from "react-native-linear-gradient";
 import moment from "moment";
-import Textinput from "../components/TextInput";
-import { OtpInput } from "react-native-otp-entry";
-import { style } from "../styles/OtpStyle";
-import { useSelector } from "react-redux";
-import { getToken, setToken } from "../storage/AsyncStorage";
+
 
 class Componentprops extends Baseprops { }
 
@@ -74,10 +70,6 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
 
         }, [])
     )
-    useEffect(() => {
-        carsModalList()
-    })
-
     {/* Car List api */ }
     const handelCarList = async () => {
         const response = await CarsList(
@@ -498,7 +490,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                     <Text
                                                         style={{
                                                             color: '#FBC41D',
-                                                            fontSize: 24,
+                                                            fontSize: 22,
                                                             fontWeight: 'bold',
 
                                                         }}
@@ -509,10 +501,10 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                     <Text
                                                         style={{
                                                             color: '#FFFFFF',
-                                                            fontSize: 18,
+                                                            fontSize: 16,
                                                         }}
                                                     >
-                                                        ₹{e.price}
+                                                        {e.total_kms} kms
                                                     </Text>
                                                 </View>
 
@@ -531,13 +523,12 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                         flexDirection: 'row',
                                                     }}
                                                 >
-                                                    {e.features.map((item: any, index: any) => (
+                                                    {e.features.slice(0, 2).map((item: any, index: any) => (
                                                         <View
                                                             key={index}
                                                             style={{
-                                                                marginHorizontal: wp(1.5),
+                                                                marginHorizontal: wp(2),
                                                                 alignItems: 'center',
-
                                                             }}
                                                         >
                                                             <Image
@@ -550,7 +541,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                             />
                                                             <Text
                                                                 style={{
-                                                                    fontSize: 13,
+                                                                    fontSize: 11,
                                                                     fontWeight: '500',
                                                                     color: '#ffffff',
                                                                     top: hp(1.5),
@@ -560,6 +551,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                             </Text>
                                                         </View>
                                                     ))}
+
                                                 </ScrollView>
                                             </LinearGradient>
 

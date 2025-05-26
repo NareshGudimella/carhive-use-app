@@ -40,14 +40,22 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
         if (response.code == 0) {
             setRentalData(response.data)
         } else {
-            Alert.alert('Alert', 'Unable to get Rental Details')
+
+            Alert.alert(
+                'Alert',
+                'Unable to get Rental Details',
+                [
+                    { text: 'Login your account', onPress: () => console.log('Login pressed') }
+                ]
+            );
         }
     }
     const handelPayment = async (booking_car_id: any) => {
         const response = await excuteGetResponse(`secure/cars/payment/${booking_car_id}`)
         console.log('payment', response)
         if (response.code == 0) {
-            props.navigation.navigate('PaymentSuccessScreen', { id: response.data.booking_id, price: response.data.total_price })
+            props.navigation.navigate('PaymentSuccessScreen',
+                { id: response.data.booking_id, price: response.data.total_price })
         } else {
             Alert.alert('Alert', 'unable to get Booking Payment Details')
         }
@@ -555,7 +563,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                             }}>
                                                                 <PrimaryButton
                                                                     title='Rate your Experience'
-                                                                    onclick={() => props.navigation.navigate('RattingScreen',{id:e.car_booking_id})} />
+                                                                    onclick={() => props.navigation.navigate('RattingScreen', { id: e.car_booking_id })} />
                                                             </View>
                                                         </View>
                                                     </Cardview>

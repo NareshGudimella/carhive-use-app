@@ -7,6 +7,8 @@ export const Cardview = ({ children }: { children: any }) => {
                 backgroundColor: '#ffffff',
                 elevation: 2,
                 borderRadius: 15,
+                borderWidth:0.5,
+                borderColor:'#EAECF2'
             }}>
             {children}
         </View>

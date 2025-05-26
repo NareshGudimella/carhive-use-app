@@ -85,7 +85,7 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                     <Text
                                         style={{
                                             marginTop: hp(8.5),
-                                            fontSize: 17,
+                                            fontSize: 15,
                                             fontWeight: 'bold'
                                         }}>Booking ID : {orderDetails && orderDetails.booking_id}</Text>
                                     <Text
@@ -99,7 +99,7 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                         style={{
                                             color: '#FBC41D',
                                             fontWeight: 'bold',
-                                            fontSize: 16
+                                            fontSize: 15
                                         }}>Rental</Text>
                                 </View>
                                 <View style={{
@@ -121,7 +121,7 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                     }}>Status :</Text>
                                     <Text
                                         style={{
-                                            fontSize: 15,
+                                            fontSize: 14,
                                             fontWeight: '500'
                                         }}> {orderDetails && orderDetails.status}</Text>
                                 </View>
@@ -150,7 +150,7 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                     alignItems: 'center'
                                 }}>
                                     <Text style={{
-                                        fontSize: 15,
+                                        fontSize: 14,
                                         fontWeight: 'bold'
                                     }}>{orderDetails && moment(orderDetails.from_date).format('DD MMM YYYY')}</Text>
                                     <Text style={{
@@ -169,7 +169,7 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                     alignItems: 'center'
                                 }}>
                                     <Text style={{
-                                        fontSize: 15,
+                                        fontSize: 14,
                                         fontWeight: 'bold'
                                     }}>{orderDetails && moment(orderDetails.to_date).format('DD MMM YYYY')}</Text>
                                     <Text style={{
@@ -458,7 +458,7 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                         }}>
                                             <Text
                                                 style={{
-                                                    fontSize: 15,
+                                                    fontSize: 14,
                                                     fontWeight: 'bold'
                                                 }}>{e.booking_status}</Text>
                                             <Text style={{

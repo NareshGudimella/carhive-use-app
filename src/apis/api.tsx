@@ -114,8 +114,23 @@ export const carDetails = async (carid: any, from_date: any, to_date: any) => {
 export const LoginCarDetails = async (carid: any, from_date: any, to_date: any) => {
     return excuteResponse(`secure/cars/cardetails/${carid}`, { from_date, to_date })
 }
-export const SignUp = async (name: any, email: any, gender: any, dob: any) => {
-    return excuteResponse(`secure/signup`, { name, email, gender, dob })
+export const SignUp = async (body: any) => {
+    const formdata = new FormData();
+
+    console.log('signupvalue', Object.entries<any>(body));
+
+    for (const [key, value] of Object.entries<any>(body)) {
+        if (key === 'profile_pic' && value?.uri) {
+            formdata.append(key, {
+                uri: value.uri,
+                type: value.type,
+                name: value.fileName,
+            });
+        } else {
+            formdata.append(key, value);
+        }
+    }
+    return excuteResponse(`secure/signup`, formdata)
 }
 export const summery = async (carid: any, from_date: any, to_date: any,
     latitude: any, longitude: any, ofercode: any) => {

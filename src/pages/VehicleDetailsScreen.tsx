@@ -1,10 +1,9 @@
-import { Alert, Image, Modal, Platform, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Image, Modal, Platform, Pressable, ScrollView, Text, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { hp, wp } from "../utils/ResponsiveScreen";
 import { BackButtonStyle } from "../styles/BackButtonStyle";
-import { BottomTabstyles } from "../styles/BottomTabstyles";
 import { Cardview } from "../components/Cardview";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { ImageStyle } from "../styles/ImageStyle";
 import { Rating } from 'react-native-ratings';
 import PrimaryButton from "../components/PrimaryButton";
@@ -604,7 +603,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                     autoPlay={false}
                                     ref={ref}
                                     width={wp(87)}
-                                    height={hp(21)}
+                                    height={hp(18)}
                                     data={carData.reviews}
                                     renderItem={({ item }: { item: any }) => (
                                         <View style={{ paddingVertical: hp(1), marginHorizontal: hp(2), width: wp(87) }}>
@@ -648,11 +647,13 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                                     </View>
                                                 </View>
                                             </View>
+                                            <Text
+                                                numberOfLines={1}
+                                                style={{
+                                                    fontWeight: '500',
+                                                    marginVertical: hp(2),
 
-                                            <Text style={{
-                                                fontWeight: '500',
-                                                marginVertical: hp(2)
-                                            }}>{item.review}</Text>
+                                                }}>{item.review}</Text>
                                         </View>
                                     )}
                                 />
@@ -682,7 +683,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                         color: '#64748B',
                                         top: (-3),
                                         marginHorizontal: wp(2)
-                                    }}>₹{carData && carData.price_per_hour} /Day</Text>
+                                    }}>/ {carData && carData.total_kms} kms</Text>
                                 </View>
                                 <PrimaryButton
                                     title='Book Now'
