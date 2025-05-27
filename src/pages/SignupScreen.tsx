@@ -117,15 +117,22 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
                 justifyContent: 'center',
                 alignItems: 'center'
             }}>
-                <Pressable onPress={() => SetCaremaModal(true)}>
+                <Pressable
+                    style={{
+                        borderWidth: 2,
+                        padding: 2,
+                        borderColor: '#D9D9D9',
+                        borderRadius: wp(12)
+                    }}
+                    onPress={() => SetCaremaModal(true)}>
                     <Image
                         source={profileImage != null ?
                             { uri: profileImage?.uri }
                             : require('../assets/profile.png')}
                         style={{
-                            height: wp(25),
-                            width: wp(25),
-                            borderRadius: wp(12)
+                            height: wp(22),
+                            width: wp(22),
+                            borderRadius: wp(11)
                         }} />
                 </Pressable>
                 <Text style={{

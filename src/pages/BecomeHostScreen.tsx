@@ -133,7 +133,7 @@ const BecomeHostScreen: React.FC<Componentprops> = (props) => {
                         <Dropdown
                             style={{
                                 height: hp(6),
-                                borderColor: "#E5E7EB",
+                                borderColor: "#75757533",
                                 borderWidth: 1,
                                 borderRadius: 8,
                                 paddingHorizontal: 15,
@@ -146,6 +146,7 @@ const BecomeHostScreen: React.FC<Componentprops> = (props) => {
                             containerStyle={{
                                 borderRadius: 8,
                                 backgroundColor: "#EEEFF2",
+                                
                             }}
                             placeholderStyle={{
                                 fontSize: 16,
@@ -191,7 +192,7 @@ const BecomeHostScreen: React.FC<Componentprops> = (props) => {
                         <Dropdown
                             style={{
                                 height: hp(6),
-                                borderColor: "#E5E7EB",
+                                borderColor: "#75757533",
                                 borderWidth: 1,
                                 borderRadius: 8,
                                 paddingHorizontal: 15,

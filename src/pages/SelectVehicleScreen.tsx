@@ -480,79 +480,84 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                 style={{
                                                     width: wp(89.6),
                                                     flexDirection: 'row',
-                                                    paddingHorizontal: wp(5),
                                                     borderBottomLeftRadius: 20,
                                                     borderBottomRightRadius: 20,
-                                                    paddingVertical: wp(1.5)
+
                                                 }}
                                             >
-                                                <View>
-                                                    <Text
-                                                        style={{
-                                                            color: '#FBC41D',
-                                                            fontSize: 22,
-                                                            fontWeight: 'bold',
-
-                                                        }}
-
-                                                    >
-                                                        ₹{e.total_price}
-                                                    </Text>
-                                                    <Text
-                                                        style={{
-                                                            color: '#FFFFFF',
-                                                            fontSize: 16,
-                                                        }}
-                                                    >
-                                                        {e.total_kms} kms
-                                                    </Text>
-                                                </View>
-
-                                                <View
-                                                    style={{
-                                                        borderWidth: 0.2,
-                                                        borderColor: '#666666',
-                                                        backgroundColor: '#666666',
-                                                        marginHorizontal: wp(5),
-                                                    }}
-                                                />
-
-                                                <ScrollView
-                                                    horizontal
-                                                    style={{
-                                                        flexDirection: 'row',
-                                                    }}
-                                                >
-                                                    {e.features.slice(0, 2).map((item: any, index: any) => (
-                                                        <View
-                                                            key={index}
+                                                <View style={{
+                                                    paddingHorizontal: wp(5),
+                                                    flexDirection: 'row',
+                                                    paddingVertical: wp(2)
+                                                }}>
+                                                    <View>
+                                                        <Text
                                                             style={{
-                                                                marginHorizontal: wp(2),
-                                                                alignItems: 'center',
+                                                                color: '#FBC41D',
+                                                                fontSize: 22,
+                                                                fontWeight: 'bold',
+
+                                                            }}
+
+                                                        >
+                                                            ₹{e.total_price}
+                                                        </Text>
+                                                        <Text
+                                                            style={{
+                                                                color: '#FFFFFF',
+                                                                fontSize: 16,
                                                             }}
                                                         >
-                                                            <Image
-                                                                source={{ uri: item.icon }}
+                                                            {e.total_kms} kms
+                                                        </Text>
+                                                    </View>
+
+                                                    <View
+                                                        style={{
+                                                            borderWidth: 0.2,
+                                                            borderColor: '#666666',
+                                                            backgroundColor: '#666666',
+                                                            marginHorizontal: wp(5),
+                                                        }}
+                                                    />
+
+                                                    <ScrollView
+                                                        horizontal
+                                                        style={{
+                                                            flexDirection: 'row',
+                                                        }}
+                                                    >
+                                                        {e.features.slice(0, 2).map((item: any, index: any) => (
+                                                            <View
+                                                                key={index}
                                                                 style={{
-                                                                    height: 20,
-                                                                    width: 20,
-                                                                    tintColor: '#ffffff',
-                                                                }}
-                                                            />
-                                                            <Text
-                                                                style={{
-                                                                    fontSize: 11,
-                                                                    fontWeight: '500',
-                                                                    color: '#ffffff',
-                                                                    top: hp(1.5),
+                                                                    marginHorizontal: wp(2),
+                                                                    alignItems: 'center',
                                                                 }}
                                                             >
-                                                                {item.name}
-                                                            </Text>
-                                                        </View>
-                                                    ))}
+                                                                <Image
+                                                                    source={{ uri: item.icon }}
+                                                                    style={{
+                                                                        height: 20,
+                                                                        width: 20,
+                                                                        tintColor: '#ffffff',
+                                                                    }}
+                                                                />
+                                                                <Text
+                                                                    style={{
+                                                                        fontSize: 11,
+                                                                        fontWeight: '500',
+                                                                        color: '#ffffff',
+                                                                        top: hp(1.5),
+                                                                    }}
+                                                                >
+                                                                    {item.name}
+                                                                </Text>
+                                                            </View>
+                                                        ))}
 
-                                                </ScrollView>
+                                                    </ScrollView>
+                                                </View>
                                             </LinearGradient>
 
                                         </View>

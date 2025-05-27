@@ -377,7 +377,6 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                                     }}>
                                                         {ModelcancelData && ModelcancelData.cancellation}
                                                     </Text>
-
                                                 </View> :
                                                 typeofTandC == 'Modification' ?
                                                     <View style={{ marginHorizontal: wp(5) }}>

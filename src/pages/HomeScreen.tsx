@@ -19,7 +19,7 @@ import { excuteGetResponse } from "../apis/api";
 import { useFocusEffect } from "@react-navigation/native";
 import DatePicker from "react-native-date-picker";
 import Geolocation from "@react-native-community/geolocation";
-import { check, PERMISSIONS, request } from "react-native-permissions";
+import { check, PERMISSIONS, request, RESULTS } from "react-native-permissions";
 import { getCity } from "../storage/AsyncStorage";
 import moment from "moment";
 
@@ -316,6 +316,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                                 fontWeight: '500'
                                             }}>Pickup Date</Text>
                                         <Pressable
+                                        
                                             onPress={() => {
                                                 setOpen(true)
                                                 setDateType('pickup')
@@ -323,7 +324,9 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                             }}
                                             style={[SelectorBoxStyle.style, {
                                                 flexDirection: 'row',
-                                                marginTop: wp(2)
+                                                marginTop: wp(2),
+                                                borderWidth:0.5,
+                                                borderColor:'#EDEFF8'
                                             }]}>
                                             <Image
                                                 source={
@@ -352,7 +355,9 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                             }}
                                             style={[SelectorBoxStyle.style, {
                                                 flexDirection: 'row',
-                                                marginTop: wp(2)
+                                                marginTop: wp(2),
+                                                  borderWidth:0.5,
+                                                borderColor:'#EDEFF8'
                                             }]}>
                                             <Image
                                                 source={require('../assets/clock.png')}
@@ -385,7 +390,9 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                             }}
                                             style={[SelectorBoxStyle.style, {
                                                 flexDirection: 'row',
-                                                marginTop: wp(2)
+                                                marginTop: wp(2),
+                                                  borderWidth:0.5,
+                                                borderColor:'#EDEFF8'
                                             }]}>
                                             <Image
                                                 source={
@@ -414,7 +421,9 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                             }}
                                             style={[SelectorBoxStyle.style, {
                                                 flexDirection: 'row',
-                                                marginTop: wp(2)
+                                                marginTop: wp(2),
+                                                  borderWidth:0.5,
+                                                borderColor:'#EDEFF8'
                                             }]}>
                                             <Image
                                                 source={require('../assets/clock.png')}

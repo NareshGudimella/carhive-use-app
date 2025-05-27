@@ -174,6 +174,14 @@ export const userUpdateProfile = async (body: any) => {
                     name: value.fileName
                 })
             }
+        } else if (key == 'profile_pic') {
+            if (value && value.uri) {
+                data.append(key, {
+                    uri: value.uri,
+                    type: value.type,
+                    name: value.fileName
+                })
+            }
         } else {
             data.append(key, value)
         }

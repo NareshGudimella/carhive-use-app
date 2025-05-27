@@ -11,6 +11,8 @@ export const input = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         paddingHorizontal: wp(5),
+        borderWidth: 1,
+        borderColor: '#75757533'
 
     },
     imgstyle: {

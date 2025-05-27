@@ -11,7 +11,6 @@ import { Cardview } from "../components/Cardview";
 import { RadioButton } from "react-native-paper";
 import { useCallback, useState } from "react";
 import PrimaryButton from "../components/PrimaryButton";
-import { BottomModelView } from "../components/BottomModelView";
 import { CenterModalView } from "../components/CenterModelView";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { excuteGetResponse } from "../apis/api";
@@ -44,12 +43,10 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
             Alert.alert(
                 'Alert',
                 'Unable to get Rental Details',
-                [
-                    { text: 'Login your account', onPress: () => console.log('Login pressed') }
-                ]
             );
         }
     }
+
     const handelPayment = async (booking_car_id: any) => {
         const response = await excuteGetResponse(`secure/cars/payment/${booking_car_id}`)
         console.log('payment', response)
@@ -476,20 +473,48 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                                 }}> {moment(e.to_date).format('DD MMM YYYY HH:DD A')}
                                                             </Text>
                                                         </View>
+
                                                         {
-                                                            e.submit_flag == 1 ?
+                                                            e.pay_flag == 1 ?
                                                                 <View style={{
                                                                     marginBottom: hp(2),
                                                                     marginHorizontal: wp(10)
                                                                 }}>
-                                                                    <PrimaryButton
-                                                                        title='Extend Service'
-                                                                        onclick={() => {
-                                                                            setExtendServiceModal(true)
-                                                                            setCarId(e.car_booking_id)
-                                                                            setPrice(e.pirce_per_hour)
-                                                                        }} />
-                                                                </View> : <></>
+                                                                    <Pressable
+                                                                        onPress={() => {
+                                                                            handelPayment(e.car_booking_id)
+                                                                        }}
+                                                                        style={{
+                                                                            backgroundColor: '#FBC41D',
+                                                                            justifyContent: 'center',
+                                                                            alignItems: 'center',
+                                                                            height: hp(6),
+                                                                            borderRadius: 10
+                                                                        }}>
+                                                                        <Text style={{
+                                                                            color: '#000000',
+                                                                            fontWeight: 'bold'
+                                                                        }}>Pay</Text>
+                                                                    </Pressable>
+                                                                </View> :
+                                                                <>
+                                                                    {
+                                                                        e.submit_flag == 1 ?
+                                                                            <View style={{
+                                                                                marginBottom: hp(2),
+                                                                                marginHorizontal: wp(10)
+                                                                            }}>
+                                                                                <PrimaryButton
+                                                                                    title='Extend Service'
+                                                                                    onclick={() => {
+                                                                                        setExtendServiceModal(true)
+                                                                                        setCarId(e.car_booking_id)
+                                                                                        setPrice(e.pirce_per_hour)
+                                                                                    }} />
+                                                                            </View> : <></>
+
+                                                                    }
+                                                                </>
 
                                                         }
                                                     </View>
@@ -647,6 +672,32 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                                         }}> {moment(e.extended_date).format('DD MMM YYYY HH:DD A')}
                                                                     </Text>
                                                                 </View>
+                                                                {
+                                                                    e.submit_flag == 1 ?
+                                                                        <View style={{
+                                                                            marginBottom: hp(2),
+                                                                            marginHorizontal: wp(10)
+                                                                        }}>
+                                                                            <Pressable
+                                                                                onPress={() => {
+                                                                                    handelPayment(e.car_booking_id)
+                                                                                }}
+                                                                                style={{
+                                                                                    backgroundColor: '#FBC41D',
+                                                                                    justifyContent: 'center',
+                                                                                    alignItems: 'center',
+                                                                                    height: hp(6),
+                                                                                    borderRadius: 10
+                                                                                }}>
+                                                                                <Text style={{
+                                                                                    color: '#000000',
+                                                                                    fontWeight: 'bold'
+                                                                                }}>Pay</Text>
+                                                                            </Pressable>
+                                                                        </View> :
+                                                                        <></>
+
+                                                                }
                                                             </View>
                                                         </Cardview>
                                                     </Pressable>
@@ -654,20 +705,20 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                         <Pressable
                                                             onPress={() => props.navigation.navigate('OrderDetailsScreen', { Id: e.car_booking_id })}
                                                             style={{
-                                                                marginVertical: hp(1.5)
                                                             }}>
                                                             <Cardview>
                                                                 <View>
-                                                                    <View style={{
-                                                                        backgroundColor: '#FF8300',
-                                                                        width: wp(25),
-                                                                        justifyContent: 'center',
-                                                                        alignItems: 'center',
-                                                                        paddingVertical: hp(1),
-                                                                        alignSelf: 'flex-end',
-                                                                        borderTopRightRadius: 15,
-                                                                        borderBottomLeftRadius: 10
-                                                                    }}>
+                                                                    <View
+                                                                        style={{
+                                                                            backgroundColor: '#FF8300',
+                                                                            width: wp(25),
+                                                                            justifyContent: 'center',
+                                                                            alignItems: 'center',
+                                                                            paddingVertical: hp(1),
+                                                                            alignSelf: 'flex-end',
+                                                                            borderTopRightRadius: 15,
+                                                                            borderBottomLeftRadius: 10
+                                                                        }}>
                                                                         <Text
                                                                             style={{
                                                                                 color: '#ffffff',
@@ -730,7 +781,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                                         </Text>
                                                                     </View>
                                                                     {
-                                                                        e.submit_flag == 1 ?
+                                                                        e.pay_flag == 1 ?
                                                                             <View style={{
                                                                                 marginBottom: hp(2),
                                                                                 marginHorizontal: wp(10)
@@ -753,9 +804,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                                                 </Pressable>
                                                                             </View> :
                                                                             <></>
-
                                                                     }
-
                                                                 </View>
                                                             </Cardview>
                                                         </Pressable> : <></>

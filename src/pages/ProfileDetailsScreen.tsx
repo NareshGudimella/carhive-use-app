@@ -71,6 +71,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
         object.aadhar_back_image = aadharback
         object.driving_licence_front = licensefront
         object.driving_licence_back = licenseback
+        object.profile_pic = profileImage
         console.log('profileOBj', object)
         const response = await userUpdateProfile(object)
         console.log('profileOBj111', response)
@@ -81,8 +82,6 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
         }
 
     }
-
-
     return (
         <SafeAreaView style={{
             flex: 1
@@ -172,19 +171,31 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                 alignItems: 'center',
                                 marginVertical: hp(1)
                             }}>
-                                <Pressable onPress={() => {
-                                    SetCaremaModal(true),
-                                        setTargetType('Profile')
-                                }}>
-                                    <Image
-                                        source={profileImage != null ?
-                                            { uri: profileImage?.uri }
-                                            : require('../assets/profile.png')}
-                                        style={{
-                                            height: wp(25),
-                                            width: wp(25),
-                                            borderRadius: wp(12)
-                                        }} />
+                                <Pressable
+                                    style={{ borderWidth: 2,
+                                         borderRadius: wp(12),
+                                         borderColor:'#D9D9D9',
+                                        padding:2}}
+                                    onPress={() => {
+                                        SetCaremaModal(true),
+                                            setTargetType('Profile')
+                                    }}>{profilDetails && (
+                                        <Image
+                                            source={
+                                                profileImage != null
+                                                    ? { uri: profileImage?.uri }
+                                                    : profilDetails.profile_pic != null
+                                                        ? { uri: profilDetails.profile_pic }
+                                                        : require('../assets/profile.png')
+                                            }
+                                            style={{
+                                                height: wp(22),
+                                                width: wp(22),
+                                                borderRadius: wp(11),
+                                            }}
+                                        />
+                                    )}
+
                                 </Pressable>
 
                             </View>

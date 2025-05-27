@@ -124,7 +124,10 @@ const KycDetailsScreen: React.FC<Componentprops> = (props) => {
                                     marginTop: hp(2)
                                 }}>
                                     <PrimaryButton title='Back'
-                                        onclick={() => props.navigation.navigate('HomeScreen')} />
+                                        onclick={() => {
+                                            props.navigation.navigate('HomeScreen'),
+                                                setSuccessKycModal(false)
+                                        }} />
                                 </View>
                             </View>
                         </CenterModalView>

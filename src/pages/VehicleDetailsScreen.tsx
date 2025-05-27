@@ -363,12 +363,12 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                             <Image
                                 source={require('../assets/Back.png')}
                                 style={BackButtonStyle.style}
-                                tintColor='#ffffff'
+                                tintColor='#000000'
                             />
                         </Pressable>
                         <Text
                             style={{
-                                color: '#ffffff',
+                                color: '#000000',
                                 marginHorizontal: wp(2),
                                 fontWeight: 'bold'
                             }}
