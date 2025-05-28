@@ -71,28 +71,43 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
             return;
         }
 
-        const pickupDay = new Date(pickupDate.getFullYear(), pickupDate.getMonth(), pickupDate.getDate());
-        const dropDay = new Date(dropDate.getFullYear(), dropDate.getMonth(), dropDate.getDate());
-        if (cityname && cityname.cityId != '') {
-            if (dropDay > pickupDay ? dropDay >= pickupDay : pickupTime.getTime() != dropTime.getTime()) {
+        const pickupDateTime = new Date(
+            pickupDate.getFullYear(),
+            pickupDate.getMonth(),
+            pickupDate.getDate(),
+            pickupTime.getHours(),
+            pickupTime.getMinutes()
+        );
+
+        const dropDateTime = new Date(
+            dropDate.getFullYear(),
+            dropDate.getMonth(),
+            dropDate.getDate(),
+            dropTime.getHours(),
+            dropTime.getMinutes()
+        );
+
+        if (cityname && cityname.cityId !== '') {
+            if (pickupDateTime < dropDateTime) {
                 props.navigation.navigate('SelectVehicleScreen', {
                     lat: latitude,
                     long: longitude,
-                    pickdate: `${moment(pickupDate).format('DD-MM-YYYY')} ${moment(pickupTime).format('HH:mm')}`,
-                    drop: `${moment(dropDate).format('DD-MM-YYYY')} ${moment(dropTime).format('HH:mm')}`,
+                    pickdate: `${moment(pickupDateTime).format('DD-MM-YYYY HH:mm')}`,
+                    drop: `${moment(dropDateTime).format('DD-MM-YYYY HH:mm')}`,
                     picktime: pickupTime,
                     dropuptime: dropTime,
                     addressid: cityname.cityId
                 });
                 console.log('date time',
-                    `${moment(pickupDate).format('DD-MM-YYYY')} ${moment(pickupTime).format('HH:mm')}`,
-                    `${moment(dropDate).format('DD-MM-YYYY')} ${moment(dropTime).format('HH:mm')}`);
+                    `${moment(pickupDateTime).format('DD-MM-YYYY HH:mm')}`,
+                    `${moment(dropDateTime).format('DD-MM-YYYY HH:mm')}`);
             } else {
-                Alert.alert('Alert', 'Please Select Pick Date and Time');
+                Alert.alert('Alert', 'Please select a valid Drop Date and Time after Pickup');
             }
         } else {
-            Alert.alert('Alert', 'Alert Select the City')
+            Alert.alert('Alert', 'Please select the City');
         }
+
     };
     {/*location fetching */ }
     const VerifyLocationPermission = async () => {
@@ -316,7 +331,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                                 fontWeight: '500'
                                             }}>Pickup Date</Text>
                                         <Pressable
-                                        
+
                                             onPress={() => {
                                                 setOpen(true)
                                                 setDateType('pickup')
@@ -325,8 +340,8 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                             style={[SelectorBoxStyle.style, {
                                                 flexDirection: 'row',
                                                 marginTop: wp(2),
-                                                borderWidth:0.5,
-                                                borderColor:'#EDEFF8'
+                                                borderWidth: 0.5,
+                                                borderColor: '#EDEFF8'
                                             }]}>
                                             <Image
                                                 source={
@@ -356,8 +371,8 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                             style={[SelectorBoxStyle.style, {
                                                 flexDirection: 'row',
                                                 marginTop: wp(2),
-                                                  borderWidth:0.5,
-                                                borderColor:'#EDEFF8'
+                                                borderWidth: 0.5,
+                                                borderColor: '#EDEFF8'
                                             }]}>
                                             <Image
                                                 source={require('../assets/clock.png')}
@@ -391,8 +406,8 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                             style={[SelectorBoxStyle.style, {
                                                 flexDirection: 'row',
                                                 marginTop: wp(2),
-                                                  borderWidth:0.5,
-                                                borderColor:'#EDEFF8'
+                                                borderWidth: 0.5,
+                                                borderColor: '#EDEFF8'
                                             }]}>
                                             <Image
                                                 source={
@@ -422,8 +437,8 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                             style={[SelectorBoxStyle.style, {
                                                 flexDirection: 'row',
                                                 marginTop: wp(2),
-                                                  borderWidth:0.5,
-                                                borderColor:'#EDEFF8'
+                                                borderWidth: 0.5,
+                                                borderColor: '#EDEFF8'
                                             }]}>
                                             <Image
                                                 source={require('../assets/clock.png')}

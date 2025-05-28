@@ -46,6 +46,15 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
             );
         }
     }
+    const handelCancle = async (car_booking_id: any) => {
+        const response = await excuteGetResponse(`secure/cars/bookings/cancel/${car_booking_id}`)
+        console.log('cancel', response)
+        if (response.code == 0) {
+            handelRentalDetails()
+        } else {
+            Alert.alert('Alert', 'Unable to get details')
+        }
+    }
 
     const handelPayment = async (booking_car_id: any) => {
         const response = await excuteGetResponse(`secure/cars/payment/${booking_car_id}`)
@@ -186,7 +195,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                 e.status == 'PENDING' ?
                                     <Pressable
                                         onPress={() => props.navigation.navigate('OrderDetailsScreen', { Id: e.car_booking_id })}
-                                        style={{ marginVertical: hp(1.5) }}>
+                                        style={{ marginVertical: hp(0.5) }}>
                                         <Cardview>
                                             <View>
                                                 <View style={{
@@ -245,11 +254,33 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                     }}>{moment(e.from_date).format('DD MMM YYYY HH:DD A')} -
                                                     {moment(e.to_date).format('DD MMM YYYY HH:DD A')}</Text>
                                             </View>
+                                            <Pressable
+                                                onPress={() => {
+                                                    handelCancle(e.car_booking_id)
+                                                }}
+                                                style={{
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+                                                    backgroundColor: '#E34234',
+                                                    height: hp(6),
+                                                    marginHorizontal: wp(10),
+                                                    marginBottom: hp(1.4),
+                                                    borderRadius: 10
+                                                }}>
+                                                <Text
+                                                    style={{
+                                                        color: '#ffffff',
+                                                        fontWeight: 'bold',
+                                                        fontSize: 15
+                                                    }}
+                                                >Cancel</Text>
+                                            </Pressable>
                                         </Cardview>
                                     </Pressable> :
                                     e.status == 'ACCEPTED' ?
                                         <Pressable
                                             onPress={() => props.navigation.navigate('OrderDetailsScreen', { Id: e.car_booking_id })}
+                                            style={{ marginVertical: hp(0.5) }}
                                         >
                                             <Cardview>
                                                 <View>
@@ -392,14 +423,33 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                         </Pressable>
                                                     </View>
                                                 </View>
+                                                <Pressable
+                                                    onPress={() => {
+                                                        handelCancle(e.car_booking_id)
+                                                    }}
+                                                    style={{
+                                                        justifyContent: 'center',
+                                                        alignItems: 'center',
+                                                        backgroundColor: '#E34234',
+                                                        height: hp(6),
+                                                        marginHorizontal: wp(10),
+                                                        marginBottom: hp(1.4),
+                                                        borderRadius: 10
+                                                    }}>
+                                                    <Text
+                                                        style={{
+                                                            color: '#ffffff',
+                                                            fontWeight: 'bold',
+                                                            fontSize: 15
+                                                        }}
+                                                    >Cancel</Text>
+                                                </Pressable>
                                             </Cardview>
                                         </Pressable> :
                                         e.status == 'ONGOING' ?
                                             <Pressable
                                                 onPress={() => props.navigation.navigate('OrderDetailsScreen', { Id: e.car_booking_id })}
-                                                style={{
-                                                    marginVertical: hp(1.5)
-                                                }}>
+                                                style={{ marginVertical: hp(0.5) }}>
                                                 <Cardview>
                                                     <View>
                                                         <View style={{
@@ -476,26 +526,90 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
 
                                                         {
                                                             e.pay_flag == 1 ?
-                                                                <View style={{
-                                                                    marginBottom: hp(2),
-                                                                    marginHorizontal: wp(10)
-                                                                }}>
-                                                                    <Pressable
-                                                                        onPress={() => {
-                                                                            handelPayment(e.car_booking_id)
-                                                                        }}
-                                                                        style={{
-                                                                            backgroundColor: '#FBC41D',
-                                                                            justifyContent: 'center',
-                                                                            alignItems: 'center',
-                                                                            height: hp(6),
-                                                                            borderRadius: 10
-                                                                        }}>
-                                                                        <Text style={{
-                                                                            color: '#000000',
-                                                                            fontWeight: 'bold'
-                                                                        }}>Pay</Text>
-                                                                    </Pressable>
+                                                                <View>
+                                                                    <View style={{
+                                                                        marginHorizontal: wp(4)
+                                                                    }}>
+                                                                        <View
+                                                                            style={{
+                                                                                borderWidth: 0.5,
+                                                                                borderColor: '#64748B29',
+                                                                                borderStyle: 'dashed',
+                                                                                marginBottom: hp(1)
+                                                                            }} />
+                                                                        <View>
+                                                                            <Text
+                                                                                style={{
+                                                                                    fontSize: 13,
+                                                                                    fontWeight: 'bold'
+                                                                                }}
+                                                                            >Actual Kms to drive :
+                                                                                <Text
+                                                                                    style={{
+                                                                                        fontSize: 14,
+                                                                                        fontWeight: '500',
+                                                                                        color: '#525252'
+                                                                                    }}
+                                                                                > {e.total_kms
+                                                                                    }</Text></Text>
+                                                                            <Text
+                                                                                style={{
+                                                                                    fontSize: 13,
+                                                                                    fontWeight: 'bold'
+                                                                                }}
+                                                                            >Kms driven :
+                                                                                <Text
+                                                                                    style={{
+                                                                                        fontSize: 14,
+                                                                                        fontWeight: '500',
+                                                                                        color: '#525252'
+                                                                                    }}
+                                                                                > {e.total_kms_driven}
+                                                                                </Text>
+                                                                            </Text>
+                                                                            <Text
+                                                                                style={{
+                                                                                    fontSize: 13,
+                                                                                    fontWeight: 'bold'
+                                                                                }}
+                                                                            >Extra Kms driven :
+                                                                                <Text
+                                                                                    style={{
+                                                                                        fontSize: 14,
+                                                                                        fontWeight: '500',
+                                                                                        color: '#525252'
+                                                                                    }}
+                                                                                > {e.extra_kms}</Text></Text>
+                                                                        </View>
+                                                                        <View
+                                                                            style={{
+                                                                                borderWidth: 0.5,
+                                                                                borderColor: '#64748B29',
+                                                                                borderStyle: 'dashed',
+                                                                                marginVertical: hp(1)
+                                                                            }} />
+                                                                    </View>
+                                                                    <View style={{
+                                                                        marginBottom: hp(2),
+                                                                        marginHorizontal: wp(10)
+                                                                    }}>
+                                                                        <Pressable
+                                                                            onPress={() => {
+                                                                                handelPayment(e.car_booking_id)
+                                                                            }}
+                                                                            style={{
+                                                                                backgroundColor: '#FBC41D',
+                                                                                justifyContent: 'center',
+                                                                                alignItems: 'center',
+                                                                                height: hp(6),
+                                                                                borderRadius: 10
+                                                                            }}>
+                                                                            <Text style={{
+                                                                                color: '#000000',
+                                                                                fontWeight: 'bold'
+                                                                            }}>Pay   ₹{e.extra_charges}</Text>
+                                                                        </Pressable>
+                                                                    </View>
                                                                 </View> :
                                                                 <>
                                                                     {
@@ -523,7 +637,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                             : e.status == 'COMPLETED' ?
                                                 <Pressable
                                                     onPress={() => props.navigation.navigate('OrderDetailsScreen', { Id: e.car_booking_id })}
-                                                    style={{ marginVertical: hp(1.5) }}>
+                                                    style={{ marginVertical: hp(0.5) }}>
                                                     <Cardview>
                                                         <View>
                                                             <View style={{
@@ -596,9 +710,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                 : e.status == 'EXTEND' ?
                                                     <Pressable
                                                         onPress={() => props.navigation.navigate('OrderDetailsScreen', { Id: e.car_booking_id })}
-                                                        style={{
-                                                            marginVertical: hp(1.5)
-                                                        }}>
+                                                        style={{ marginVertical: hp(0.5) }}>
                                                         <Cardview>
                                                             <View>
                                                                 <View style={{
@@ -704,8 +816,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                     : e.status == 'EXTENDED' ?
                                                         <Pressable
                                                             onPress={() => props.navigation.navigate('OrderDetailsScreen', { Id: e.car_booking_id })}
-                                                            style={{
-                                                            }}>
+                                                            style={{ marginVertical: hp(0.5) }}>
                                                             <Cardview>
                                                                 <View>
                                                                     <View

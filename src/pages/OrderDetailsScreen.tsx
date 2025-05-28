@@ -1,4 +1,4 @@
-import { Image, Linking, Pressable, ScrollView, Text, View } from "react-native";
+import { Alert, Image, Linking, Pressable, ScrollView, Text, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { wp, hp } from "../utils/ResponsiveScreen";
 import { Cardview } from "../components/Cardview";
@@ -36,6 +36,8 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
         console.log('orderDetails', response)
         if (response.code == 0) {
             setOrderDetails(response.data)
+        } else {
+            Alert.alert('Alert', 'unable to get details')
         }
     }
     return (

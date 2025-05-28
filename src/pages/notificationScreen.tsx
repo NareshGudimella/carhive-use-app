@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Baseprops } from "../utils/navigation";
-import { Image, Pressable, ScrollView, Text, View, Dimensions } from "react-native";
+import { Image, Pressable, ScrollView, Text, View, Dimensions, Alert } from "react-native";
 import AutoHeightImage from 'react-native-auto-height-image';
 import { hp, wp } from "../utils/ResponsiveScreen";
 import { excuteGetResponse } from '../apis/api';
@@ -25,6 +25,8 @@ const NotificationScreen: React.FC<Componentprops> = (props) => {
         console.log('notify', response)
         if (response.code == 0) {
             setNotification(response.data)
+        } else {
+            Alert.alert('Alert', 'Unable to get details')
         }
     }
 

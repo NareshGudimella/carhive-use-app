@@ -96,7 +96,13 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
         if (response.code == 0) {
             setCarsList(response.data)
         } else {
-            Alert.alert('Alert', 'unable to get details of unlogin')
+            Alert.alert('Alert', 'unable to get details ', [
+                {
+                    text: 'Ok',
+                    onPress: () => props.navigation.goBack(),
+                    style: 'cancel',
+                }
+            ])
             return
         }
     }
@@ -640,8 +646,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                         style={{
                                                             color: '#64748B',
                                                         }}>Note </Text>
-                                                    : For Documents Aadhar,
-                                                    Driving License, Bike</Text>
+                                                    :{e.user_documents}</Text>
                                             </View>
                                         </View>
                                     </Pressable>
