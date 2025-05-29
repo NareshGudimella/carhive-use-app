@@ -46,6 +46,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
             );
         }
     }
+
     const handelCancle = async (car_booking_id: any) => {
         const response = await excuteGetResponse(`secure/cars/bookings/cancel/${car_booking_id}`)
         console.log('cancel', response)

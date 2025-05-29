@@ -51,6 +51,14 @@ const ExtendServiceRequestScreen: React.FC<Componentprops> = (props) => {
                     style: 'cancel',
                 },
             ])
+        } else if (response.message == 'Cannot_extend_ride_within_5_hours_of_end_time') {
+            Alert.alert('Alert', 'Cannot extend ride before 5 hours of return vehicle', [
+                {
+                    text: 'Ok',
+                    onPress: () => props.navigation.goBack(),
+                    style: 'cancel',
+                },
+            ])
         } else {
             Alert.alert('Alert', 'Unable to get CarDetils', [
                 {
