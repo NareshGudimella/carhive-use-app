@@ -172,10 +172,12 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                 marginVertical: hp(1)
                             }}>
                                 <Pressable
-                                    style={{ borderWidth: 2,
-                                         borderRadius: wp(12),
-                                         borderColor:'#D9D9D9',
-                                        padding:2}}
+                                    style={{
+                                        borderWidth: 2,
+                                        borderRadius: wp(12),
+                                        borderColor: '#D9D9D9',
+                                        padding: 2
+                                    }}
                                     onPress={() => {
                                         SetCaremaModal(true),
                                             setTargetType('Profile')

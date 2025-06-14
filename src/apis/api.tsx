@@ -1,6 +1,6 @@
 import { getToken } from "../storage/AsyncStorage"
 
-const BASE_URL = 'https://carhive.pengwinsolutions.in/api'
+const BASE_URL = 'https://carhive.co.in/api'
 
 export const excuteResponse = async (url: string, body: any) => {
 

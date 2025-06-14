@@ -18,52 +18,20 @@ import ProfileScreen from './src/pages/ProfileScreen';
 import ProfileDetailsScreen from './src/pages/ProfileDetailsScreen';
 import HostScreen from './src/pages/HostScreen';
 import BecomeHostScreen from './src/pages/BecomeHostScreen';
-import { Provider, useDispatch } from 'react-redux';
-import { store, updateProfile } from './src/storage/redux';
+import { Provider } from 'react-redux';
+import { store } from './src/storage/redux';
 import SelectCityScreen from './src/pages/SelectCityScreen';
-import { Foregroundmessage, requestfirebasePermissions } from './src/firebase/firebase';
-import { getCity, getToken, setCity } from './src/storage/AsyncStorage';
-import { excuteGetResponse, firebasemessage } from './src/apis/api';
 import NotificationScreen from './src/pages/notificationScreen';
-import DeviceInfo from 'react-native-device-info';
-import messaging from '@react-native-firebase/messaging';
 import RattingScreen from './src/pages/RattingScreen';
+import SplaceScreen from './src/pages/SplaceScreen';
 export const navigationRef = createNavigationContainerRef();
 const Stack = createNativeStackNavigator();
 
 function RootStack() {
 
-  const dispatch = useDispatch()
-
-  React.useEffect(() => {
-    loadUserDetails()
-    requestfirebasePermissions()
-    Foregroundmessage()
-  })
-
-  const loadUserDetails = async () => {
-    const token = await getToken()
-    if (token && token != '') {
-      const response = await excuteGetResponse('secure/profile')
-      console.log('profile', response)
-      if (response.code == 0) {
-        dispatch(updateProfile(response.data));
-        const token = await getToken()
-        console.log('token', response.data.token)
-        if (token && token != '') {
-          const token = await messaging().getToken();
-          const response = await firebasemessage(token, Platform.OS,
-            await DeviceInfo.getBuildNumber(), Platform.Version,)
-          console.log('firebaser', response)
-        }
-      } else {
-        Alert.alert('Alert', 'Unable to get details')
-      }
-    }
-  }
-
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name='SplaceScreen' component={SplaceScreen} />
       <Stack.Screen name="HomeScreen" component={HomeScreen} />
       <Stack.Screen name='SelectCityScreen' component={SelectCityScreen} />
       <Stack.Screen name='SelectVehicleScreen' component={SelectVehicleScreen} />

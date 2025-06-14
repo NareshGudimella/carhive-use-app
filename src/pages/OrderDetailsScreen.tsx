@@ -389,6 +389,64 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                         color: '#FF0000'
                                     }}>-₹ {orderDetails && orderDetails.offer_price}</Text>
                                 </View>
+                                {
+                                    orderDetails && orderDetails.extended_price != null &&
+                                    <View style={{
+                                        flexDirection: 'row',
+                                        justifyContent: 'space-between',
+                                        marginVertical: hp(1.5)
+                                    }}>
+                                        <View style={{ flexDirection: 'row' }}>
+                                            <Text style={{
+                                                color: '#64748B',
+                                                textDecorationLine: 'underline'
+                                            }}>Extended trip Fee</Text>
+                                            <Image
+                                                source={require('../assets/info.png')}
+                                                style={{
+                                                    height: 10,
+                                                    width: 10,
+                                                    marginTop: 3,
+                                                    marginHorizontal: 3
+                                                }}
+                                            />
+                                        </View>
+                                        <Text style={{
+                                            fontWeight: 'bold',
+                                            fontSize: 15
+                                        }}>₹ {orderDetails && orderDetails.extended_price}</Text>
+                                    </View>
+
+                                }
+                                {
+                                    orderDetails && orderDetails.extra_charges != null &&
+                                    <View style={{
+                                        flexDirection: 'row',
+                                        justifyContent: 'space-between',
+                                        marginVertical: hp(1.5)
+                                    }}>
+                                        <View style={{ flexDirection: 'row' }}>
+                                            <Text style={{
+                                                color: '#64748B',
+                                                textDecorationLine: 'underline'
+                                            }}>Extra kms Fee</Text>
+                                            <Image
+                                                source={require('../assets/info.png')}
+                                                style={{
+                                                    height: 10,
+                                                    width: 10,
+                                                    marginTop: 3,
+                                                    marginHorizontal: 3
+                                                }}
+                                            />
+                                        </View>
+                                        <Text style={{
+                                            fontWeight: 'bold',
+                                            fontSize: 15
+                                        }}>₹ {orderDetails && orderDetails.extra_charges}</Text>
+                                    </View>
+
+                                }
                                 <View style={{
                                     borderWidth: 0.4,
                                     borderStyle: 'dashed',
@@ -408,6 +466,7 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                         fontWeight: 'bold'
                                     }}>₹ {orderDetails && orderDetails.total_price}</Text>
                                 </View>
+
                             </View>
                         </Cardview>
                     </View>

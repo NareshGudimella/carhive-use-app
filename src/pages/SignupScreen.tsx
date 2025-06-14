@@ -46,6 +46,9 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
             Alert.alert('Alert', 'Enter your Gender')
             return
         }
+        if (profileImage == null) {
+            Alert.alert('Alert', 'Upload your profile pic')
+        }
 
 
         const object = JSON.parse(JSON.stringify(userDetailsObj))

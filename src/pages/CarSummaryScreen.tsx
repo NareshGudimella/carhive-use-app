@@ -54,14 +54,14 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
         } else if (response.code == 1 && response.message == 'Offer_Expired_or_Not_Started') {
             Alert.alert('Alert', 'Offer Expired')
             setCouponcode('')
-        } else if (response.code == 1 && response.message == 'Offer_Not_Applicable_minimum_amount_1233.00') {
+        } else if (response.code == 1 && response.message == 'Offer_Not_Applicable_minimum_amount') {
             Alert.alert('Alert', 'This offer isn’t applicable for this ride, as your minimum balance needs to be above ₹1200.')
             setCouponcode('')
         } else if (response.code == 1 && response.message == 'Offer_Not_Applicable') {
             Alert.alert('Alert', 'Offer not available')
             setCouponcode('')
         } else {
-            Alert.alert('Alert', 'Unable to getdetails')
+            Alert.alert('Alert', 'Unable to get details')
         }
     }
     const handelModelData = async () => {
@@ -111,13 +111,11 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                             setCoupanModalScreen(!couponModalScreen);
                         }}
                     >
-
                         <BottomModelView onclick={() => setCoupanModalScreen(false)}>
                             <View style={{ margin: wp(5) }}>
                                 <View style={{
                                     flexDirection: 'row',
                                     alignItems: 'center',
-
                                 }}>
                                     <Pressable onPress={() => setCoupanModalScreen(false)}>
                                         <Image source={require('../assets/Back.png')}
@@ -254,7 +252,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                         }}
                     >
                         <BottomModelView onclick={() => setTermsAndCondition(false)}>
-                            <View>
+                            <ScrollView style={{}}>
                                 <View style={{
                                     justifyContent: 'center',
                                     alignItems: 'center',
@@ -434,7 +432,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                             }} />
                                     </View>
                                 </View>
-                            </View>
+                            </ScrollView>
                         </BottomModelView>
                     </Modal>
                 </View>
@@ -826,31 +824,32 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                 marginHorizontal: wp(5),
                                 marginVertical: hp(2)
                             }}>
-                                <View style={{
-                                    flexDirection: 'row',
-                                    justifyContent: 'space-between'
-                                }}>
-                                    <View style={{ flexDirection: 'row' }}>
+                                {carDetails && carDetails.trip_charges != 0 &&
+                                    <View style={{
+                                        flexDirection: 'row',
+                                        justifyContent: 'space-between'
+                                    }}>
+                                        <View style={{ flexDirection: 'row' }}>
+                                            <Text style={{
+                                                color: '#64748B',
+                                                textDecorationLine: 'underline'
+                                            }}>Trip Charges</Text>
+                                            <Image
+                                                source={require('../assets/info.png')}
+                                                style={{
+                                                    height: 10,
+                                                    width: 10,
+                                                    marginTop: 3,
+                                                    marginHorizontal: 3
+                                                }}
+                                            />
+                                        </View>
                                         <Text style={{
-                                            color: '#64748B',
-                                            textDecorationLine: 'underline'
-                                        }}>Trip Charges</Text>
-                                        <Image
-                                            source={require('../assets/info.png')}
-                                            style={{
-                                                height: 10,
-                                                width: 10,
-                                                marginTop: 3,
-                                                marginHorizontal: 3
-                                            }}
-                                        />
-                                    </View>
-                                    <Text style={{
-                                        fontWeight: 'bold',
-                                        fontSize: 15
-                                    }}>₹ {carDetails && carDetails.trip_charges}</Text>
-                                </View>
-                                <View style={{
+                                            fontWeight: 'bold',
+                                            fontSize: 15
+                                        }}>₹ {carDetails && carDetails.trip_charges}</Text>
+                                    </View>}
+                                {carDetails && carDetails.taxes != 0 && <View style={{
                                     flexDirection: 'row',
                                     justifyContent: 'space-between',
                                     marginVertical: hp(1)
@@ -874,8 +873,8 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                         fontWeight: 'bold',
                                         fontSize: 15
                                     }}>₹ {carDetails && carDetails.taxes}</Text>
-                                </View>
-                                <View style={{
+                                </View>}
+                                {carDetails && carDetails.convenience_fee != 0 && <View style={{
                                     flexDirection: 'row',
                                     justifyContent: 'space-between',
                                     marginVertical: hp(1)
@@ -899,8 +898,8 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                         fontWeight: 'bold',
                                         fontSize: 15
                                     }}>₹ {carDetails && carDetails.convenience_fee}</Text>
-                                </View>
-                                <View style={{
+                                </View>}
+                                {carDetails && carDetails.security_deposite != 0 && <View style={{
                                     flexDirection: 'row',
                                     justifyContent: 'space-between'
                                 }}>
@@ -917,8 +916,8 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                         fontWeight: 'bold',
                                         fontSize: 15
                                     }}>₹ {carDetails && carDetails.security_deposite}</Text>
-                                </View>
-                                <View style={{
+                                </View>}
+                                {carDetails && carDetails.protection_fee != 0 && <View style={{
                                     flexDirection: 'row',
                                     justifyContent: 'space-between',
                                     marginVertical: hp(1)
@@ -942,9 +941,9 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                         fontWeight: 'bold',
                                         fontSize: 15
                                     }}>₹ {carDetails && carDetails.protection_fee}</Text>
-                                </View>
+                                </View>}
 
-                                <View style={{
+                                {carDetails && carDetails.coupon != 0 && <View style={{
                                     flexDirection: 'row',
                                     justifyContent: 'space-between'
                                 }}>
@@ -962,7 +961,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                         fontSize: 15,
                                         color: '#FF0000'
                                     }}>-₹ {carDetails && carDetails.coupon}</Text>
-                                </View>
+                                </View>}
                                 <View style={{
                                     borderWidth: 0.4,
                                     borderStyle: 'dashed',
