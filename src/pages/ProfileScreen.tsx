@@ -1,4 +1,4 @@
-import { Alert, Image, Modal, Pressable, ScrollView, Text, View } from "react-native";
+import { Alert, Image, Linking, Modal, Pressable, ScrollView, Text, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import BottomTabNavigation from "../components/BottomTab";
 import { wp, hp } from "../utils/ResponsiveScreen";
@@ -70,13 +70,13 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                             alignItems: 'center',
                                             marginHorizontal: wp(2),
                                             borderRadius: 10,
-                                            borderColor: '#FBC41D'
+                                            borderColor: '#00354a'
                                         }}>
                                         <Text
                                             style={{
                                                 fontSize: 16,
                                                 fontWeight: 'bold',
-                                                color: '#FBC41D'
+                                                color: '#00354a'
                                             }}>Yes</Text>
                                     </Pressable>
                                     <Pressable
@@ -89,8 +89,8 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                             alignItems: 'center',
                                             marginHorizontal: wp(2),
                                             borderRadius: 10,
-                                            borderColor: '#FBC41D',
-                                            backgroundColor: '#FBC41D'
+                                            borderColor: '#00354a',
+                                            backgroundColor: '#00354a'
                                         }}>
                                         <Text
                                             style={{
@@ -317,10 +317,14 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                 marginHorizontal: wp(5),
                                 marginVertical: hp(2)
                             }}>
-                                <Text style={{
-                                    fontSize: 16,
-                                    fontWeight: 'bold'
-                                }}>
+                                <Text
+                                    onPress={() => {
+                                        Linking.openURL('https://carhive.co.in/terms_conditions')
+                                    }}
+                                    style={{
+                                        fontSize: 16,
+                                        fontWeight: 'bold'
+                                    }}>
                                     Terms & Conditions
                                 </Text>
                                 <View
@@ -329,10 +333,14 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                         borderColor: '#F4F6FA',
                                         marginVertical: hp(2)
                                     }} />
-                                <Text style={{
-                                    fontSize: 16,
-                                    fontWeight: 'bold'
-                                }}>Privacy policy</Text>
+                                <Text
+                                    onPress={() => {
+                                        Linking.openURL('https://carhive.co.in/policy')
+                                    }}
+                                    style={{
+                                        fontSize: 16,
+                                        fontWeight: 'bold'
+                                    }}>Privacy policy</Text>
                                 <View
                                     style={{
                                         borderWidth: 0.5,

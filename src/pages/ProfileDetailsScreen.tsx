@@ -1,4 +1,4 @@
-import { Alert, Image, TextInput, Pressable, ScrollView, Text, View } from "react-native";
+import { Alert, Image, TextInput, Pressable, ScrollView, Text, View, Platform } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { wp, hp } from "../utils/ResponsiveScreen";
 import { Cardview } from "../components/Cardview";
@@ -8,13 +8,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { excuteGetResponse, userUpdateProfile } from "../apis/api";
 import { useFocusEffect } from "@react-navigation/native";
 import { Dropdown } from "react-native-element-dropdown";
-import DatePicker from "react-native-date-picker";
 import moment from "moment";
 import CameraModalScreen from "../components/CameraModel";
 import { Asset } from "react-native-image-picker";
 import { useDispatch } from "react-redux";
 import { updateProfile } from "../storage/redux";
 import PrimaryButton from "../components/PrimaryButton";
+import DatePicker from "react-native-date-picker";
 
 class Componentprops extends Baseprops { }
 
@@ -33,6 +33,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
     const [targetType, setTargetType] = useState('');
     const [userDetailsObj, setUserDetailsObj] = useState<any>({})
     const [profileImage, setProfileImage] = useState<Asset | null>(null)
+    const [showPicker, setShowPicker] = useState(false);
 
     useFocusEffect(
         useCallback(() => {
@@ -56,7 +57,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
             handleInputChangeValue('gender', response.data.gender)
             setDate(new Date(response.data.dob))
         } else {
-            Alert.alert('Alert', 'Unable to get details')
+            Alert.alert('Alert', 'Login your account')
         }
     }
 
@@ -78,7 +79,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
         if (response.code == 0) {
             props.navigation.navigate('ProfileScreen')
         } else {
-            Alert.alert('Alert!', 'Unable to get details.')
+            Alert.alert('Alert!', 'Login Your Account.')
         }
 
     }
@@ -242,19 +243,21 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                     flexDirection: "row",
                                     alignItems: "center",
                                     elevation: 1,
+
                                 }}
                                 containerStyle={{
                                     borderRadius: 8,
                                     backgroundColor: "#EEEFF2",
                                 }}
                                 placeholderStyle={{
-                                    fontSize: 16,
+                                    fontSize: 15,
                                     color: "#000000",
                                     fontWeight: 'bold'
                                 }}
                                 selectedTextStyle={{
-                                    fontSize: 16,
+                                    fontSize: 15,
                                     color: "#000",
+                                    fontWeight: 'bold'
                                 }}
                                 iconStyle={{
                                     width: 24,
@@ -273,7 +276,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                             <View style={{ marginVertical: hp(0.8) }} />
                             <Cardview>
                                 <Text
-                                    onPress={() => setOpen(true)}
+                                    onPress={() => setShowPicker(true)}
                                     style={{
                                         height: hp(6),
                                         marginHorizontal: wp(4),
@@ -285,17 +288,22 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                     {date ? moment(date).format('YYYY-MM-DD') : 'Date of birth'}
                                 </Text>
                             </Cardview>
+
                             <DatePicker
                                 modal
-                                open={open}
+                                open={showPicker}
                                 date={date ? date : new Date()}
                                 mode="date"
                                 dividerColor="#FBC41D"
                                 onConfirm={(selectedDate) => {
-                                    setOpen(false);
-                                    setDate(selectedDate);
+                                    setShowPicker(false);
+                                    if (selectedDate) {
+                                        setDate(selectedDate);
+                                    }
                                 }}
-                                onCancel={() => setOpen(false)}
+                                onCancel={() => {
+                                    setShowPicker(false);
+                                }}
                                 theme="light"
                             />
                         </View>

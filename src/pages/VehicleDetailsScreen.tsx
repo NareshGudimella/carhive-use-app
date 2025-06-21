@@ -199,12 +199,12 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                     >By continuing you agree
                                         to our <Text
                                             style={{
-                                                color: '#FBC41D'
+                                                color: '#00354a'
                                             }}> Terms of service
                                         </Text> ,   &
                                         <Text
                                             style={{
-                                                color: '#FBC41D'
+                                                color: '#00354a'
                                             }}>  Privacy policy</Text>
                                     </Text>
                                     <View style={{ marginVertical: hp(2) }}>
@@ -271,7 +271,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                         code to your phone
                                         <Text
                                             style={{
-                                                color: '#FBC41D',
+                                                color: '#00354a',
                                                 fontSize: 16
                                             }}>  +91 {phoneNumber}</Text>
                                     </Text>
@@ -301,7 +301,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                             color: '#64748B'
                                         }}>I didn’t receive a code</Text>
                                         <Text style={{
-                                            color: '#FBC41D',
+                                            color: '#00354a',
                                             marginHorizontal: wp(2),
                                             fontSize: 16
                                         }}>Resend</Text>
@@ -404,7 +404,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                         {carData && carData.car_description}{' '}
                                         <Text
                                             onPress={() => setTextExpanded(false)}
-                                            style={{ color: '#FBC41D' }}
+                                            style={{ color: '#00354a' }}
                                         >
                                             Show less &lt;&lt;
                                         </Text>
@@ -415,7 +415,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                         {' '}
                                         <Text
                                             onPress={() => setTextExpanded(true)}
-                                            style={{ color: '#FBC41D' }}
+                                            style={{ color: '#00354a' }}
                                         >
                                             See all &gt;&gt;
                                         </Text>

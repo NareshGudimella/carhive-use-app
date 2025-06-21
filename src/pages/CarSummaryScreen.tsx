@@ -155,7 +155,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                             setCoupanModalScreen(false)
                                         }}
                                         style={{
-                                            backgroundColor: '#FBC41D',
+                                            backgroundColor: '#00354a',
                                             paddingVertical: 2,
                                             justifyContent: 'center',
                                             alignItems: 'center',
@@ -197,14 +197,13 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                                             onPress={() => {
                                                                 setCouponcode(e.offercode)
                                                             }}
-                                                            style={[couponcode == e.offercode ? { backgroundColor: '#009940' } : { backgroundColor: '#FBC41D' }, {
+                                                            style={[couponcode == e.offercode ? { backgroundColor: '#009940' } : { backgroundColor: '#00354a' }, {
                                                                 paddingVertical: 2,
                                                                 justifyContent: 'center',
                                                                 alignItems: 'center',
                                                                 paddingHorizontal: wp(6),
                                                                 borderRadius: 10,
                                                                 height: hp(3.5)
-
                                                             }]}>
                                                             <Text
                                                                 style={{
@@ -252,7 +251,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                         }}
                     >
                         <BottomModelView onclick={() => setTermsAndCondition(false)}>
-                            <ScrollView style={{}}>
+                            <View style={{}}>
                                 <View style={{
                                     justifyContent: 'center',
                                     alignItems: 'center',
@@ -279,7 +278,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                 }}>
                                     <Pressable
                                         style={typeofTandC == 't&c' ? {
-                                            backgroundColor: '#FBC41D',
+                                            backgroundColor: '#00354a',
                                             borderRadius: 10,
                                             width: wp(28),
                                             paddingVertical: hp(1),
@@ -295,7 +294,8 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                         <Text
                                             style={typeofTandC == 't&c' ? {
                                                 fontSize: 16,
-                                                fontWeight: 'bold'
+                                                fontWeight: '500',
+                                                color: '#ffffff'
                                             } : {
                                                 fontSize: 15,
                                                 fontWeight: '500'
@@ -303,7 +303,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                     </Pressable>
                                     <Pressable
                                         style={typeofTandC == 'Cancellation' ? {
-                                            backgroundColor: '#FBC41D',
+                                            backgroundColor: '#00354a',
                                             borderRadius: 10,
                                             width: wp(28),
                                             paddingVertical: hp(1),
@@ -319,7 +319,8 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                         <Text
                                             style={typeofTandC == 'Cancellation' ? {
                                                 fontSize: 16,
-                                                fontWeight: 'bold'
+                                                fontWeight: '500',
+                                                color: '#ffffff'
                                             } : {
                                                 fontSize: 15,
                                                 fontWeight: '500'
@@ -327,7 +328,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                     </Pressable>
                                     <Pressable
                                         style={typeofTandC == 'Modification' ? {
-                                            backgroundColor: '#FBC41D',
+                                            backgroundColor: '#00354a',
                                             borderRadius: 10,
                                             width: wp(28),
                                             paddingVertical: hp(1),
@@ -343,7 +344,8 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                         <Text
                                             style={typeofTandC == 'Modification' ? {
                                                 fontSize: 16,
-                                                fontWeight: 'bold'
+                                                fontWeight: '500',
+                                                color: '#ffffff'
                                             } : {
                                                 fontSize: 15,
                                                 fontWeight: '500'
@@ -353,7 +355,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                 <View>
                                     {
                                         typeofTandC == 't&c' ?
-                                            <View style={{ marginHorizontal: wp(5) }}>
+                                            <ScrollView style={{ marginHorizontal: wp(5),maxHeight:hp(60)}}>
                                                 <Text style={{
                                                     color: '#64748B',
                                                     fontWeight: '500',
@@ -363,9 +365,9 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                                 }}>
                                                     {ModelcancelData && ModelcancelData.terms_conditions}
                                                 </Text>
-                                            </View> :
+                                            </ScrollView> :
                                             typeofTandC == 'Cancellation' ?
-                                                <View style={{ marginHorizontal: wp(5) }}>
+                                                <ScrollView style={{ marginHorizontal: wp(5),maxHeight:hp(60) }}>
                                                     <Text style={{
                                                         color: '#64748B',
                                                         fontWeight: '500',
@@ -375,9 +377,9 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                                     }}>
                                                         {ModelcancelData && ModelcancelData.cancellation}
                                                     </Text>
-                                                </View> :
+                                                </ScrollView> :
                                                 typeofTandC == 'Modification' ?
-                                                    <View style={{ marginHorizontal: wp(5) }}>
+                                                    <ScrollView style={{ marginHorizontal: wp(5),maxHeight:hp(60) }}>
                                                         <Text style={{
                                                             color: '#64748B',
                                                             fontWeight: '500',
@@ -387,7 +389,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                                         }}>
                                                             {ModelcancelData && ModelcancelData.modification}
                                                         </Text>
-                                                    </View> : <></>
+                                                    </ScrollView> : <></>
                                     }
                                 </View>
                                 <View style={{ marginHorizontal: wp(5) }}>
@@ -398,7 +400,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                     }}>
                                         <Checkbox
                                             status={checked ? 'checked' : 'unchecked'}
-                                            color="#FBC41D"
+                                            color="#00354a"
                                             onPress={() => {
                                                 const value = !checked;
                                                 setChecked(value);
@@ -432,7 +434,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                             }} />
                                     </View>
                                 </View>
-                            </ScrollView>
+                            </View>
                         </BottomModelView>
                     </Modal>
                 </View>
@@ -566,7 +568,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                 }}>
                                     <Checkbox
                                         status={eligiabilityCheck ? 'checked' : 'unchecked'}
-                                        color="#FBC41D"
+                                        color="#00354a"
                                         onPress={() => {
                                             const newValue = !eligiabilityCheck;
                                             setEligiabilityCheck(newValue);
@@ -619,7 +621,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                         }}
                                     >
                                         By signing up you agree to
-                                        <Text style={{ color: "#FBC41D" }}>
+                                        <Text style={{ color: "#00354a" }}>
                                             {" "}
                                             Terms of Services & Privacy Policy.
                                         </Text>
@@ -807,7 +809,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                     style={{
                                         width: 20,
                                         height: 20,
-                                        tintColor: '#FBC41D'
+                                        tintColor: '#00354a'
                                     }} />
                             </Pressable>
                         </Cardview>

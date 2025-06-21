@@ -264,7 +264,7 @@ const BecomeHostScreen: React.FC<Componentprops> = (props) => {
                         lineHeight: hp(2.5),
                         marginVertical: hp(2)
                     }}>By signing up you agree to <Text style={{
-                        color: '#FBC41D'
+                        color: '#00354a'
                     }}>
                             Terms of Services & Privacy Policy.</Text>
                     </Text>

@@ -13,7 +13,7 @@ export const FilterButtonStyle = StyleSheet.create({
 
     },
     selectedbutton: {
-        backgroundColor: '#FBC41D',
+        backgroundColor: '#00354a',
         borderWidth: 1,
         borderRadius: 15,
         paddingVertical: hp(1.5),

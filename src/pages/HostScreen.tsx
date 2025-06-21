@@ -232,7 +232,7 @@ const HostScreen: React.FC<Componentprops> = (props) => {
                         <PrimaryButton title='Become a Host'
                             onclick={() => props.navigation.navigate('BecomeHostScreen')} />
                         <Text style={{
-                            color: '#FBC41D',
+                            color: '#00354a',
                             fontSize: 13,
                             fontWeight: '500',
                             marginTop: hp(2),

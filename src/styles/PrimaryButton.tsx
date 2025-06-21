@@ -7,7 +7,7 @@ import {
 
 export const PrimaryButtonStyle = StyleSheet.create({
     style: {
-        backgroundColor: '#FBC41D',
+        backgroundColor: '#00354a',
         height: hp(6),
         borderRadius: 10,
         justifyContent: 'center',
@@ -16,6 +16,7 @@ export const PrimaryButtonStyle = StyleSheet.create({
     textstyle: {
         fontSize: 15,
         fontWeight: 'bold',
-        marginHorizontal: wp(5)
+        marginHorizontal: wp(5),
+        color:'#ffffff'
     }
 })

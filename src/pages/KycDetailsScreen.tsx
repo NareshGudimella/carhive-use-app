@@ -358,7 +358,7 @@ const KycDetailsScreen: React.FC<Componentprops> = (props) => {
                             }}
                         >
                             By signing up you agree to
-                            <Text style={{ color: "#FBC41D" }}>
+                            <Text style={{ color: "#00354a" }}>
                                 {" "}
                                 Terms of Services & Privacy Policy.
                             </Text>

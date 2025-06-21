@@ -50,7 +50,6 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
             Alert.alert('Alert', 'Upload your profile pic')
         }
 
-
         const object = JSON.parse(JSON.stringify(userDetailsObj))
         object.name = userName,
             object.email = userEmail,
@@ -144,8 +143,6 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
                     marginTop: hp(2)
                 }}>Upload your selfie</Text>
             </View>
-
-
             <View style={{
                 marginHorizontal: wp(7),
                 marginTop: hp(2)
@@ -233,14 +230,13 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
                             {isDateSelected ? moment(date).format('YYYY-MM-DD') : 'Date of birth'}
                         </Text>
                     </View>
-
                 </Pressable>
                 <DatePicker
                     modal
                     open={open}
                     date={date}
                     mode="date"
-                    dividerColor="#FBC41D"
+                    dividerColor="#00354a"
                     onConfirm={(selectedDate) => {
                         setOpen(false);
                         setDate(selectedDate);
@@ -252,7 +248,6 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
                     theme="light"
                 />
             </View>
-
             <View
                 style={{
                     flex: 1,
@@ -282,7 +277,7 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
                         }}
                     >
                         By signing up you agree to
-                        <Text style={{ color: "#FBC41D" }}>
+                        <Text style={{ color: "#00354a" }}>
                             {" "}
                             Terms of Services & Privacy Policy.
                         </Text>

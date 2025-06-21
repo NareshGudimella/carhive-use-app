@@ -41,7 +41,8 @@ const BottomTabNavigation: React.FC<Componentprops> = (props) => {
                     props.step == 1 ?
                         <View style={{}}>
                             <Image source={require('../assets/Union.png')}
-                                style={BottomTabstyles.baseStyle} />
+                                style={BottomTabstyles.baseStyle}
+                                tintColor='#00354a'  />
                         </View>
                         : <></>
                 }
@@ -64,7 +65,8 @@ const BottomTabNavigation: React.FC<Componentprops> = (props) => {
                     props.step == 2 ?
                         <View style={{ justifyContent: 'flex-end' }}>
                             <Image source={require('../assets/Union.png')}
-                                style={BottomTabstyles.baseStyle} />
+                                style={BottomTabstyles.baseStyle} 
+                                tintColor='#00354a' />
                         </View>
                         : <></>
                 }
@@ -87,7 +89,8 @@ const BottomTabNavigation: React.FC<Componentprops> = (props) => {
                     props.step == 3 ?
                         <View style={{ justifyContent: 'flex-end' }}>
                             <Image source={require('../assets/Union.png')}
-                                style={BottomTabstyles.baseStyle} />
+                                style={BottomTabstyles.baseStyle} 
+                                tintColor='#00354a' />
                         </View>
                         : <></>
                 }
@@ -110,7 +113,8 @@ const BottomTabNavigation: React.FC<Componentprops> = (props) => {
                     props.step == 4 ?
                         <View style={{ justifyContent: 'flex-end' }}>
                             <Image source={require('../assets/Union.png')}
-                                style={BottomTabstyles.baseStyle} />
+                                style={BottomTabstyles.baseStyle}
+                                tintColor='#00354a' />
                         </View>
                         : <></>
                 }

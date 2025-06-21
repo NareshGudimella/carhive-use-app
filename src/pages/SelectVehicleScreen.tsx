@@ -176,7 +176,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                 style={{
                                                     height: 25,
                                                     width: 25,
-                                                    tintColor: '#FBC41D'
+                                                    tintColor: '#00354a'
                                                 }}
                                                 source={require('../assets/close.png')} />
                                         </Pressable>

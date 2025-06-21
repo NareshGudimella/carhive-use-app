@@ -1,12 +1,12 @@
-import { View } from "react-native"
+import { Pressable, View } from "react-native"
 import { BottomModelStyle } from "../styles/BottomModelStyle"
 
 export const CenterModalView = ({ children }: { children: any }) => {
     return (
-        <View style={BottomModelStyle.centerView}>
+        <Pressable style={BottomModelStyle.centerView}>
             <View style={BottomModelStyle.centersubView}>
                 {children}
             </View>
-        </View>
+        </Pressable>
     )
 }

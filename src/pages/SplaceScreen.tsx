@@ -14,7 +14,9 @@ import { Foregroundmessage, requestfirebasePermissions } from "../firebase/fireb
 class Componentprops extends Baseprops { }
 
 const SplaceScreen: React.FC<Componentprops> = (props) => {
+
     const dispatch = useDispatch()
+
     useFocusEffect(
         useCallback(() => {
             setTimeout(() => {
@@ -24,6 +26,7 @@ const SplaceScreen: React.FC<Componentprops> = (props) => {
                 Foregroundmessage()
             }, 1000);
         }, []))
+
     const loadUserDetails = async () => {
         const token = await getToken()
         if (token && token != '') {

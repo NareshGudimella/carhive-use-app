@@ -1,4 +1,4 @@
-import { Alert, Image, Linking, PermissionsAndroid, Platform, Pressable, ScrollView, Text, View } from "react-native";
+import { Alert, Image, Linking, Modal, PermissionsAndroid, Platform, Pressable, ScrollView, Text, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { Background } from "../styles/BackgroundColor";
 import BottomTabNavigation from "../components/BottomTab";
@@ -22,7 +22,6 @@ import Geolocation from "@react-native-community/geolocation";
 import { check, PERMISSIONS, request, RESULTS } from "react-native-permissions";
 import { getCity } from "../storage/AsyncStorage";
 import moment from "moment";
-
 class Componentprops extends Baseprops { }
 
 const HomeScreen: React.FC<Componentprops> = (props) => {
@@ -39,7 +38,6 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
     const [longitude, setLongitude] = useState('')
     const [latitude, setLatitude] = useState('')
     const [cityname, setCityname] = useState<any>([])
-
     useFocusEffect(
         useCallback(() => {
             handelBannerImage()
@@ -216,14 +214,17 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                             }}>
                             <Image
                                 source={require('../assets/Location.png')}
-                                style={{ height: 26, width: 26 }}
+                                style={{ height: 26, width: 26, tintColor: '#00354a' }}
                             />
-                            <Text style={{ marginHorizontal: wp(2) }}>
+                            <Text style={{
+                                marginHorizontal: wp(2),
+                                fontWeight: 'bold'
+                            }}>
                                 {cityname && cityname !== '' ? cityname.cityname : 'Select city'}
                             </Text>
                             <Image
                                 source={require('../assets/mingcute_down-fill.png')}
-                                style={{ height: 10, width: 25 }}
+                                style={{ height: 10, width: 25, tintColor: '#00354a' }}
                             />
                         </Pressable>
                         <Pressable
@@ -239,7 +240,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                             }}>
                             <Image
                                 source={require('../assets/bell2.png')}
-                                style={{ height: 15, width: 15 }}
+                                style={{ height: 15, width: 15,tintColor:'#00354a' }}
                             />
                         </Pressable>
                     </View>
@@ -273,9 +274,8 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                 color: '#64748B'
                             }}>Your journey awaits, book it right away.</Text>
                         </View>
-                        {/* Date Picker and time picker */}
                         <View>
-                            {modeltype == 'Time' ?
+                            {modeltype === 'Time' &&
                                 <DatePicker
                                     modal
                                     mode="time"
@@ -294,8 +294,11 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                     onCancel={() => {
                                         setOpen(false)
                                     }}
-                                /> :
-                                <DatePicker
+                                />
+                            }
+
+                            {modeltype !== 'Time' &&
+                                < DatePicker
                                     modal
                                     mode={"date"}
                                     open={open}
@@ -333,7 +336,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                         <Pressable
 
                                             onPress={() => {
-                                                setOpen(true)
+                                                setOpen(true);
                                                 setDateType('pickup')
                                                 setModeltype('date')
                                             }}
@@ -376,7 +379,8 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                             }]}>
                                             <Image
                                                 source={require('../assets/clock.png')}
-                                                style={BottomTabstyles.selectedstyle} />
+                                                style={BottomTabstyles.selectedstyle}
+                                                tintColor='#000000' />
                                             <Text
                                                 style={{
                                                     marginHorizontal: wp(2),
@@ -442,7 +446,8 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                             }]}>
                                             <Image
                                                 source={require('../assets/clock.png')}
-                                                style={BottomTabstyles.selectedstyle} />
+                                                style={BottomTabstyles.selectedstyle} 
+                                                tintColor='#000000'/>
                                             <Text
                                                 style={{
                                                     marginHorizontal: wp(2),

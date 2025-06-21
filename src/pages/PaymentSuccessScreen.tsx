@@ -27,7 +27,7 @@ const PaymentSuccessScreen: React.FC<Componentprops> = (props) => {
                 <Text style={{
                     fontSize: 24,
                     fontWeight: 'bold',
-                    color: '#FBC41D',
+                    color: '#00354a',
                     marginVertical: hp(1)
                 }}>Payment Done</Text>
                 <Text

@@ -39,7 +39,7 @@ const SelectCityScreen: React.FC<Componentprops> = (props) => {
                 flex: 1,
                 marginHorizontal: wp(5)
             }}>
-                <View style={{flex:1}}>
+                <View style={{ flex: 1 }}>
                     <View style={{
                         marginTop: hp(4)
                     }}>
@@ -71,10 +71,10 @@ const SelectCityScreen: React.FC<Componentprops> = (props) => {
                                     justifyContent: 'center',
                                     alignItems: 'center',
                                     borderRadius: 20,
-                                    borderColor: '#FBC41D',
+                                    borderColor: '#00354a',
                                     marginHorizontal: wp(1),
                                     marginBottom: hp(1.5),
-                                    backgroundColor: selectCity == e.cityId ? '#FBC41D' : '#ffffff'
+                                    backgroundColor: selectCity == e.cityId ? '#00354a' : '#ffffff'
                                 }}
                                 key={index}>
                                 <Text
