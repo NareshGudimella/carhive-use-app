@@ -1,4 +1,4 @@
-import { Alert, Image, Pressable, Text, View } from "react-native";
+import { Alert, Image, Modal, Pressable, Text, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { wp, hp } from "../utils/ResponsiveScreen";
 import Textinput from "../components/TextInput";
@@ -12,6 +12,7 @@ import { SignUp } from "../apis/api";
 import moment from "moment";
 import CameraModalScreen from "../components/CameraModel";
 import { Asset } from "react-native-image-picker";
+import { CenterModalView } from "../components/CenterModelView";
 
 class Componentprops extends Baseprops { }
 
@@ -26,6 +27,7 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
     const [cameraModal, SetCaremaModal] = useState(false)
     const [profileImage, setProfileImage] = useState<Asset | null>(null)
     const [userDetailsObj, setUserDetailsObj] = useState<any>({})
+    const [successKycModal, setSuccessKycModal] = useState(false)
 
     const genderData = [
         { label: "MALE", value: "MALE" },
@@ -48,6 +50,7 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
         }
         if (profileImage == null) {
             Alert.alert('Alert', 'Upload your profile pic')
+            return
         }
 
         const object = JSON.parse(JSON.stringify(userDetailsObj))
@@ -58,8 +61,14 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
             object.profile_pic = profileImage
         const response = await SignUp(object);
         console.log('Signupresponse', response, object);
-        if (response.code == 0) {
-            props.navigation.navigate('KycDetailsScreen');
+        if (response.code == 0) { 
+            setSuccessKycModal(true)
+        } else if (response.message == 'NAME_NOT_MATCH' && response.code == 1) {
+            Alert.alert('Alert', 'Enter your name as per aadhar card')
+            return
+        } else if (response.code == 1 && response.message == 'DOB_NOT_MATCH') {
+            Alert.alert('Alert', 'Enter your DOB as per driving licence')
+            return
         } else if (response.code == 1 && response.message == 'EMAIL_EXIST') {
             Alert.alert('Alert', 'Email already exist');
             return
@@ -80,6 +89,62 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
                     setImages={(image: Asset) => {
                         setProfileImage(image)
                     }} />
+            }
+            {
+                successKycModal &&
+                <View>
+                    <Modal
+                        animationType="slide"
+                        transparent={true}
+                        visible={successKycModal}
+                        onRequestClose={() => {
+                            setSuccessKycModal(!successKycModal);
+                        }}>
+                        <CenterModalView>
+                            <View style={{
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                marginBottom: hp(2)
+                            }}>
+                                <Image
+                                    source={require('../assets/true.png')}
+                                    style={{
+                                        height: 180,
+                                        width: 200
+                                    }}
+                                />
+                                <Text
+                                    style={{
+                                        fontSize: 18,
+                                        fontWeight: 'bold'
+                                    }}
+                                >Congratulations! 👍</Text>
+                                <Text
+                                    style={{
+                                        fontSize: 14,
+                                        fontWeight: '500',
+                                        color: '#64748B',
+                                        width: wp(70),
+                                        textAlign: 'center',
+                                        marginVertical: hp(1)
+                                    }}
+                                >Your account is ready to use.
+                                    You will be redirected to
+                                    the Home page in a few seconds.</Text>
+                                <View style={{
+                                    width: wp(40),
+                                    marginTop: hp(2)
+                                }}>
+                                    <PrimaryButton title='Back'
+                                        onclick={() => {
+                                            props.navigation.navigate('HomeScreen'),
+                                                setSuccessKycModal(false)
+                                        }} />
+                                </View>
+                            </View>
+                        </CenterModalView>
+                    </Modal>
+                </View>
             }
             <Pressable
                 onPress={() => props.navigation.goBack()}
@@ -149,7 +214,7 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
             }}>
                 <Textinput
                     image={require("../assets/users.png")}
-                    placeholder="Your name"
+                    placeholder="Your name in aadhar card"
                     keyboardtype="default"
                     onChangeText={setUserName}
                     value={userName}

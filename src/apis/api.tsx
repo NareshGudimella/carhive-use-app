@@ -258,3 +258,58 @@ export const firebasemessage = async (firebasetoken: any, os_type: any, bundle_v
 export const Ratting = async (car_booking_id: any, rating: any, review: any) => {
     return excuteResponse(`secure/cars/bookings/ratings/${car_booking_id}`, { rating, review })
 }
+export const aadharnumberverify = async (aadharnumber: any) => {
+    return excuteResponse(`secure/aadhar`, { aadharnumber })
+}
+export const aadharotpverify = async (body: any) => {
+    const data = new FormData()
+    console.log('value', Object.entries<any>(body))
+    for (const [key, value] of Object.entries<any>(body)) {
+        if (key == 'aadhar_front_image') {
+            if (value && value.uri) {
+                data.append(key, {
+                    uri: value.uri,
+                    type: value.type,
+                    name: value.fileName
+                })
+            }
+        } else if (key == 'aadhar_back_image') {
+            if (value && value.uri) {
+                data.append(key, {
+                    uri: value.uri,
+                    type: value.type,
+                    name: value.fileName
+                })
+            }
+        } else {
+            data.append(key, value)
+        }
+    }
+    return excuteResponse(`secure/verfyaadhar`, data)
+}
+export const licenceverify = async (body: any) => {
+    const data = new FormData()
+    console.log('value', Object.entries<any>(body))
+    for (const [key, value] of Object.entries<any>(body)) {
+        if (key == 'driving_licence_front') {
+            if (value && value.uri) {
+                data.append(key, {
+                    uri: value.uri,
+                    type: value.type,
+                    name: value.fileName
+                })
+            }
+        } else if (key == 'driving_licence_back') {
+            if (value && value.uri) {
+                data.append(key, {
+                    uri: value.uri,
+                    type: value.type,
+                    name: value.fileName
+                })
+            }
+        } else {
+            data.append(key, value)
+        }
+    }
+    return excuteResponse(`secure/driving`, data)
+}

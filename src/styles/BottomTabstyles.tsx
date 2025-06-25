@@ -1,14 +1,10 @@
 import { StyleSheet } from 'react-native';
-import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp
-}
-    from 'react-native-responsive-screen';
+
 
 export const BottomTabstyles = StyleSheet.create({
     selectedstyle: {
-        height: 24,
-        width: 24,
+        height: 22,
+        width: 22,
         tintColor: '#6292ab'
     },
     nonselectedstyle: {

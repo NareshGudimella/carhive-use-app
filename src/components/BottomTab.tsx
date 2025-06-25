@@ -65,7 +65,9 @@ const BottomTabNavigation: React.FC<Componentprops> = (props) => {
                     props.step == 2 ?
                         <View style={{ justifyContent: 'flex-end' }}>
                             <Image source={require('../assets/Union.png')}
-                                style={BottomTabstyles.baseStyle} 
+                                style={[BottomTabstyles.baseStyle,
+                                    
+                                ]} 
                                 tintColor='#00354a' />
                         </View>
                         : <></>

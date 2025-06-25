@@ -159,7 +159,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                         }}>
                                         <Text style={{
                                             fontWeight: '500',
-                                            color:'#ffffff'
+                                            color: '#ffffff'
                                         }}>Extend Now</Text>
                                     </Pressable>
                                 </View>
@@ -833,7 +833,6 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                                             </Pressable>
                                                                         </View> :
                                                                         <></>
-
                                                                 }
                                                             </View>
                                                         </Cardview>
