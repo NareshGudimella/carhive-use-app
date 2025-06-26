@@ -30,6 +30,7 @@ const RattingScreen: React.FC<Componentprops> = (props) => {
             Alert.alert('Alert',
                 'Unable to get details'
             )
+            return
         }
     }
 

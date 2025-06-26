@@ -27,6 +27,7 @@ const NotificationScreen: React.FC<Componentprops> = (props) => {
             setNotification(response.data)
         } else {
             Alert.alert('Alert', 'Unable to get details')
+            return
         }
     }
 

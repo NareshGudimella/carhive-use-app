@@ -43,6 +43,7 @@ const ExtendServiceRequestScreen: React.FC<Componentprops> = (props) => {
                     style: 'cancel',
                 },
             ])
+            return
         } else if (response.message == 'Request_already_sent') {
             Alert.alert('Alert', 'Request already sent', [
                 {
@@ -51,6 +52,7 @@ const ExtendServiceRequestScreen: React.FC<Componentprops> = (props) => {
                     style: 'cancel',
                 },
             ])
+            return
         } else if (response.message == 'Cannot_extend_ride_within_5_hours_of_end_time') {
             Alert.alert('Alert', 'Cannot extend ride before 5 hours of return vehicle', [
                 {
@@ -59,6 +61,7 @@ const ExtendServiceRequestScreen: React.FC<Componentprops> = (props) => {
                     style: 'cancel',
                 },
             ])
+            return
         } else {
             Alert.alert('Alert', 'Unable to get CarDetils', [
                 {
@@ -67,6 +70,7 @@ const ExtendServiceRequestScreen: React.FC<Componentprops> = (props) => {
                     style: 'cancel',
                 },
             ])
+            return
         }
     }
 
@@ -83,6 +87,7 @@ const ExtendServiceRequestScreen: React.FC<Componentprops> = (props) => {
             })
         } else {
             Alert.alert('Alert', 'Unable to extend time')
+            return
         }
     }
 

@@ -128,10 +128,12 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                             marginHorizontal: wp(5),
                             marginVertical: hp(1.5)
                         }}>
-                            <Text style={{
+                            <Text
+                            numberOfLines={1}
+                             style={{
                                 fontSize: 20,
-                                fontWeight: 'bold'
-                            }}>Hi, {user && user.name}</Text>
+                                fontWeight: 'bold',
+                            }}>Hi, {user && user.aadharcard_name}</Text>
                             <Text
                                 style={{
                                     color: '#64748B',

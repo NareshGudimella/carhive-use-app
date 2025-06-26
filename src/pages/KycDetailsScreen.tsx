@@ -51,7 +51,7 @@ const KycDetailsScreen: React.FC<Componentprops> = (props) => {
             Alert.alert('Alert', 'unable to get KYC details')
         }
     }
-
+    ``
     return (
         <SafeAreaView style={{ flex: 1 }}>
             {cameraModal && (

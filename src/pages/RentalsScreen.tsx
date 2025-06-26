@@ -44,6 +44,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                 'Alert',
                 'Unable to get Rental Details',
             );
+            return
         }
     }
 
@@ -67,6 +68,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                 }
             }
         ])
+        return
     }
     const handelExtendPayment = async (booking_car_id: any) => {
         const response = await excuteGetResponse(`secure/cars/extended_payment/${booking_car_id}`)
@@ -76,6 +78,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                 { id: response.data.booking_id, price: response.data.total_price })
         } else {
             Alert.alert('Alert', 'unable to get Booking Payment Details')
+            return
         }
 
     }
@@ -87,6 +90,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                 { id: response.data.booking_id, price: response.data.total_price })
         } else {
             Alert.alert('Alert', 'unable to get Booking Payment Details')
+            return
         }
 
     }

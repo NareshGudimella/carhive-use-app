@@ -56,6 +56,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
             setCityname(citiedata)
         } else {
             Alert.alert('ALert', 'unable to get banner')
+            return
         }
     }
     {/*pickup date and drop date picker*/ }
@@ -101,9 +102,11 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                     `${moment(dropDateTime).format('DD-MM-YYYY HH:mm')}`);
             } else {
                 Alert.alert('Alert', 'Please select a valid Drop Date and Time after Pickup');
+                return
             }
         } else {
             Alert.alert('Alert', 'Please select the City');
+            return
         }
 
     };
@@ -240,7 +243,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                             }}>
                             <Image
                                 source={require('../assets/bell2.png')}
-                                style={{ height: 15, width: 15,tintColor:'#00354a' }}
+                                style={{ height: 15, width: 15, tintColor: '#00354a' }}
                             />
                         </Pressable>
                     </View>
@@ -446,8 +449,8 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                             }]}>
                                             <Image
                                                 source={require('../assets/clock.png')}
-                                                style={BottomTabstyles.selectedstyle} 
-                                                tintColor='#000000'/>
+                                                style={BottomTabstyles.selectedstyle}
+                                                tintColor='#000000' />
                                             <Text
                                                 style={{
                                                     marginHorizontal: wp(2),

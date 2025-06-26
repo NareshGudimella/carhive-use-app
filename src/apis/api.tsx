@@ -137,59 +137,8 @@ export const summery = async (carid: any, from_date: any, to_date: any,
     return excuteResponse(`secure/cars/details/${carid}`,
         { from_date, to_date, latitude, longitude, ofercode })
 }
-export const userUpdateProfile = async (body: any) => {
-    const data = new FormData()
-    console.log('value', Object.entries<any>(body))
-    for (const [key, value] of Object.entries<any>(body)) {
-        console.log('value', value)
-        if (key == 'aadhar_front_image') {
-            if (value && value.uri) {
-                data.append(key, {
-                    uri: value.uri,
-                    type: value.type,
-                    name: value.fileName
-                })
-            }
-        } else if (key == 'aadhar_back_image') {
-            if (value && value.uri) {
-                data.append(key, {
-                    uri: value.uri,
-                    type: value.type,
-                    name: value.fileName
-                })
-            }
-        } else if (key == 'driving_licence_front') {
-            if (value && value.uri) {
-                data.append(key, {
-                    uri: value.uri,
-                    type: value.type,
-                    name: value.fileName
-                })
-            }
-        } else if (key == 'driving_licence_back') {
-            if (value && value.uri) {
-                data.append(key, {
-                    uri: value.uri,
-                    type: value.type,
-                    name: value.fileName
-                })
-            }
-        } else if (key == 'profile_pic') {
-            if (value && value.uri) {
-                data.append(key, {
-                    uri: value.uri,
-                    type: value.type,
-                    name: value.fileName
-                })
-            }
-        } else {
-            data.append(key, value)
-        }
-    }
-
-    console.log('DATA', data)
-
-    return excuteResponse(`secure/profile/update`, data)
+export const userUpdateProfile = async (email: any) => {
+    return excuteResponse(`secure/profile/update`, { email })
 }
 
 export const KycDetails = async (

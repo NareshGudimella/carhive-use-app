@@ -54,14 +54,18 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
         } else if (response.code == 1 && response.message == 'Offer_Expired_or_Not_Started') {
             Alert.alert('Alert', 'Offer Expired')
             setCouponcode('')
+            return
         } else if (response.code == 1 && response.message == 'Offer_Not_Applicable_minimum_amount') {
             Alert.alert('Alert', 'This offer isn’t applicable for this ride, as your minimum balance needs to be above ₹1200.')
             setCouponcode('')
+            return
         } else if (response.code == 1 && response.message == 'Offer_Not_Applicable') {
             Alert.alert('Alert', 'Offer not available')
             setCouponcode('')
+            return
         } else {
             Alert.alert('Alert', 'Unable to get details')
+            return
         }
     }
     const handelModelData = async () => {
@@ -71,6 +75,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
             setModelcancelData(response.data)
         } else {
             Alert.alert('Alert', 'Unable to get details')
+            return
         }
     }
     const handelPaymentDetails = async () => {
@@ -89,6 +94,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
             }
         } else {
             Alert.alert('Alert', 'unable to get Booking Payment Details')
+            return
         }
     }
     const handelCouponCode = async () => {
@@ -96,6 +102,9 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
         console.log('cuoponcodes', response)
         if (response.code == 0) {
             setCoupons(response.data)
+        } else {
+            Alert.alert('Alert', 'Unabl;e to get details')
+            return
         }
     }
     return (
@@ -355,7 +364,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                 <View>
                                     {
                                         typeofTandC == 't&c' ?
-                                            <ScrollView style={{ marginHorizontal: wp(5),maxHeight:hp(60)}}>
+                                            <ScrollView style={{ marginHorizontal: wp(5), maxHeight: hp(60) }}>
                                                 <Text style={{
                                                     color: '#64748B',
                                                     fontWeight: '500',
@@ -367,7 +376,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                                 </Text>
                                             </ScrollView> :
                                             typeofTandC == 'Cancellation' ?
-                                                <ScrollView style={{ marginHorizontal: wp(5),maxHeight:hp(60) }}>
+                                                <ScrollView style={{ marginHorizontal: wp(5), maxHeight: hp(60) }}>
                                                     <Text style={{
                                                         color: '#64748B',
                                                         fontWeight: '500',
@@ -379,7 +388,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                                     </Text>
                                                 </ScrollView> :
                                                 typeofTandC == 'Modification' ?
-                                                    <ScrollView style={{ marginHorizontal: wp(5),maxHeight:hp(60) }}>
+                                                    <ScrollView style={{ marginHorizontal: wp(5), maxHeight: hp(60) }}>
                                                         <Text style={{
                                                             color: '#64748B',
                                                             fontWeight: '500',

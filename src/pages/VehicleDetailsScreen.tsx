@@ -78,12 +78,6 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
             } else if (response.data.profile_flag == 0) {
                 props.navigation.navigate('SignupScreen')
                 return
-            } else if (response.data.documents.aadhar_back == null ||
-                response.data.documents.aadhar_front == null ||
-                response.data.documents.license_back == null ||
-                response.data.documents.license_front == null
-            ) {
-                props.navigation.navigate('KycDetailsScreen')
             } else {
                 props.navigation.navigate('CarSummaryScreen',
                     {
@@ -166,6 +160,14 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
             Alert.alert('Alert', 'Enter Valid Aadhar number')
             return
         }
+        if (aadharfront == null) {
+            Alert.alert('Alert', 'Please upload your aadhar front image')
+            return
+        }
+        if (aadharback == null) {
+            Alert.alert('Alert', 'Please upload your aadhar back image')
+            return
+        }
         const response = await aadharnumberverify(aadharnumber)
         console.log('aadhar', response)
         if (response.code == 0) {
@@ -176,6 +178,10 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
         }
     }
     const handelAadharotp = async () => {
+        if (aadharotp != 6) {
+            Alert.alert('Alert', 'Enter valid 6-digit OTP.')
+            return
+        }
         const object = JSON.parse(JSON.stringify(userDetailsObj))
         object.aadhar_front_image = aadharfront
         object.aadhar_back_image = aadharback
@@ -188,9 +194,22 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
             setAadharotpmodal(false)
         } else {
             Alert.alert('Alert', 'Unable to get details')
+            return
         }
     }
     const handelLicencedata = async () => {
+        if (licencenumber != 16 && licencenumber == 0) {
+            Alert.alert('Alert', 'Enter your valid driving licence')
+            return
+        }
+        if (licensefront == null) {
+            Alert.alert('Alert', 'Upload your licence front image')
+            return
+        }
+        if (licenseback == null) {
+            Alert.alert('Alert', 'Upload your licence back image')
+            return
+        }
         const object = JSON.parse(JSON.stringify(userDetailsObj))
         object.driving_licence_front = licensefront
         object.driving_licence_back = licenseback
@@ -619,7 +638,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                     marginVertical: hp(2)
                                 }}>
                                     <Pressable
-                                        onPress={() => setAadharmodal(false)}
+                                        onPress={() => setLicencemodal(false)}
                                         style={{
                                             backgroundColor: '#EEEEEE80',
                                             borderRadius: 20,
@@ -653,7 +672,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                         for verification</Text>
                                     <Textinput
                                         image={require('../assets/users.png')}
-                                        placeholder='Enter your driving license number'
+                                        placeholder='Enter your driving licence number'
                                         keyboardtype='numeric'
                                         value={licencenumber}
                                         onChangeText={setlicencenumber}

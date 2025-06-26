@@ -52,7 +52,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
         if (response.code == 0) {
             setProfileDetails(response.data)
             dispatch(updateProfile(response.data));
-            handleInputChangeValue('name', response.data.name)
+            handleInputChangeValue('name', response.data.aadharcard_name)
             handleInputChangeValue('email', response.data.email)
             handleInputChangeValue('gender', response.data.gender)
             setDate(new Date(response.data.dob))
@@ -66,15 +66,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
     }
 
     const handleUpdateBtn = async () => {
-        const object = JSON.parse(JSON.stringify(userDetailsObj))
-        object.dob = moment(date).format('YYYY-MM-DD')
-        object.aadhar_front_image = aadharfront
-        object.aadhar_back_image = aadharback
-        object.driving_licence_front = licensefront
-        object.driving_licence_back = licenseback
-        object.profile_pic = profileImage
-        console.log('profileOBj', object)
-        const response = await userUpdateProfile(object)
+        const response = await userUpdateProfile(userDetailsObj.email)
         console.log('profileOBj111', response)
         if (response.code == 0) {
             props.navigation.navigate('ProfileScreen')
@@ -87,34 +79,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
         <SafeAreaView style={{
             flex: 1
         }}>
-            {cameraModal && (
-                <CameraModalScreen
-                    close={() => SetCaremaModal(false)}
-                    cameraModal={cameraModal}
-                    onclick={() => setSuccessKycModal(true)}
-                    setImages={(image: Asset) => {
-                        switch (targetType) {
-                            case 'aadharfront':
-                                setAadharfront(image);
-                                break;
-                            case 'aadharback':
-                                setAadharBack(image);
-                                break;
-                            case 'licensefront':
-                                setlicensefront(image);
-                                break;
-                            case 'licenseback':
-                                setlicenseBack(image);
-                                break;
-                            case 'Profile':
-                                setProfileImage(image);
-                                break;
-                        }
 
-                        SetCaremaModal(false);
-                    }}
-                />
-            )}
             <ScrollView style={{ flex: 1 }}>
                 <View style={{
                     flexDirection: 'row',
@@ -231,7 +196,6 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
 
                             </Cardview>
                             <View style={{ marginVertical: hp(0.8) }} />
-
                             <Dropdown
                                 style={{
                                     height: hp(6),

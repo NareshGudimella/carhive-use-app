@@ -38,6 +38,7 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
             setOrderDetails(response.data)
         } else {
             Alert.alert('Alert', 'unable to get details')
+            return
         }
     }
     return (

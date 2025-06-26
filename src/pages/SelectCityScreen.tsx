@@ -30,6 +30,7 @@ const SelectCityScreen: React.FC<Componentprops> = (props) => {
             setCitys(response.data)
         } else {
             Alert.alert('Alert', 'Unable to cities details')
+            return
         }
     }
 
