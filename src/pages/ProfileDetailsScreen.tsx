@@ -23,9 +23,6 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
     const dispatch = useDispatch()
     const [profilDetails, setProfileDetails] = useState<any>(null)
     const [date, setDate] = useState<any>(new Date())
-    const [open, setOpen] = useState(false)
-    const [cameraModal, SetCaremaModal] = useState(false)
-    const [successKycModal, setSuccessKycModal] = useState(false)
     const [aadharfront, setAadharfront] = useState<Asset | null>(null)
     const [aadharback, setAadharBack] = useState<Asset | null>(null)
     const [licenseback, setlicenseBack] = useState<Asset | null>(null)
@@ -145,8 +142,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                         padding: 2
                                     }}
                                     onPress={() => {
-                                        SetCaremaModal(true),
-                                            setTargetType('Profile')
+                                        setTargetType('Profile')
                                     }}>{profilDetails && (
                                         <Image
                                             source={
@@ -163,9 +159,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                             }}
                                         />
                                     )}
-
                                 </Pressable>
-
                             </View>
                             <Cardview>
                                 <TextInput
@@ -173,6 +167,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                     placeholderTextColor='#000000'
                                     onChangeText={text => handleInputChangeValue('name', text)}
                                     value={userDetailsObj.name}
+                                    editable={false}
                                     style={{
                                         height: hp(6),
                                         marginHorizontal: wp(4),
@@ -193,7 +188,6 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                         fontSize: 16,
                                         fontWeight: 'bold'
                                     }} />
-
                             </Cardview>
                             <View style={{ marginVertical: hp(0.8) }} />
                             <Dropdown
@@ -207,7 +201,6 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                     flexDirection: "row",
                                     alignItems: "center",
                                     elevation: 1,
-
                                 }}
                                 containerStyle={{
                                     borderRadius: 8,
@@ -233,6 +226,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                 valueField="id"
                                 placeholder="Gender"
                                 value={userDetailsObj.gender}
+                                disable={true}
                                 onChange={(item) => {
                                     handleInputChangeValue('gender', item.id)
                                 }}
@@ -240,7 +234,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                             <View style={{ marginVertical: hp(0.8) }} />
                             <Cardview>
                                 <Text
-                                    onPress={() => setShowPicker(true)}
+                                    onPress={() => setShowPicker(false)}
                                     style={{
                                         height: hp(6),
                                         marginHorizontal: wp(4),
@@ -252,7 +246,6 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                     {date ? moment(date).format('YYYY-MM-DD') : 'Date of birth'}
                                 </Text>
                             </Cardview>
-
                             <DatePicker
                                 modal
                                 open={showPicker}
@@ -298,7 +291,6 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                                 <Pressable
                                                     onPress={() => {
                                                         setTargetType('aadharfront');
-                                                        SetCaremaModal(true);
                                                     }}
                                                     style={{
                                                         justifyContent: 'center', alignItems: 'center',
@@ -315,7 +307,6 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                                     />
                                                 </Pressable>
                                                 :
-
                                                 <CameraView
                                                     image={profilDetails &&
                                                         profilDetails.documents.aadhar_front != null ?
@@ -324,7 +315,6 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                                     title="Upload Front"
                                                     onclick={() => {
                                                         setTargetType('aadharfront');
-                                                        SetCaremaModal(true);
                                                     }}
                                                 />
                                             }
@@ -338,7 +328,6 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                                 <Pressable
                                                     onPress={() => {
                                                         setTargetType('aadharback');
-                                                        SetCaremaModal(true);
                                                     }}
                                                     style={{
                                                         justifyContent: 'center', alignItems: 'center',
@@ -364,7 +353,6 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                                     title="Upload Front"
                                                     onclick={() => {
                                                         setTargetType('aadharback');
-                                                        SetCaremaModal(true);
                                                     }}
 
                                                 />}
@@ -387,7 +375,6 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                             {licensefront ?
                                                 <Pressable
                                                     onPress={() => {
-                                                        SetCaremaModal(true);
                                                         setTargetType('licensefront')
                                                     }}
                                                     style={{
@@ -413,7 +400,6 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                                             require('../assets/Huge.png')}
                                                     title="Upload Front"
                                                     onclick={() => {
-                                                        SetCaremaModal(true);
                                                         setTargetType('licensefront')
                                                     }}
                                                 />}
@@ -424,7 +410,6 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                             {licenseback ?
                                                 <Pressable
                                                     onPress={() => {
-                                                        SetCaremaModal(true);
                                                         setTargetType('licenseback')
                                                     }}
                                                     style={{
@@ -450,7 +435,6 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                                             require('../assets/Huge.png')}
                                                     title="Upload Front"
                                                     onclick={() => {
-                                                        SetCaremaModal(true);
                                                         setTargetType('licenseback')
                                                     }}
                                                 />}

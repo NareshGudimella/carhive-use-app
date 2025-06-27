@@ -8,9 +8,15 @@ import { useCallback, useEffect, useState } from "react";
 import { BottomModelView } from "../components/BottomModelView";
 import { Checkbox } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { carBookings, excuteGetResponse, excuteResponse, summery } from "../apis/api";
+import { carBookings, excuteGetResponse, summery } from "../apis/api";
 import { useFocusEffect } from "@react-navigation/native";
-
+import {
+    CFPaymentGatewayService,
+} from 'react-native-cashfree-pg-sdk';
+import {
+    CFEnvironment,
+    CFSession,
+} from 'cashfree-pg-api-contract';
 class Componentprops extends Baseprops { }
 
 const CarSummaryScreen: React.FC<Componentprops> = (props) => {
@@ -27,6 +33,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
     const [couponModalScreen, setCoupanModalScreen] = useState(false)
     const [cuopon, setCoupons] = useState([])
     const [couponcode, setCouponcode] = useState<any>('')
+    const [price, setPrice] = useState('')
 
     useFocusEffect(
         useCallback(() => {
@@ -34,6 +41,25 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
             handelCouponCode()
         }, [])
     )
+    useEffect(() => {
+        CFPaymentGatewayService.setCallback({
+            onVerify: (orderID) => {
+                console.log('orderId is :' + orderID);
+                props.navigation.navigate('PaymentSuccessScreen', { price: price })
+            },
+            onError: (error, orderID) => {
+                console.log(
+                    'exception is : ' + JSON.stringify(error) + '\norderId is :' + orderID
+                );
+            },
+        });
+
+        return () => {
+            console.log('UNMOUNTED');
+            CFPaymentGatewayService.removeCallback();
+        };
+    }, []);
+
 
     useEffect(() => {
         if (couponcode != '')
@@ -87,10 +113,17 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
         )
         console.log('paymentDetails', response, couponcode)
         if (response.code == 0) {
-            const response1 = await excuteGetResponse(`secure/cars/payment/${response.booking_car_id}`)
-            console.log('SuccessPayment', response1)
-            if (response1.code == 0) {
-                props.navigation.navigate('PaymentSuccessScreen', { price: response1.data.total_price })
+            setPrice(response.data.total_price)
+            try {
+                const session = new CFSession(
+                    response.data.payment_session_id,
+                    response.data.order_id,
+                    response.data.env == CFEnvironment.PRODUCTION ? CFEnvironment.PRODUCTION : CFEnvironment.SANDBOX
+                );
+                console.log('Session', JSON.stringify(session));
+                CFPaymentGatewayService.doWebPayment(session);
+            } catch (e: any) {
+                console.log(e.message);
             }
         } else {
             Alert.alert('Alert', 'unable to get Booking Payment Details')
@@ -100,12 +133,16 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
     const handelCouponCode = async () => {
         const response = await excuteGetResponse(`secure/cars/offers`)
         console.log('cuoponcodes', response)
+
         if (response.code == 0) {
             setCoupons(response.data)
         } else {
             Alert.alert('Alert', 'Unabl;e to get details')
             return
         }
+    }
+    const setup = () => {
+
     }
     return (
         <SafeAreaView style={{ flex: 1 }}>

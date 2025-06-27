@@ -8,7 +8,7 @@ import { wp, hp } from "../utils/ResponsiveScreen";
 import { Cardview } from "../components/Cardview";
 import { CameraView } from "../components/CameraView";
 import PrimaryButton from "../components/PrimaryButton";
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import CameraModalScreen from "../components/CameraModel";
 import { CenterModalView } from "../components/CenterModelView";
 import { SafeAreaView } from "react-native-safe-area-context";
