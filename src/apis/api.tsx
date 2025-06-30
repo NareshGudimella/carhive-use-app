@@ -176,13 +176,6 @@ export const KycDetails = async (
     return excuteResponse(`secure/documents`, formdata);
 };
 
-
-export const wishlist = async (carid: any) => {
-    return excuteGetResponse(`secure/cars/favorite/add/${carid}`)
-}
-export const removeWishlist = async (carid: any) => {
-    return excuteGetResponse(`secure/cars/favorite/remove/${carid}`)
-}
 export const carBookings = async (terms_conditions_flag: any,
     booking_list_flag: any, from_date: any, to_date: any, carid: any,
     ofercode: any, trip_charges: any, taxes: any, convenience_fee: any,

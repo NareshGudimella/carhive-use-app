@@ -113,17 +113,21 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
         )
         console.log('paymentDetails', response, couponcode)
         if (response.code == 0) {
-            setPrice(response.data.total_price)
-            try {
-                const session = new CFSession(
-                    response.data.payment_session_id,
-                    response.data.order_id,
-                    response.data.env == CFEnvironment.PRODUCTION ? CFEnvironment.PRODUCTION : CFEnvironment.SANDBOX
-                );
-                console.log('Session', JSON.stringify(session));
-                CFPaymentGatewayService.doWebPayment(session);
-            } catch (e: any) {
-                console.log(e.message);
+            const response1 = await excuteGetResponse(`secure/cars/payment/${response.booking_car_id}`)
+            console.log('paymentmethod', response1)
+            if (response1.code == 0) {
+                setPrice(response1.data.order_amount)
+                try {
+                    const session = new CFSession(
+                        response1.data.payment_session_id,
+                        response1.data.order_id,
+                        response1.data.env == CFEnvironment.PRODUCTION ? CFEnvironment.PRODUCTION : CFEnvironment.SANDBOX
+                    );
+                    console.log('Session', JSON.stringify(session));
+                    CFPaymentGatewayService.doWebPayment(session);
+                } catch (e: any) {
+                    console.log(e.message);
+                }
             }
         } else {
             Alert.alert('Alert', 'unable to get Booking Payment Details')
@@ -141,9 +145,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
             return
         }
     }
-    const setup = () => {
 
-    }
     return (
         <SafeAreaView style={{ flex: 1 }}>
             {

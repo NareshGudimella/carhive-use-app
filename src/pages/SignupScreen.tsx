@@ -1,4 +1,4 @@
-import { Alert, Image, Modal, Pressable, Text, View } from "react-native";
+import { Alert, Image, Modal, Pressable, ScrollView, Text, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { wp, hp } from "../utils/ResponsiveScreen";
 import Textinput from "../components/TextInput";
@@ -61,7 +61,7 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
             object.profile_pic = profileImage
         const response = await SignUp(object);
         console.log('Signupresponse', response, object);
-        if (response.code == 0) { 
+        if (response.code == 0) {
             setSuccessKycModal(true)
         } else if (response.message == 'NAME_NOT_MATCH' && response.code == 1) {
             Alert.alert('Alert', 'Enter your name as per aadhar card')
@@ -82,273 +82,275 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
     }
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            {
-                cameraModal && <CameraModalScreen
-                    close={() => SetCaremaModal(false)}
-                    cameraModal={cameraModal}
-                    setImages={(image: Asset) => {
-                        setProfileImage(image)
-                    }} />
-            }
-            {
-                successKycModal &&
-                <View>
-                    <Modal
-                        animationType="slide"
-                        transparent={true}
-                        visible={successKycModal}
-                        onRequestClose={() => {
-                            setSuccessKycModal(!successKycModal);
-                        }}>
-                        <CenterModalView>
-                            <View style={{
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                marginBottom: hp(2)
-                            }}>
-                                <Image
-                                    source={require('../assets/true.png')}
-                                    style={{
-                                        height: 180,
-                                        width: 200
-                                    }}
-                                />
-                                <Text
-                                    style={{
-                                        fontSize: 18,
-                                        fontWeight: 'bold'
-                                    }}
-                                >Congratulations! 👍</Text>
-                                <Text
-                                    style={{
-                                        fontSize: 14,
-                                        fontWeight: '500',
-                                        color: '#64748B',
-                                        width: wp(70),
-                                        textAlign: 'center',
-                                        marginVertical: hp(1)
-                                    }}
-                                >Your account is ready to use.
-                                    You will be redirected to
-                                    the Home page in a few seconds.</Text>
-                                <View style={{
-                                    width: wp(40),
-                                    marginTop: hp(2)
-                                }}>
-                                    <PrimaryButton title='Back'
-                                        onclick={() => {
-                                            props.navigation.navigate('HomeScreen'),
-                                                setSuccessKycModal(false)
-                                        }} />
-                                </View>
-                            </View>
-                        </CenterModalView>
-                    </Modal>
-                </View>
-            }
-            <Pressable
-                onPress={() => props.navigation.goBack()}
-                style={{
-                    marginHorizontal: wp(5),
-                    marginVertical: hp(2),
-                    marginTop: hp(3.5)
-                }}>
-                <Image
-                    source={require("../assets/Back.png")}
-                    style={{ height: 35, width: 35 }}
-                />
-            </Pressable>
-
-            <View style={{ marginHorizontal: wp(7) }}>
-                <Text style={{
-                    fontSize: 28,
-                    fontWeight: "bold",
-                    marginTop: hp(2)
-                }}>
-                    Sign up to Ride a car
-                </Text>
-                <Text
-                    style={{
-                        fontSize: 17,
-                        fontWeight: "400",
-                        color: "#9CA3AF",
-                        width: wp(70),
-                        marginVertical: hp(1.5),
-                    }}
-                >
-                    Ready to hit the road? Signing up to book your ride is quick and
-                    easy!
-                </Text>
-            </View>
-            <View style={{
-                justifyContent: 'center',
-                alignItems: 'center'
-            }}>
-                <Pressable
-                    style={{
-                        borderWidth: 2,
-                        padding: 2,
-                        borderColor: '#D9D9D9',
-                        borderRadius: wp(12)
-                    }}
-                    onPress={() => SetCaremaModal(true)}>
-                    <Image
-                        source={profileImage != null ?
-                            { uri: profileImage?.uri }
-                            : require('../assets/profile.png')}
-                        style={{
-                            height: wp(22),
-                            width: wp(22),
-                            borderRadius: wp(11)
+            <ScrollView style={{ flex: 1 }}>
+                {
+                    cameraModal && <CameraModalScreen
+                        close={() => SetCaremaModal(false)}
+                        cameraModal={cameraModal}
+                        setImages={(image: Asset) => {
+                            setProfileImage(image)
                         }} />
-                </Pressable>
-                <Text style={{
-                    fontSize: 16,
-                    fontWeight: 'bold',
-                    marginTop: hp(2)
-                }}>Upload your selfie</Text>
-            </View>
-            <View style={{
-                marginHorizontal: wp(7),
-                marginTop: hp(2)
-            }}>
-                <Textinput
-                    image={require("../assets/users.png")}
-                    placeholder="Your name in aadhar card"
-                    keyboardtype="default"
-                    onChangeText={setUserName}
-                    value={userName}
-                    max={40}
-                />
-                <Textinput
-                    image={require("../assets/sms.png")}
-                    placeholder="Email"
-                    keyboardtype="default"
-                    onChangeText={setUserEmail}
-                    value={userEmail}
-                    max={(50)}
-                />
-                <Dropdown
-                    style={{
-                        height: hp(6),
-                        borderColor: "#E5E7EB",
-                        borderWidth: 1,
-                        borderRadius: 8,
-                        paddingHorizontal: 15,
-                        marginVertical: hp(1),
-                        backgroundColor: "#EEEFF2",
-                        flexDirection: "row",
-                        alignItems: "center",
-                        elevation: 1,
-                    }}
-                    containerStyle={{
-                        borderRadius: 8,
-                        backgroundColor: "#EEEFF2",
-                    }}
-                    placeholderStyle={{
-                        fontSize: 16,
-                        color: "#9CA3AF",
-                    }}
-                    selectedTextStyle={{
-                        fontSize: 16,
-                        color: "#000",
-                    }}
-                    iconStyle={{
-                        width: 24,
-                        height: 24,
-                    }}
-                    data={genderData}
-                    maxHeight={300}
-                    labelField="label"
-                    valueField="value"
-                    placeholder="Gender"
-                    value={gender}
-                    onFocus={() => setIsFocus(true)}
-                    onBlur={() => setIsFocus(false)}
-                    onChange={(item) => {
-                        setGender(item.value);
-                        setIsFocus(false);
-                    }}
-                    renderLeftIcon={() => (
-                        <Image
-                            source={require("../assets/sms.png")}
-                            style={[input.style, { marginRight: wp(4) }]}
-                        />
-                    )}
-                    renderRightIcon={() => (
-                        <Image
-                            source={require("../assets/mingcute_down-fill.png")}
-                            style={{
-                                width: 20,
-                                height: 20,
-                                tintColor: isFocus ? "#FBC41D" : "#9CA3AF",
-                            }}
-                        />
-                    )}
-                />
-                <Pressable
-                    onPress={() => setOpen(true)}
-                    style={input.continer}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Image source={require('../assets/sms.png')} style={input.style} />
-                        <Text style={[input.textinput, { color: isDateSelected ? '#000' : '#9CA3AF' }]}>
-                            {isDateSelected ? moment(date).format('YYYY-MM-DD') : 'Date of birth'}
-                        </Text>
+                }
+                {
+                    successKycModal &&
+                    <View>
+                        <Modal
+                            animationType="slide"
+                            transparent={true}
+                            visible={successKycModal}
+                            onRequestClose={() => {
+                                setSuccessKycModal(!successKycModal);
+                            }}>
+                            <CenterModalView>
+                                <View style={{
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    marginBottom: hp(2)
+                                }}>
+                                    <Image
+                                        source={require('../assets/true.png')}
+                                        style={{
+                                            height: 180,
+                                            width: 200
+                                        }}
+                                    />
+                                    <Text
+                                        style={{
+                                            fontSize: 18,
+                                            fontWeight: 'bold'
+                                        }}
+                                    >Congratulations! 👍</Text>
+                                    <Text
+                                        style={{
+                                            fontSize: 14,
+                                            fontWeight: '500',
+                                            color: '#64748B',
+                                            width: wp(70),
+                                            textAlign: 'center',
+                                            marginVertical: hp(1)
+                                        }}
+                                    >Your account is ready to use.
+                                        You will be redirected to
+                                        the Home page in a few seconds.</Text>
+                                    <View style={{
+                                        width: wp(40),
+                                        marginTop: hp(2)
+                                    }}>
+                                        <PrimaryButton title='Back'
+                                            onclick={() => {
+                                                props.navigation.navigate('HomeScreen'),
+                                                    setSuccessKycModal(false)
+                                            }} />
+                                    </View>
+                                </View>
+                            </CenterModalView>
+                        </Modal>
                     </View>
+                }
+                <Pressable
+                    onPress={() => props.navigation.goBack()}
+                    style={{
+                        marginHorizontal: wp(5),
+                        marginVertical: hp(2),
+                        marginTop: hp(3.5)
+                    }}>
+                    <Image
+                        source={require("../assets/Back.png")}
+                        style={{ height: 35, width: 35 }}
+                    />
                 </Pressable>
-                <DatePicker
-                    modal
-                    open={open}
-                    date={date}
-                    mode="date"
-                    dividerColor="#00354a"
-                    onConfirm={(selectedDate) => {
-                        setOpen(false);
-                        setDate(selectedDate);
-                        setIsDateSelected(true);
-                    }}
-                    onCancel={() => {
-                        setOpen(false);
-                    }}
-                    theme="light"
-                />
-            </View>
-            <View
-                style={{
-                    flex: 1,
-                    justifyContent: "flex-end",
-                    marginHorizontal: wp(7),
-                    marginVertical: hp(3),
-                }}
-            >
-                <PrimaryButton
-                    title="Submit"
-                    onclick={() => {
-                        handleInputChangeValue
-                        handelSignup()
-                    }}
-                />
-                <View style={{
-                    justifyContent: "center",
-                    alignItems: "center"
-                }}>
+
+                <View style={{ marginHorizontal: wp(7) }}>
+                    <Text style={{
+                        fontSize: 28,
+                        fontWeight: "bold",
+                        marginTop: hp(2)
+                    }}>
+                        Sign up to Ride a car
+                    </Text>
                     <Text
                         style={{
+                            fontSize: 17,
+                            fontWeight: "400",
                             color: "#9CA3AF",
                             width: wp(70),
-                            textAlign: "center",
-                            marginTop: hp(1.5),
-                            lineHeight: hp(3)
+                            marginVertical: hp(1.5),
                         }}
                     >
-                        By signing up you agree to
-                        <Text style={{ color: "#00354a" }}>
-                            {" "}
-                            Terms of Services & Privacy Policy.
-                        </Text>
+                        Ready to hit the road? Signing up to book your ride is quick and
+                        easy!
                     </Text>
                 </View>
-            </View>
+                <View style={{
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}>
+                    <Pressable
+                        style={{
+                            borderWidth: 2,
+                            padding: 2,
+                            borderColor: '#D9D9D9',
+                            borderRadius: wp(12)
+                        }}
+                        onPress={() => SetCaremaModal(true)}>
+                        <Image
+                            source={profileImage != null ?
+                                { uri: profileImage?.uri }
+                                : require('../assets/profile.png')}
+                            style={{
+                                height: wp(22),
+                                width: wp(22),
+                                borderRadius: wp(11)
+                            }} />
+                    </Pressable>
+                    <Text style={{
+                        fontSize: 16,
+                        fontWeight: 'bold',
+                        marginTop: hp(2)
+                    }}>Upload your selfie</Text>
+                </View>
+                <View style={{
+                    marginHorizontal: wp(7),
+                    marginTop: hp(2)
+                }}>
+                    <Textinput
+                        image={require("../assets/users.png")}
+                        placeholder="Your name in aadhar card"
+                        keyboardtype="default"
+                        onChangeText={setUserName}
+                        value={userName}
+                        max={40}
+                    />
+                    <Textinput
+                        image={require("../assets/sms.png")}
+                        placeholder="Email"
+                        keyboardtype="default"
+                        onChangeText={setUserEmail}
+                        value={userEmail}
+                        max={(50)}
+                    />
+                    <Dropdown
+                        style={{
+                            height: hp(6),
+                            borderColor: "#E5E7EB",
+                            borderWidth: 1,
+                            borderRadius: 8,
+                            paddingHorizontal: 15,
+                            marginVertical: hp(1),
+                            backgroundColor: "#EEEFF2",
+                            flexDirection: "row",
+                            alignItems: "center",
+                            elevation: 1,
+                        }}
+                        containerStyle={{
+                            borderRadius: 8,
+                            backgroundColor: "#EEEFF2",
+                        }}
+                        placeholderStyle={{
+                            fontSize: 16,
+                            color: "#9CA3AF",
+                        }}
+                        selectedTextStyle={{
+                            fontSize: 16,
+                            color: "#000",
+                        }}
+                        iconStyle={{
+                            width: 24,
+                            height: 24,
+                        }}
+                        data={genderData}
+                        maxHeight={300}
+                        labelField="label"
+                        valueField="value"
+                        placeholder="Gender"
+                        value={gender}
+                        onFocus={() => setIsFocus(true)}
+                        onBlur={() => setIsFocus(false)}
+                        onChange={(item) => {
+                            setGender(item.value);
+                            setIsFocus(false);
+                        }}
+                        renderLeftIcon={() => (
+                            <Image
+                                source={require("../assets/sms.png")}
+                                style={[input.style, { marginRight: wp(4) }]}
+                            />
+                        )}
+                        renderRightIcon={() => (
+                            <Image
+                                source={require("../assets/mingcute_down-fill.png")}
+                                style={{
+                                    width: 20,
+                                    height: 20,
+                                    tintColor: isFocus ? "#FBC41D" : "#9CA3AF",
+                                }}
+                            />
+                        )}
+                    />
+                    <Pressable
+                        onPress={() => setOpen(true)}
+                        style={input.continer}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Image source={require('../assets/sms.png')} style={input.style} />
+                            <Text style={[input.textinput, { color: isDateSelected ? '#000' : '#9CA3AF' }]}>
+                                {isDateSelected ? moment(date).format('YYYY-MM-DD') : 'Date of birth'}
+                            </Text>
+                        </View>
+                    </Pressable>
+                    <DatePicker
+                        modal
+                        open={open}
+                        date={date}
+                        mode="date"
+                        dividerColor="#00354a"
+                        onConfirm={(selectedDate) => {
+                            setOpen(false);
+                            setDate(selectedDate);
+                            setIsDateSelected(true);
+                        }}
+                        onCancel={() => {
+                            setOpen(false);
+                        }}
+                        theme="light"
+                    />
+                </View>
+                <View
+                    style={{
+                        flex: 1,
+                        justifyContent: "flex-end",
+                        marginHorizontal: wp(7),
+                        marginVertical: hp(3),
+                    }}
+                >
+                    <PrimaryButton
+                        title="Submit"
+                        onclick={() => {
+                            handleInputChangeValue
+                            handelSignup()
+                        }}
+                    />
+                    <View style={{
+                        justifyContent: "center",
+                        alignItems: "center"
+                    }}>
+                        <Text
+                            style={{
+                                color: "#9CA3AF",
+                                width: wp(70),
+                                textAlign: "center",
+                                marginTop: hp(1.5),
+                                lineHeight: hp(3)
+                            }}
+                        >
+                            By signing up you agree to
+                            <Text style={{ color: "#00354a" }}>
+                                {" "}
+                                Terms of Services & Privacy Policy.
+                            </Text>
+                        </Text>
+                    </View>
+                </View>
+            </ScrollView>
         </SafeAreaView>
     );
 };

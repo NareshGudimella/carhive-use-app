@@ -178,7 +178,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
         }
     }
     const handelAadharotp = async () => {
-        if (aadharotp != 6) {
+        if (aadharotp.trim().length != 6) {
             Alert.alert('Alert', 'Enter valid 6-digit OTP.')
             return
         }
@@ -673,7 +673,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                     <Textinput
                                         image={require('../assets/users.png')}
                                         placeholder='Enter your driving licence number'
-                                        keyboardtype='numeric'
+                                        keyboardtype='default'
                                         value={licencenumber}
                                         onChangeText={setlicencenumber}
                                         max={16}
