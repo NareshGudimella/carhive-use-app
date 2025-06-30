@@ -30,8 +30,8 @@ import { wp,hp } from "../utils/ResponsiveScreen";
     otpBox: {
         borderColor: '#E8ECF4',
         marginHorizontal: wp(1.5),
-        width: 50,
-        height: 50,
+        width: 40,
+        height: 40,
         borderRadius: 10,
         backgroundColor: '#F7F8F9',
         justifyContent: 'center',

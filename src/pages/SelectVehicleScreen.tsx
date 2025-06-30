@@ -16,7 +16,7 @@ import PrimaryButton from "../components/PrimaryButton";
 import { Rating } from "react-native-ratings";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useFocusEffect } from "@react-navigation/native";
-import { CarsList, excuteGetResponse, Login, LoginCarsList, Otp, removeWishlist, wishlist } from "../apis/api";
+import { CarsList, excuteGetResponse, } from "../apis/api";
 import LinearGradient from "react-native-linear-gradient";
 import moment from "moment";
 
