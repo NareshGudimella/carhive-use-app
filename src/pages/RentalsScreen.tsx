@@ -88,10 +88,10 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
         }
     }
 
-    const handelCancle = async (car_booking_id: any) => {
+    const handelCancel = async (car_booking_id: any) => {
         Alert.alert('Alert', 'Are you sure do you want to cancel the booking', [
             {
-                text: 'Cancle',
+                text: 'Cancel',
                 onPress: () => console.log('Cancel Pressed'),
                 style: "cancel",
             },
@@ -533,7 +533,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                             </View>
                                             <Pressable
                                                 onPress={() => {
-                                                    handelCancle(e.car_booking_id)
+                                                    handelCancel(e.car_booking_id)
                                                 }}
                                                 style={{
                                                     justifyContent: 'center',
@@ -702,7 +702,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                 </View>
                                                 <Pressable
                                                     onPress={() => {
-                                                        handelCancle(e.car_booking_id)
+                                                        handelCancel(e.car_booking_id)
                                                     }}
                                                     style={{
                                                         justifyContent: 'center',

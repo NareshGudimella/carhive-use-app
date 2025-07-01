@@ -60,9 +60,11 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
             }
         }, [])
     )
+
     const handleInputChangeValue = (key: string, value: any) => {
         setUserDetailsObj((e: any) => ({ ...e, [key]: value }))
     }
+
     const handelButtonSubmit = async () => {
         const token = await getToken()
         console.log('token', token)
@@ -92,6 +94,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
             setMobileNumberModal(true)
         }
     }
+
     const handelLogin = async () => {
         if (phoneNumber.trim().length != 10) {
             Alert.alert('Alert', 'Invalid mobile number')
@@ -105,6 +108,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
             Alert.alert('Alert', 'Unable to get Phone number')
         }
     }
+
     const handelOtp = async () => {
         if (!otp || otp.length !== 4) {
             Alert.alert('Alert!', 'Enter a valid 4-digit OTP.');
@@ -141,6 +145,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
             Alert.alert('Alert', 'Unable to get OTP')
         }
     }
+
     const handelVicheDetails = async (carid: any) => {
 
         const response1 = await carDetails(carid,
@@ -155,6 +160,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
         }
 
     }
+
     const handelAadhardetails = async () => {
         if (aadharnumber.trim().length != 12) {
             Alert.alert('Alert', 'Enter Valid Aadhar number')
@@ -177,6 +183,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
             Alert.alert('Alert', 'Unable to get details')
         }
     }
+
     const handelAadharotp = async () => {
         if (aadharotp.trim().length != 6) {
             Alert.alert('Alert', 'Enter valid 6-digit OTP.')
@@ -192,6 +199,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
         if (response.code == 0) {
             setLicencemodal(true)
             setAadharotpmodal(false)
+            setOtpModal(false)
         } else {
             Alert.alert('Alert', 'Unable to get details')
             return
@@ -612,7 +620,6 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                     <View style={{ marginVertical: hp(2) }}>
                                         <PrimaryButton title='Request OTP'
                                             onclick={() => {
-                                                setAadharmodal(false)
                                                 handelAadhardetails()
                                             }}
                                         />
@@ -911,7 +918,6 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                             title='Verify'
                                             onclick={() => {
                                                 handelAadharotp()
-                                                setOtpModal(false)
                                             }}
                                         />
                                     </View>

@@ -1,19 +1,16 @@
-import { Alert, Image, TextInput, Pressable, ScrollView, Text, View, Platform } from "react-native";
+import { Alert, Image, TextInput, Pressable, ScrollView, Text, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { wp, hp } from "../utils/ResponsiveScreen";
 import { Cardview } from "../components/Cardview";
 import { CameraView } from "../components/CameraView";
 import { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { excuteGetResponse, userUpdateProfile } from "../apis/api";
+import { excuteGetResponse } from "../apis/api";
 import { useFocusEffect } from "@react-navigation/native";
 import { Dropdown } from "react-native-element-dropdown";
 import moment from "moment";
-import CameraModalScreen from "../components/CameraModel";
-import { Asset } from "react-native-image-picker";
 import { useDispatch } from "react-redux";
 import { updateProfile } from "../storage/redux";
-import PrimaryButton from "../components/PrimaryButton";
 import DatePicker from "react-native-date-picker";
 
 class Componentprops extends Baseprops { }
@@ -23,13 +20,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
     const dispatch = useDispatch()
     const [profilDetails, setProfileDetails] = useState<any>(null)
     const [date, setDate] = useState<any>(new Date())
-    const [aadharfront, setAadharfront] = useState<Asset | null>(null)
-    const [aadharback, setAadharBack] = useState<Asset | null>(null)
-    const [licenseback, setlicenseBack] = useState<Asset | null>(null)
-    const [licensefront, setlicensefront] = useState<Asset | null>(null)
-    const [targetType, setTargetType] = useState('');
     const [userDetailsObj, setUserDetailsObj] = useState<any>({})
-    const [profileImage, setProfileImage] = useState<Asset | null>(null)
     const [showPicker, setShowPicker] = useState(false);
 
     useFocusEffect(
@@ -62,16 +53,6 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
         setUserDetailsObj((e: any) => ({ ...e, [key]: value }))
     }
 
-    const handleUpdateBtn = async () => {
-        const response = await userUpdateProfile(userDetailsObj.email)
-        console.log('profileOBj111', response)
-        if (response.code == 0) {
-            props.navigation.navigate('ProfileScreen')
-        } else {
-            Alert.alert('Alert!', 'Login Your Account.')
-        }
-
-    }
     return (
         <SafeAreaView style={{
             flex: 1
@@ -120,14 +101,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                         fontSize: 16,
                                         fontWeight: 'bold'
                                     }}>Personal details</Text>
-                                <Pressable>
-                                    <Image
-                                        source={require('../assets/edit1.png')}
-                                        style={{
-                                            height: 20,
-                                            width: 20
-                                        }} />
-                                </Pressable>
+
                             </View>
                             <View style={{
                                 justifyContent: 'center',
@@ -141,24 +115,26 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                         borderColor: '#D9D9D9',
                                         padding: 2
                                     }}
-                                    onPress={() => {
-                                        setTargetType('Profile')
-                                    }}>{profilDetails && (
+                                    >{profilDetails &&
+                                        profilDetails.profile_pic != null ?
                                         <Image
-                                            source={
-                                                profileImage != null
-                                                    ? { uri: profileImage?.uri }
-                                                    : profilDetails.profile_pic != null
-                                                        ? { uri: profilDetails.profile_pic }
-                                                        : require('../assets/profile.png')
-                                            }
+                                            source={{ uri: profilDetails.profile_pic }}
                                             style={{
                                                 height: wp(22),
                                                 width: wp(22),
                                                 borderRadius: wp(11),
                                             }}
                                         />
-                                    )}
+                                        :
+                                        <Image
+                                            source={require('../assets/profile.png')}
+                                            style={{
+                                                height: wp(22),
+                                                width: wp(22),
+                                                borderRadius: wp(11),
+                                            }}
+                                        />
+                                    }
                                 </Pressable>
                             </View>
                             <Cardview>
@@ -273,11 +249,17 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                 marginHorizontal: wp(4),
                                 marginVertical: hp(1)
                             }}>
-                                <Text style={{
-                                    fontSize: 18,
-                                    fontWeight: 'bold',
-                                    marginVertical: hp(1)
-                                }}>Aadhar card</Text>
+                                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                    <Text style={{
+                                        fontSize: 18,
+                                        fontWeight: 'bold',
+                                        marginVertical: hp(1)
+                                    }}>Aadhar card</Text>
+                                    {profilDetails && profilDetails.aadhar_verfy_flag == 1 &&
+                                        <Image resizeMode='contain' style={{ width: 30, height: 30 }} source={require('../assets/check.png')} />
+                                    }
+                                </View>
+
                                 <View style={{
                                     flexDirection: 'row',
                                     justifyContent: 'space-between',
@@ -287,20 +269,18 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                         width: wp(38)
                                     }}>
                                         <Cardview>
-                                            {aadharfront ?
+                                            {profilDetails && profilDetails.documents.aadhar_front ?
                                                 <Pressable
-                                                    onPress={() => {
-                                                        setTargetType('aadharfront');
-                                                    }}
                                                     style={{
-                                                        justifyContent: 'center', alignItems: 'center',
-                                                        paddingVertical: hp(2)
+                                                        justifyContent: 'center',
+                                                        alignItems: 'center',
+                                                        paddingVertical: hp(1)
                                                     }}>
                                                     <Image
-                                                        source={{ uri: aadharfront?.uri }}
+                                                        source={{ uri: profilDetails.documents.aadhar_front }}
                                                         style={{
-                                                            width: 110,
-                                                            height: 75,
+                                                            width: 120,
+                                                            height: 90,
                                                             resizeMode: 'cover',
                                                             borderRadius: 10
                                                         }}
@@ -308,14 +288,9 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                                 </Pressable>
                                                 :
                                                 <CameraView
-                                                    image={profilDetails &&
-                                                        profilDetails.documents.aadhar_front != null ?
-                                                        { uri: profilDetails.documents.aadhar_front } :
+                                                    image={
                                                         require('../assets/Huge.png')}
                                                     title="Upload Front"
-                                                    onclick={() => {
-                                                        setTargetType('aadharfront');
-                                                    }}
                                                 />
                                             }
                                         </Cardview>
@@ -324,20 +299,17 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                         width: wp(38)
                                     }}>
                                         <Cardview>
-                                            {aadharback ?
+                                            {profilDetails && profilDetails.documents.aadhar_front ?
                                                 <Pressable
-                                                    onPress={() => {
-                                                        setTargetType('aadharback');
-                                                    }}
                                                     style={{
                                                         justifyContent: 'center', alignItems: 'center',
-                                                        paddingVertical: hp(2)
+                                                        paddingVertical: hp(1)
                                                     }}>
                                                     <Image
-                                                        source={{ uri: aadharback?.uri }}
+                                                        source={{ uri: profilDetails.documents.aadhar_front }}
                                                         style={{
-                                                            width: 110,
-                                                            height: 75,
+                                                            width: 120,
+                                                            height: 90,
                                                             resizeMode: 'cover',
                                                             borderRadius: 10
                                                         }}
@@ -345,25 +317,24 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                                 </Pressable>
                                                 :
                                                 <CameraView
-                                                    image={profilDetails &&
-                                                        profilDetails.documents.aadhar_back != null ?
-                                                        { uri: profilDetails.documents.aadhar_back }
-                                                        :
+                                                    image={
                                                         require('../assets/Huge.png')}
-                                                    title="Upload Front"
-                                                    onclick={() => {
-                                                        setTargetType('aadharback');
-                                                    }}
+                                                    title="Upload Back"
 
                                                 />}
                                         </Cardview>
                                     </View>
                                 </View>
-                                <Text style={{
-                                    fontSize: 18,
-                                    fontWeight: 'bold',
-                                    marginVertical: hp(1)
-                                }}>Driving License</Text>
+                                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                    <Text style={{
+                                        fontSize: 18,
+                                        fontWeight: 'bold',
+                                        marginVertical: hp(1)
+                                    }}>Driving License</Text>
+                                    {profilDetails && profilDetails.driving_licence_flag == 1 &&
+                                        <Image resizeMode='contain' style={{ width: 30, height: 30 }} source={require('../assets/check.png')} />
+                                    }
+                                </View>
                                 <View style={{
                                     flexDirection: 'row',
                                     justifyContent: 'space-between',
@@ -372,17 +343,14 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                 }}>
                                     <View style={{ width: wp(38) }}>
                                         <Cardview>
-                                            {licensefront ?
+                                            {profilDetails && profilDetails.documents.license_front ?
                                                 <Pressable
-                                                    onPress={() => {
-                                                        setTargetType('licensefront')
-                                                    }}
                                                     style={{
                                                         justifyContent: 'center', alignItems: 'center',
                                                         paddingVertical: hp(2)
                                                     }}>
                                                     <Image
-                                                        source={{ uri: licensefront?.uri }}
+                                                        source={{ uri: profilDetails.documents.license_front }}
                                                         style={{
                                                             width: 110,
                                                             height: 75,
@@ -393,31 +361,21 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                                 </Pressable>
                                                 :
                                                 <CameraView
-                                                    image={
-                                                        profilDetails &&
-                                                            profilDetails.documents.license_front != null ?
-                                                            { uri: profilDetails.documents.license_front } :
-                                                            require('../assets/Huge.png')}
+                                                    image={require('../assets/Huge.png')}
                                                     title="Upload Front"
-                                                    onclick={() => {
-                                                        setTargetType('licensefront')
-                                                    }}
                                                 />}
                                         </Cardview>
                                     </View>
                                     <View style={{ width: wp(38) }}>
                                         <Cardview>
-                                            {licenseback ?
+                                            {profilDetails && profilDetails.documents.license_back ?
                                                 <Pressable
-                                                    onPress={() => {
-                                                        setTargetType('licenseback')
-                                                    }}
                                                     style={{
                                                         justifyContent: 'center', alignItems: 'center',
                                                         paddingVertical: hp(2)
                                                     }}>
                                                     <Image
-                                                        source={{ uri: licenseback?.uri }}
+                                                        source={{ uri: profilDetails.documents.license_back }}
                                                         style={{
                                                             width: 110,
                                                             height: 75,
@@ -428,28 +386,14 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                                 </Pressable>
                                                 :
                                                 <CameraView
-                                                    image={
-                                                        profilDetails &&
-                                                            profilDetails.documents.license_back != null ?
-                                                            { uri: profilDetails.documents.license_back } :
-                                                            require('../assets/Huge.png')}
-                                                    title="Upload Front"
-                                                    onclick={() => {
-                                                        setTargetType('licenseback')
-                                                    }}
+                                                    image={require('../assets/Huge.png')}
+                                                    title="Upload Back"
                                                 />}
                                         </Cardview>
                                     </View>
                                 </View>
                             </View>
                         </Cardview>
-                    </View>
-                    <View style={{
-                        marginHorizontal: wp(5), marginVertical: hp(2)
-                    }}>
-                        <PrimaryButton title='Submit' onclick={() => {
-                            handleUpdateBtn()
-                        }} />
                     </View>
                 </View>
             </ScrollView>

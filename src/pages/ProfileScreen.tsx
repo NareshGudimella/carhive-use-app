@@ -236,7 +236,8 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                         marginHorizontal: wp(2),
                                         marginVertical: hp(1.5)
                                     }} />
-                                <Pressable onPress={() => Linking.openURL(`tel: ${8143993222}`)} style={{
+                                <Pressable 
+                                onPress={() => Linking.openURL(`tel: ${8143993222}`)} style={{
                                     flexDirection: 'row',
                                     alignItems: 'center',
 

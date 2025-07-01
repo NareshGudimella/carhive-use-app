@@ -11,7 +11,7 @@ class Componentprops extends Baseprops {
 export const CameraView: React.FC<Componentprops> = (props) => {
     return (
         <Pressable
-            onPress={() => props.onclick()}
+            onPress={props.onclick}
             style={{
                 justifyContent: 'center',
                 alignItems: 'center',

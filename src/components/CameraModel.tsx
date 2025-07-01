@@ -142,7 +142,7 @@ const CameraModalScreen: React.FC<Componentprops> = (props) => {
                                     setImage(null)
                                 }} />
                             <PrimaryButton
-                                title='Cancle'
+                                title='Cancel'
                                 onclick={() => props.close()} />
                         </View>
                     </> :
@@ -151,7 +151,7 @@ const CameraModalScreen: React.FC<Componentprops> = (props) => {
                             marginTop: hp(5)
                         }}>
                             <PrimaryButton
-                                title='Cancle'
+                                title='Cancel'
                                 onclick={() => props.close()} />
                         </View>}
 
