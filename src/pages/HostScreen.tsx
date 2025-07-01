@@ -231,13 +231,7 @@ const HostScreen: React.FC<Componentprops> = (props) => {
                     }}>
                         <PrimaryButton title='Become a Host'
                             onclick={() => props.navigation.navigate('BecomeHostScreen')} />
-                        <Text style={{
-                            color: '#00354a',
-                            fontSize: 13,
-                            fontWeight: '500',
-                            marginTop: hp(2),
-                            textAlign: 'center'
-                        }}>T & C Applied</Text>
+                       
                     </View>
                 </ScrollView>
             </View>

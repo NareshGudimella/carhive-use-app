@@ -236,7 +236,7 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                         marginHorizontal: wp(2),
                                         marginVertical: hp(1.5)
                                     }} />
-                                <Pressable style={{
+                                <Pressable onPress={() => Linking.openURL(`tel: ${8143993222}`)} style={{
                                     flexDirection: 'row',
                                     alignItems: 'center',
 
@@ -337,7 +337,7 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                     }} />
                                 <Text
                                     onPress={() => {
-                                        Linking.openURL('https://carhive.co.in/policy')
+                                        Linking.openURL('https://carhive.co.in/privacy_policy')
                                     }}
                                     style={{
                                         fontSize: 16,

@@ -1,11 +1,19 @@
 import React, { useCallback, useState } from 'react';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Baseprops } from "../utils/navigation";
-import { Image, Pressable, ScrollView, Text, View, Dimensions, Alert } from "react-native";
+import { Image, Pressable, ScrollView, Text, View, Dimensions, Alert, Modal, Platform } from "react-native";
 import AutoHeightImage from 'react-native-auto-height-image';
 import { hp, wp } from "../utils/ResponsiveScreen";
-import { excuteGetResponse } from '../apis/api';
+import { excuteGetResponse, firebasemessage, Login, Otp } from '../apis/api';
 import { useFocusEffect } from '@react-navigation/native';
+import { getToken, setToken } from '../storage/AsyncStorage';
+import { BottomModelView } from '../components/BottomModelView';
+import Textinput from '../components/TextInput';
+import PrimaryButton from '../components/PrimaryButton';
+import { OtpInput } from 'react-native-otp-entry';
+import { style } from '../styles/OtpStyle';
+import messaging from '@react-native-firebase/messaging';
+import DeviceInfo from "react-native-device-info";
 
 class Componentprops extends Baseprops { }
 
@@ -13,6 +21,10 @@ const NotificationScreen: React.FC<Componentprops> = (props) => {
     const screenWidth = Dimensions.get('window').width - wp(18);
 
     const [notification, setNotification] = useState<any>([])
+    const [mobileNumberModal, setMobileNumberModal] = useState(false)
+    const [otpModal, setOtpModal] = useState(false)
+    const [phoneNumber, setPhoneNumber] = useState<any>('')
+    const [otp, setOtp] = useState<any>('')
 
     useFocusEffect(
         useCallback(() => {
@@ -21,18 +33,253 @@ const NotificationScreen: React.FC<Componentprops> = (props) => {
     )
 
     const loadNotification = async () => {
-        const response = await excuteGetResponse(`secure/notifications`)
-        console.log('notify', response)
-        if (response.code == 0) {
-            setNotification(response.data)
+        const token = await getToken()
+        if (token && token != '') {
+            const response = await excuteGetResponse(`secure/notifications`)
+            console.log('notify', response)
+            if (response.code == 0) {
+                setNotification(response.data)
+            } else {
+                Alert.alert('Alert', 'Unable to get details')
+                return
+            }
         } else {
-            Alert.alert('Alert', 'Unable to get details')
+            setMobileNumberModal(true)
+        }
+    }
+
+    const handelLogin = async () => {
+        if (phoneNumber.trim().length != 10) {
+            Alert.alert('Alert', 'Invalid mobile number')
             return
+        }
+        const response = await Login(phoneNumber)
+        console.log('Login', response)
+        if (response.code == 0) {
+            setMobileNumberModal(false)
+            setOtpModal(true)
+        } else {
+            Alert.alert('Alert', 'Unable to get Phone number')
+        }
+    }
+
+    const handelOtp = async () => {
+        if (!otp || otp.length !== 4) {
+            Alert.alert('Alert!', 'Enter a valid 4-digit OTP.');
+            return;
+        }
+        const response = await Otp(phoneNumber, otp)
+        console.log('otp', response)
+        if (response.code == 0) {
+            setToken(response.data.token)
+            if (response.data.token && response.data.token != '') {
+                const token = await messaging().getToken();
+                const response = await firebasemessage(token, Platform.OS,
+                    await DeviceInfo.getBuildNumber(), Platform.Version,)
+                console.log('firebaser', response)
+            }
+            setOtpModal(false)
+            props.navigation.reset({
+                index: 0,
+                routes: [{name: 'HomeScreen'}]
+            })
+        } else {
+            Alert.alert('Alert', 'Unable to get OTP')
         }
     }
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
+
+{mobileNumberModal &&
+                <View>
+                    <Modal
+                        animationType="slide"
+                        transparent={true}
+                        visible={mobileNumberModal}
+                        onRequestClose={() => {
+                            setMobileNumberModal(!mobileNumberModal);
+                        }}>
+                        <BottomModelView onclick={() => setMobileNumberModal(false)}>
+                            <View style={{
+                                marginHorizontal: wp(5),
+                                marginVertical: hp(2)
+                            }}>
+                                <Pressable
+                                    onPress={() => setMobileNumberModal(false)}
+                                    style={{
+                                        backgroundColor: '#EEEEEE80',
+                                        borderRadius: 20,
+                                        width: 35,
+                                        height: 35,
+                                        justifyContent: 'center',
+                                        alignItems: 'center'
+                                    }}>
+                                    <Image
+                                        source={require('../assets/close.png')}
+                                        style={{
+                                            height: 15,
+                                            width: 15
+                                        }} />
+                                </Pressable>
+                                <Text style={{
+                                    fontSize: 24,
+                                    fontWeight: 'bold',
+                                    marginTop: hp(2),
+
+                                }}>User Login</Text>
+                                <Text
+                                    style={{
+                                        fontSize: 17,
+                                        fontWeight: '400',
+                                        color: '#64748B',
+                                        marginTop: hp(1),
+                                        marginBottom: hp(1.5)
+                                    }}
+                                >Please enter a your mobile number
+                                    to login into your account</Text>
+                                <Textinput
+                                    image={require('../assets/call.png')}
+                                    placeholder='Enter your mobile number'
+                                    keyboardtype='numeric'
+                                    value={phoneNumber}
+                                    onChangeText={setPhoneNumber}
+                                    max={10}
+                                />
+                                <Text
+                                    style={{
+                                        fontSize: 15,
+                                        lineHeight: hp(2.5),
+                                        color: '#64748B',
+                                        marginVertical: hp(1),
+                                        marginHorizontal: wp(2)
+                                    }}
+                                >By continuing you agree
+                                    to our <Text
+                                        style={{
+                                            color: '#00354a'
+                                        }}> Terms of service
+                                    </Text> ,   &
+                                    <Text
+                                        style={{
+                                            color: '#00354a'
+                                        }}>  Privacy policy</Text>
+                                </Text>
+                                <View style={{ marginVertical: hp(2) }}>
+                                    <PrimaryButton title='Request OTP'
+                                        onclick={() => {
+                                                handelLogin()
+                                        }}
+                                    />
+                                </View>
+                            </View>
+                        </BottomModelView>
+                    </Modal>
+                </View>
+            }
+
+
+{
+                    otpModal &&
+                    <View>
+                        <Modal
+                            animationType="slide"
+                            transparent={true}
+                            visible={otpModal}
+                            onRequestClose={() => {
+                                setOtpModal(!otpModal);
+                            }}>
+                            <BottomModelView onclick={() => setOtpModal(false)}>
+                                <View style={{
+                                    marginHorizontal: wp(5),
+                                    marginVertical: hp(2)
+                                }}>
+                                    <Pressable
+                                        onPress={() => setOtpModal(false)}
+                                        style={{
+                                            backgroundColor: '#EEEEEE80',
+                                            borderRadius: 20,
+                                            width: 35,
+                                            height: 35,
+                                            justifyContent: 'center',
+                                            alignItems: 'center'
+                                        }}>
+                                        <Image
+                                            source={require('../assets/close.png')}
+                                            style={{
+                                                height: 15,
+                                                width: 15
+                                            }} />
+                                    </Pressable>
+                                    <Text style={{
+                                        fontSize: 24,
+                                        fontWeight: 'bold',
+                                        marginTop: hp(2),
+
+                                    }}>Enter Otp</Text>
+                                    <Text
+                                        style={{
+                                            fontSize: 17,
+                                            fontWeight: '400',
+                                            color: '#64748B',
+                                            marginTop: hp(1),
+                                            marginBottom: hp(1.5),
+                                            width: wp(80)
+                                        }}
+                                    >We’ve sent an SMS with an activation
+                                        code to your phone
+                                        <Text
+                                            style={{
+                                                color: '#00354a',
+                                                fontSize: 16
+                                            }}>  +91 {phoneNumber}</Text>
+                                    </Text>
+                                    <OtpInput
+                                        numberOfDigits={4}
+                                        focusColor="#E8ECF4"
+                                        focusStickBlinkingDuration={500}
+                                        onTextChange={(text) => setOtp(text)}
+                                        onFilled={(text) => console.log(`OTP is ${text}`)}
+                                        textInputProps={{
+                                            accessibilityLabel: "One-Time Password",
+                                        }}
+                                        theme={{
+                                            containerStyle: style.otpContainer,
+                                            pinCodeContainerStyle: style.otp,
+                                            pinCodeTextStyle: style.otpText,
+                                        }}
+                                    />
+                                    <View style={{
+                                        flexDirection: 'row',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        marginVertical: hp(3)
+                                    }}>
+                                        <Text style={{
+                                            fontSize: 16,
+                                            color: '#64748B'
+                                        }}>I didn’t receive a code</Text>
+                                        <Text style={{
+                                            color: '#00354a',
+                                            marginHorizontal: wp(2),
+                                            fontSize: 16
+                                        }}>Resend</Text>
+                                    </View>
+                                    <View style={{ marginBottom: hp(2) }}>
+                                        <PrimaryButton
+                                            title='Verify'
+                                            onclick={() => {
+                                                handelOtp()
+
+                                            }}
+                                        />
+                                    </View>
+                                </View>
+                            </BottomModelView>
+                        </Modal>
+                    </View>
+                }
+                
             <View style={{
                 flexDirection: 'row',
                 alignItems: 'center',
