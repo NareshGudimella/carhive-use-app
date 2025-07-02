@@ -147,19 +147,7 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
                         </Modal>
                     </View>
                 }
-                <Pressable
-                    onPress={() => props.navigation.goBack()}
-                    style={{
-                        marginHorizontal: wp(5),
-                        marginVertical: hp(2),
-                        marginTop: hp(3.5)
-                    }}>
-                    <Image
-                        source={require("../assets/Back.png")}
-                        style={{ height: 35, width: 35 }}
-                    />
-                </Pressable>
-
+                
                 <View style={{ marginHorizontal: wp(7) }}>
                     <Text style={{
                         fontSize: 28,

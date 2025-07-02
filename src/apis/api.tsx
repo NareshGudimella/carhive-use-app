@@ -108,12 +108,15 @@ export const LoginCarsList = async (
         },
     })
 }
+
 export const carDetails = async (carid: any, from_date: any, to_date: any) => {
     return excuteResponse(`auth/cars/details/${carid}`, { from_date, to_date })
 }
+
 export const LoginCarDetails = async (carid: any, from_date: any, to_date: any) => {
     return excuteResponse(`secure/cars/cardetails/${carid}`, { from_date, to_date })
 }
+
 export const SignUp = async (body: any) => {
     const formdata = new FormData();
 

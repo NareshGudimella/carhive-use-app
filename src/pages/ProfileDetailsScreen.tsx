@@ -19,9 +19,8 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
 
     const dispatch = useDispatch()
     const [profilDetails, setProfileDetails] = useState<any>(null)
-    const [date, setDate] = useState<any>(new Date())
+    const [date, setDate] = useState<any>(null)
     const [userDetailsObj, setUserDetailsObj] = useState<any>({})
-    const [showPicker, setShowPicker] = useState(false);
 
     useFocusEffect(
         useCallback(() => {
@@ -36,14 +35,13 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
 
     const loadUserDetails = async () => {
         const response = await excuteGetResponse('secure/profile')
-        console.log('profile', response)
+        console.log('res', response)
         if (response.code == 0) {
             setProfileDetails(response.data)
-            dispatch(updateProfile(response.data));
-            handleInputChangeValue('name', response.data.aadharcard_name)
-            handleInputChangeValue('email', response.data.email)
-            handleInputChangeValue('gender', response.data.gender)
-            setDate(new Date(response.data.dob))
+            handleInputChangeValue('name', response.data && response.data.name)
+            handleInputChangeValue('email', response.data && response.data.email)
+            handleInputChangeValue('gender',  response.data && response.data.gender)
+            setDate(response.data.dob)
         } else {
             Alert.alert('Alert', 'Login your account')
         }
@@ -94,14 +92,17 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                 flexDirection: 'row',
                                 justifyContent: 'space-between',
                                 marginBottom: hp(1.5),
-                                marginHorizontal: wp(2)
+                                marginHorizontal: wp(2),
+                                alignItems: 'center'
                             }}>
                                 <Text
                                     style={{
                                         fontSize: 16,
                                         fontWeight: 'bold'
                                     }}>Personal details</Text>
-
+                                {profilDetails && profilDetails.profile_flag == 1 &&
+                                    <Image resizeMode='contain' style={{ width: 30, height: 30 }} source={require('../assets/check.png')} />
+                                }
                             </View>
                             <View style={{
                                 justifyContent: 'center',
@@ -115,25 +116,25 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                         borderColor: '#D9D9D9',
                                         padding: 2
                                     }}
-                                    >{profilDetails &&
-                                        profilDetails.profile_pic != null ?
-                                        <Image
-                                            source={{ uri: profilDetails.profile_pic }}
-                                            style={{
-                                                height: wp(22),
-                                                width: wp(22),
-                                                borderRadius: wp(11),
-                                            }}
-                                        />
-                                        :
-                                        <Image
-                                            source={require('../assets/profile.png')}
-                                            style={{
-                                                height: wp(22),
-                                                width: wp(22),
-                                                borderRadius: wp(11),
-                                            }}
-                                        />
+                                >{profilDetails &&
+                                    profilDetails.profile_pic != null ?
+                                    <Image
+                                        source={{ uri: profilDetails.profile_pic }}
+                                        style={{
+                                            height: wp(22),
+                                            width: wp(22),
+                                            borderRadius: wp(11),
+                                        }}
+                                    />
+                                    :
+                                    <Image
+                                        source={require('../assets/profile.png')}
+                                        style={{
+                                            height: wp(22),
+                                            width: wp(22),
+                                            borderRadius: wp(11),
+                                        }}
+                                    />
                                     }
                                 </Pressable>
                             </View>
@@ -141,8 +142,8 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                 <TextInput
                                     placeholder='Enter Name'
                                     placeholderTextColor='#000000'
-                                    onChangeText={text => handleInputChangeValue('name', text)}
                                     value={userDetailsObj.name}
+                                    onChangeText={text => handleInputChangeValue('name', text)}
                                     editable={false}
                                     style={{
                                         height: hp(6),
@@ -156,8 +157,8 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                 <TextInput
                                     placeholder='Enter Email'
                                     placeholderTextColor='#000000'
-                                    onChangeText={text => handleInputChangeValue('email', text)}
                                     value={userDetailsObj.email}
+                                    onChangeText={text => handleInputChangeValue('email', text)}
                                     style={{
                                         height: hp(6),
                                         marginHorizontal: wp(4),
@@ -210,7 +211,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                             <View style={{ marginVertical: hp(0.8) }} />
                             <Cardview>
                                 <Text
-                                    onPress={() => setShowPicker(false)}
+
                                     style={{
                                         height: hp(6),
                                         marginHorizontal: wp(4),
@@ -222,23 +223,6 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                     {date ? moment(date).format('YYYY-MM-DD') : 'Date of birth'}
                                 </Text>
                             </Cardview>
-                            <DatePicker
-                                modal
-                                open={showPicker}
-                                date={date ? date : new Date()}
-                                mode="date"
-                                dividerColor="#FBC41D"
-                                onConfirm={(selectedDate) => {
-                                    setShowPicker(false);
-                                    if (selectedDate) {
-                                        setDate(selectedDate);
-                                    }
-                                }}
-                                onCancel={() => {
-                                    setShowPicker(false);
-                                }}
-                                theme="light"
-                            />
                         </View>
                     </Cardview>
                     <View style={{

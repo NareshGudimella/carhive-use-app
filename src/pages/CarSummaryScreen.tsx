@@ -23,7 +23,6 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
 
     const [termsAndConditions, setTermsAndCondition] = useState(false)
     const [typeofTandC, setTypeTandC] = useState('t&c')
-    const [checked, setChecked] = useState(false);
     const [eligiabilityCheck, setEligiabilityCheck] = useState(false)
     const [eligiabilityflag, setEligiabilityflag] = useState('')
     const [eligiabilityModal, setEligiabilityModal] = useState(false)
@@ -44,8 +43,11 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
     useEffect(() => {
         CFPaymentGatewayService.setCallback({
             onVerify: (orderID) => {
-                console.log('orderId is :' + orderID);
-                props.navigation.navigate('PaymentSuccessScreen', { price: price })
+                console.log('orderId is :' , orderID);
+                console.log('price :' , price)
+                if (price != '') {
+                    props.navigation.navigate('PaymentSuccessScreen', { amount: price })
+                }
             },
             onError: (error, orderID) => {
                 console.log(
@@ -58,7 +60,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
             console.log('UNMOUNTED');
             CFPaymentGatewayService.removeCallback();
         };
-    }, []);
+    }, [price]);
 
 
     useEffect(() => {
@@ -105,14 +107,20 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
         }
     }
     const handelPaymentDetails = async () => {
+        if (eligiabilityflag == '') {
+            Alert.alert('Alert!', 'Please agree to the eligibility conditions.');
+            return
+        }
         const response = await carBookings(terms_condition_flag, eligiabilityflag,
             carDetails.from_date, carDetails.to_date, carDetails.carid,
             couponcode != '' ? couponcode : '', carDetails.trip_charges, carDetails.taxes,
             carDetails.convenience_fee, carDetails.security_deposite,
             carDetails.protection_fee, carDetails.total_price
         )
+        console.log('total_price', carDetails.total_price)
         console.log('paymentDetails', response, couponcode)
         if (response.code == 0) {
+            setEligiabilityModal(false)
             const response1 = await excuteGetResponse(`secure/cars/payment/${response.booking_car_id}`)
             console.log('paymentmethod', response1)
             if (response1.code == 0) {
@@ -447,19 +455,10 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                         marginHorizontal: wp(1)
                                     }}>
                                         <Checkbox
-                                            status={checked ? 'checked' : 'unchecked'}
+                                            status={terms_condition_flag ? 'checked' : 'unchecked'}
                                             color="#00354a"
                                             onPress={() => {
-                                                const value = !checked;
-                                                setChecked(value);
-
-                                                if (value) {
-                                                    setTerms_condition_flag('1');
-                                                    console.log('t&c flag', 1);
-                                                } else {
-                                                    setTerms_condition_flag('0');
-                                                    console.log('t&c flag', 0);
-                                                }
+                                                setTerms_condition_flag('1');
                                             }}
                                         />
                                         <Text style={{
@@ -477,8 +476,12 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                         <PrimaryButton
                                             title='Proceed'
                                             onclick={() => {
-                                                setEligiabilityModal(true),
-                                                    setTermsAndCondition(false)
+                                                if (terms_condition_flag == '') {
+                                                    Alert.alert('Alert!', 'Please accept the Terms & Conditions.');
+                                                    return
+                                                }
+                                                setTermsAndCondition(false)
+                                                setEligiabilityModal(true)
                                             }} />
                                     </View>
                                 </View>
@@ -615,19 +618,10 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                     marginHorizontal: wp(1)
                                 }}>
                                     <Checkbox
-                                        status={eligiabilityCheck ? 'checked' : 'unchecked'}
+                                        status={eligiabilityflag ? 'checked' : 'unchecked'}
                                         color="#00354a"
                                         onPress={() => {
-                                            const newValue = !eligiabilityCheck;
-                                            setEligiabilityCheck(newValue);
-
-                                            if (newValue) {
-                                                setEligiabilityflag('1');
-                                                console.log('eligiableflag', eligiabilityflag)
-                                            } else {
-                                                setEligiabilityflag('0');
-                                                console.log('eligiableflag', eligiabilityflag)
-                                            }
+                                            setEligiabilityflag('1')
                                         }}
                                     />
                                     <Text style={{
@@ -652,7 +646,6 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                     <PrimaryButton
                                         title='Proceed'
                                         onclick={() => {
-                                            setEligiabilityModal(false)
                                             handelPaymentDetails()
                                         }} />
                                 </View>

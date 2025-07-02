@@ -1,21 +1,41 @@
-import { Alert, Image, Linking, Modal, Pressable, ScrollView, Text, View } from "react-native";
+import { Alert, Image, Linking, Modal, Platform, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import BottomTabNavigation from "../components/BottomTab";
 import { wp, hp } from "../utils/ResponsiveScreen";
 import { Cardview } from "../components/Cardview";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { BottomModelView } from "../components/BottomModelView";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";
-import { removeProfile } from "../storage/redux";
-import { removeToken } from "../storage/AsyncStorage";
+import { removeProfile, updateProfile } from "../storage/redux";
+import { getToken, removeToken, setToken } from "../storage/AsyncStorage";
+import { useFocusEffect } from "@react-navigation/native";
+import PrimaryButton from "../components/PrimaryButton";
+import { style } from "../styles/OtpStyle";
+import { OtpInput } from "react-native-otp-entry";
+import { excuteGetResponse, firebasemessage, Login, Otp } from "../apis/api";
+import messaging from '@react-native-firebase/messaging';
+import DeviceInfo from "react-native-device-info";
+import Textinput from "../components/TextInput";
 
 class Componentprops extends Baseprops { }
 
 const ProfileScreen: React.FC<Componentprops> = (props) => {
+
     const [logoutModal, setLogoutModal] = useState(false)
     const dispatch = useDispatch()
     const user = useSelector((state: any) => state.profile)
+    const [tokenFlag, setTokenFlag] = useState(false)
+    const [mobileNumberModal, setMobileNumberModal] = useState(false)
+    const [otpModal, setOtpModal] = useState(false)
+    const [phoneNumber, setPhoneNumber] = useState<any>('')
+    const [otp, setOtp] = useState<any>('')
+
+    useFocusEffect(
+        useCallback(() => {
+            loadToken()
+        }, [])
+    )
 
     const handelLogout = async () => {
         dispatch(removeProfile(null))
@@ -26,8 +46,257 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
         })
     }
 
+    const handelLogin = async () => {
+        if (phoneNumber.trim().length != 10) {
+            Alert.alert('Alert', 'Invalid mobile number')
+            return
+        }
+        const response = await Login(phoneNumber)
+        console.log('Login', response)
+        if (response.code == 0) {
+            setMobileNumberModal(false)
+            setOtpModal(true)
+        } else {
+            Alert.alert('Alert', 'Unable to get Phone number')
+        }
+    }
+
+    const handelOtp = async () => {
+        if (!otp || otp.length !== 4) {
+            Alert.alert('Alert!', 'Enter a valid 4-digit OTP.');
+            return;
+        }
+        const response = await Otp(phoneNumber, otp)
+        console.log('otp', response)
+        if (response.code == 0) {
+            setToken(response.data.token)
+            if (response.data.token && response.data.token != '') {
+                const token = await messaging().getToken();
+                await firebasemessage(token, Platform.OS, await DeviceInfo.getBuildNumber(), Platform.Version,)
+                const profileresponse = await excuteGetResponse('secure/profile')
+                if (profileresponse.code == 0) {
+                    setOtpModal(false)
+                    dispatch(updateProfile(profileresponse.data));
+                    props.navigation.reset({
+                        index: 0,
+                        routes: [{ name: 'HomeScreen' }]
+                    })
+                } else {
+                    Alert.alert('Alert', 'Unable to profile details.')
+                }
+            }
+        } else {
+            Alert.alert('Alert', 'Invalid OTP')
+        }
+    }
+
+
+    const loadToken = async () => {
+        const token = await getToken();
+        if (token && token != '') {
+            setTokenFlag(true)
+        }
+    }
+
     return (
         <SafeAreaView style={{ flex: 1 }}>
+
+
+            {mobileNumberModal &&
+                <View>
+                    <Modal
+                        animationType="slide"
+                        transparent={true}
+                        visible={mobileNumberModal}
+                        onRequestClose={() => {
+                            setMobileNumberModal(!mobileNumberModal);
+                        }}>
+                        <BottomModelView onclick={() => setMobileNumberModal(false)}>
+                            <View style={{
+                                marginHorizontal: wp(5),
+                                marginVertical: hp(2)
+                            }}>
+                                <Pressable
+                                    onPress={() => setMobileNumberModal(false)}
+                                    style={{
+                                        backgroundColor: '#EEEEEE80',
+                                        borderRadius: 20,
+                                        width: 35,
+                                        height: 35,
+                                        justifyContent: 'center',
+                                        alignItems: 'center'
+                                    }}>
+                                    <Image
+                                        source={require('../assets/close.png')}
+                                        style={{
+                                            height: 15,
+                                            width: 15
+                                        }} />
+                                </Pressable>
+                                <Text style={{
+                                    fontSize: 24,
+                                    fontWeight: 'bold',
+                                    marginTop: hp(2),
+
+                                }}>User Login</Text>
+                                <Text
+                                    style={{
+                                        fontSize: 17,
+                                        fontWeight: '400',
+                                        color: '#64748B',
+                                        marginTop: hp(1),
+                                        marginBottom: hp(1.5)
+                                    }}
+                                >Please enter a your mobile number
+                                    to login into your account</Text>
+                                <Textinput
+                                    image={require('../assets/call.png')}
+                                    placeholder='Enter your mobile number'
+                                    keyboardtype='numeric'
+                                    value={phoneNumber}
+                                    onChangeText={setPhoneNumber}
+                                    max={10}
+                                />
+                                <Text
+                                    style={{
+                                        fontSize: 15,
+                                        lineHeight: hp(2.5),
+                                        color: '#64748B',
+                                        marginVertical: hp(1),
+                                        marginHorizontal: wp(2)
+                                    }}
+                                >By continuing you agree
+                                    to our <Text
+                                        style={{
+                                            color: '#00354a'
+                                        }}> Terms of service
+                                    </Text> ,   &
+                                    <Text
+                                        style={{
+                                            color: '#00354a'
+                                        }}>  Privacy policy</Text>
+                                </Text>
+                                <View style={{ marginVertical: hp(2) }}>
+                                    <PrimaryButton title='Request OTP'
+                                        onclick={() => {
+                                            handelLogin()
+                                        }}
+                                    />
+                                </View>
+                            </View>
+                        </BottomModelView>
+                    </Modal>
+                </View>
+            }
+
+
+            {
+                otpModal &&
+                <View>
+                    <Modal
+                        animationType="slide"
+                        transparent={true}
+                        visible={otpModal}
+                        onRequestClose={() => {
+                            setOtpModal(!otpModal);
+                        }}>
+                        <BottomModelView onclick={() => setOtpModal(false)}>
+                            <View style={{
+                                marginHorizontal: wp(5),
+                                marginVertical: hp(2)
+                            }}>
+                                <Pressable
+                                    onPress={() => setOtpModal(false)}
+                                    style={{
+                                        backgroundColor: '#EEEEEE80',
+                                        borderRadius: 20,
+                                        width: 35,
+                                        height: 35,
+                                        justifyContent: 'center',
+                                        alignItems: 'center'
+                                    }}>
+                                    <Image
+                                        source={require('../assets/close.png')}
+                                        style={{
+                                            height: 15,
+                                            width: 15
+                                        }} />
+                                </Pressable>
+                                <Text style={{
+                                    fontSize: 24,
+                                    fontWeight: 'bold',
+                                    marginTop: hp(2),
+
+                                }}>Enter OTP</Text>
+                                <Text
+                                    style={{
+                                        fontSize: 17,
+                                        fontWeight: '400',
+                                        color: '#64748B',
+                                        marginTop: hp(1),
+                                        marginBottom: hp(1.5),
+                                        width: wp(80)
+                                    }}
+                                >We’ve sent an SMS with an activation
+                                    code to your phone
+                                    <Text
+                                        style={{
+                                            color: '#00354a',
+                                            fontSize: 16
+                                        }}>  +91 {phoneNumber}</Text>
+                                </Text>
+                                <OtpInput
+                                    numberOfDigits={4}
+                                    focusColor="#E8ECF4"
+                                    focusStickBlinkingDuration={500}
+                                    onTextChange={(text) => setOtp(text)}
+                                    onFilled={(text) => console.log(`OTP is ${text}`)}
+                                    textInputProps={{
+                                        accessibilityLabel: "One-Time Password",
+                                    }}
+                                    theme={{
+                                        containerStyle: style.otpContainer,
+                                        pinCodeContainerStyle: style.otp,
+                                        pinCodeTextStyle: style.otpText,
+                                    }}
+                                />
+                                <View style={{
+                                    flexDirection: 'row',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    marginVertical: hp(3)
+                                }}>
+                                    <Text style={{
+                                        fontSize: 16,
+                                        color: '#64748B'
+                                    }}>I didn’t receive a code</Text>
+                                    <TouchableOpacity onPress={async () => {
+                                            const response = await Login(phoneNumber)
+                                        }}>
+                                        <Text  style={{
+                                            color: '#00354a',
+                                            marginHorizontal: wp(2),
+                                            fontSize: 16,
+                                            fontWeight: 'bold'
+                                        }}>Resend</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <View style={{ marginBottom: hp(2) }}>
+                                    <PrimaryButton
+                                        title='Verify'
+                                        onclick={() => {
+                                            handelOtp()
+
+                                        }}
+                                    />
+                                </View>
+                            </View>
+                        </BottomModelView>
+                    </Modal>
+                </View>
+            }
+
+
             {
                 logoutModal &&
                 <View>
@@ -129,11 +398,11 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                             marginVertical: hp(1.5)
                         }}>
                             <Text
-                            numberOfLines={1}
-                             style={{
-                                fontSize: 20,
-                                fontWeight: 'bold',
-                            }}>Hi, {user && user.aadharcard_name}</Text>
+                                numberOfLines={1}
+                                style={{
+                                    fontSize: 20,
+                                    fontWeight: 'bold',
+                                }}>Hi, {user && user.aadharcard_name}</Text>
                             <Text
                                 style={{
                                     color: '#64748B',
@@ -236,12 +505,12 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                         marginHorizontal: wp(2),
                                         marginVertical: hp(1.5)
                                     }} />
-                                <Pressable 
-                                onPress={() => Linking.openURL(`tel: ${8143993222}`)} style={{
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
+                                <Pressable
+                                    onPress={() => Linking.openURL(`tel: ${8143993222}`)} style={{
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
 
-                                }}>
+                                    }}>
                                     <View style={{
                                         backgroundColor: '#F4F6FA',
                                         padding: hp(1.5),
@@ -344,18 +613,31 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                         fontSize: 16,
                                         fontWeight: 'bold'
                                     }}>Privacy policy</Text>
-                                <View
+                                {tokenFlag ? <><View
                                     style={{
                                         borderWidth: 0.5,
                                         borderColor: '#F4F6FA',
                                         marginVertical: hp(2)
-                                    }} />
-                                <Text
-                                    onPress={() => setLogoutModal(true)}
-                                    style={{
-                                        fontSize: 16,
-                                        fontWeight: 'bold'
-                                    }}>Logout</Text>
+                                    }} /><Text
+                                        onPress={() => setLogoutModal(true)}
+                                        style={{
+                                            fontSize: 16,
+                                            fontWeight: 'bold'
+                                        }}>Logout</Text></>
+                                    :
+                                    <><View
+                                        style={{
+                                            borderWidth: 0.5,
+                                            borderColor: '#F4F6FA',
+                                            marginVertical: hp(2)
+                                        }} /><Text
+                                            onPress={() => setMobileNumberModal(true)}
+                                            style={{
+                                                fontSize: 16,
+                                                fontWeight: 'bold'
+                                            }}>Login</Text></>
+                                }
+
                             </View>
                         </Cardview>
                     </View>

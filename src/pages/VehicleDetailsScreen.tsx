@@ -1,4 +1,4 @@
-import { Alert, Image, Modal, Platform, Pressable, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Image, Modal, Platform, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { hp, wp } from "../utils/ResponsiveScreen";
 import { BackButtonStyle } from "../styles/BackButtonStyle";
@@ -52,10 +52,12 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
     const [licensefront, setlicensefront] = useState<Asset | null>(null)
     const [targetType, setTargetType] = useState('');
     const [userDetailsObj, setUserDetailsObj] = useState<any>({})
+    const [indicator, setIndiCator] = useState(false)
 
     useFocusEffect(
         useCallback(() => {
             if (props.route.params && props.route.params?.id) {
+                console.log('CarDetails', props.route.params?.id)
                 handelVicheDetails(props.route.params?.id)
             }
         }, [])
@@ -67,20 +69,16 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
 
     const handelButtonSubmit = async () => {
         const token = await getToken()
-        console.log('token', token)
         if (token && token != '') {
             const response = await excuteGetResponse('secure/profile')
             console.log('usertoken', response)
             if (response.data.aadhar_verfy_flag == 0) {
                 setAadharmodal(true)
-                return
-            } else if (response.data.driving_licence_flag == 0) {
+            } else if (response.data.aadhar_verfy_flag == 1 && response.data.driving_licence_flag == 0) {
                 setLicencemodal(true)
-                return
-            } else if (response.data.profile_flag == 0) {
+            } else if (response.data.aadhar_verfy_flag == 1 && response.data.driving_licence_flag == 1 && response.data.profile_flag == 0) {
                 props.navigation.navigate('SignupScreen')
-                return
-            } else {
+            } else if (response.data.aadhar_verfy_flag == 1 && response.data.driving_licence_flag == 1 && response.data.profile_flag == 1) {
                 props.navigation.navigate('CarSummaryScreen',
                     {
                         carid: carData.carid,
@@ -114,35 +112,43 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
             Alert.alert('Alert!', 'Enter a valid 4-digit OTP.');
             return;
         }
+        setIndiCator(true)
         const response = await Otp(phoneNumber, otp)
-        console.log('otp', response)
         if (response.code == 0) {
             setToken(response.data.token)
             const token = await getToken()
-            console.log('token', response.data.token)
             if (token && token != '') {
                 const token = await messaging().getToken();
-                const response = await firebasemessage(token, Platform.OS,
-                    await DeviceInfo.getBuildNumber(), Platform.Version,)
-                console.log('firebaser', response)
-            }
-            if (response.data.profile_flag == 0) {
-                console.log('yes', response.data.profile_flag)
-                setAadharmodal(true)
-                setOtpModal(false)
-            } else if (response.data.profile_flag == 1) {
-                console.log('no', response.data.profile_flag)
-                props.navigation.navigate('CarSummaryScreen',
-                    {
-                        carid: carData.carid,
-                        fromDate: carData.from_date,
-                        toDate: carData.to_date,
-                        lat: carData.latitude,
-                        long: carData.longitude
-                    })
+                const firebaserresponse = await firebasemessage(token, Platform.OS, await DeviceInfo.getBuildNumber(), Platform.Version,)
+                const profileresponse = await excuteGetResponse('secure/profile')
+                setIndiCator(false)
+                if (profileresponse.code == 0) {
+                    if (profileresponse.data.aadhar_verfy_flag == 0) {
+                        setOtpModal(false)
+                        setAadharmodal(true)
+                    } else if (profileresponse.data.aadhar_verfy_flag == 1 && profileresponse.data.driving_licence_flag == 0) {
+                        setOtpModal(false)
+                        setLicencemodal(true)
+                    } else if (profileresponse.data.aadhar_verfy_flag == 1 && profileresponse.data.driving_licence_flag == 1 && profileresponse.data.profile_flag == 0) {
+                        setOtpModal(false)
+                        props.navigation.navigate('SignupScreen')
+                    } else if (profileresponse.data.aadhar_verfy_flag == 1 && profileresponse.data.driving_licence_flag == 1 && profileresponse.data.profile_flag == 1) {
+                        setOtpModal(false)
+                        props.navigation.navigate('CarSummaryScreen',
+                            {
+                                carid: carData.carid,
+                                fromDate: carData.from_date,
+                                toDate: carData.to_date,
+                                lat: carData.latitude,
+                                long: carData.longitude
+                            })
+                    }
+                } else {
+                    Alert.alert('Alert', 'Unable to profile details.')
+                }
             }
         } else {
-            Alert.alert('Alert', 'Unable to get OTP')
+            Alert.alert('Alert', 'Invalid Otp')
         }
     }
 
@@ -174,11 +180,13 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
             Alert.alert('Alert', 'Please upload your aadhar back image')
             return
         }
+        setIndiCator(true)
         const response = await aadharnumberverify(aadharnumber)
+        setIndiCator(false)
         console.log('aadhar', response)
         if (response.code == 0) {
-            setAadharotpmodal(true)
             setAadharmodal(false)
+            setAadharotpmodal(true)
         } else {
             Alert.alert('Alert', 'Unable to get details')
         }
@@ -194,12 +202,14 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
         object.aadhar_back_image = aadharback
         object.aadharnumber = aadharnumber
         object.otp = aadharotp
+        setIndiCator(true)
         const response = await aadharotpverify(object)
+        setIndiCator(false)
         console.log('aadharotp', response)
         if (response.code == 0) {
-            setLicencemodal(true)
             setAadharotpmodal(false)
             setOtpModal(false)
+            setLicencemodal(true)
         } else {
             Alert.alert('Alert', 'Unable to get details')
             return
@@ -223,17 +233,19 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
         object.driving_licence_back = licenseback
         object.dl_number = licencenumber
         object.dob = moment(date).format('YYYY-MM-DD')
+        setIndiCator(true)
         const response = await licenceverify(object)
-        console.log('responselicence', response)
+        setIndiCator(false)
         if (response.code == 0) {
+            setLicencemodal(false)
             props.navigation.reset({
                 index: 0,
-                routes: [{
-                    name: 'SignupScreen'
-                }]
+                routes: [{ name: 'SignupScreen' }]
             })
+        } else if (response.message == 'LICIENCE_NOT_FOUND') {
+            Alert.alert('Alert', 'License not found. Please check your details and try again.');
         } else {
-            Alert.alert('Alert', 'Unable to get details')
+            Alert.alert('Alert', 'Something went wrong. Please try again later.');
         }
     }
     return (
@@ -387,7 +399,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                         fontWeight: 'bold',
                                         marginTop: hp(2),
 
-                                    }}>Enter Otp</Text>
+                                    }}>Enter OTP</Text>
                                     <Text
                                         style={{
                                             fontSize: 17,
@@ -430,19 +442,24 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                             fontSize: 16,
                                             color: '#64748B'
                                         }}>I didn’t receive a code</Text>
-                                        <Text style={{
-                                            color: '#00354a',
-                                            marginHorizontal: wp(2),
-                                            fontSize: 16
-                                        }}>Resend</Text>
+                                        <TouchableOpacity onPress={async () => {
+                                            const response = await Login(phoneNumber)
+                                        }}>
+                                            <Text style={{
+                                                color: '#00354a',
+                                                marginHorizontal: wp(2),
+                                                fontSize: 16,
+                                                fontWeight: 'bold'
+                                            }}>Resend</Text>
+                                        </TouchableOpacity>
+
                                     </View>
-                                    <View style={{ marginBottom: hp(2) }}>
+                                    {indicator && <ActivityIndicator color='#00354a' size="large" />}
+                                    <View style={{ marginBottom: hp(2), marginTop: hp(2) }}>
                                         <PrimaryButton
                                             title='Verify'
                                             onclick={() => {
                                                 handelOtp()
-                                                setOtpModal(false)
-
                                             }}
                                         />
                                     </View>
@@ -617,6 +634,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                                 color: '#00354a'
                                             }}>  Privacy policy</Text>
                                     </Text>
+                                    {indicator && <ActivityIndicator color='#00354a' size="large" />}
                                     <View style={{ marginVertical: hp(2) }}>
                                         <PrimaryButton title='Request OTP'
                                             onclick={() => {
@@ -806,6 +824,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                                 color: '#00354a'
                                             }}>  Privacy policy</Text>
                                     </Text>
+                                    {indicator && <ActivityIndicator color='#00354a' size="large" />}
                                     <View style={{ marginVertical: hp(2) }}>
                                         <PrimaryButton title='Submit'
                                             onclick={() => {
@@ -859,7 +878,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                         fontWeight: 'bold',
                                         marginTop: hp(2),
 
-                                    }}>Enter Otp</Text>
+                                    }}>Enter OTP</Text>
                                     <Text
                                         style={{
                                             fontSize: 17,
@@ -913,6 +932,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                                 color: '#00354a'
                                             }}>  Privacy policy</Text>
                                     </Text>
+                                    {indicator && <ActivityIndicator color='#00354a' size="large" />}
                                     <View style={{ marginBottom: hp(2) }}>
                                         <PrimaryButton
                                             title='Verify'
@@ -1092,7 +1112,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                         width: 60,
                                         borderRadius: 30
                                     }} />
-                                <View style={{ marginHorizontal: wp(5) }}>
+                                <View style={{ width: wp(60), marginStart: wp(3)  }}>
                                     <Text style={{
                                         fontSize: 18,
                                         fontWeight: 'bold'
@@ -1101,18 +1121,6 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                         flexDirection: 'row',
                                         alignItems: 'center'
                                     }}>
-                                        <Text style={{
-                                            fontSize: 15,
-                                            fontWeight: '400'
-                                        }}>{carData && carData.rating}</Text>
-                                        <Rating
-                                            readonly
-                                            startingValue={carData && carData.rating}
-                                            imageSize={13}
-                                            ratingCount={5}
-                                            fractions={1}
-                                            style={{ marginLeft: 8 }}
-                                        />
                                     </View>
                                 </View>
                             </View>
@@ -1130,44 +1138,11 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                 paddingVertical: hp(2),
                                 paddingHorizontal: hp(2)
                             }}>
-                                <View style={{ flexDirection: 'row' }}>
-                                    <Image
-                                        source={require('../assets/license.png')}
-                                        style={{ height: 40, width: 40 }} />
-                                    <View style={{ marginHorizontal: wp(3) }}>
-                                        <Text style={{
-                                            fontSize: 16,
-                                            fontWeight: 'bold'
-                                        }}>Driving License</Text>
-                                        <Text style={{
-                                            fontSize: 14,
-                                            color: '#64748B',
-                                            fontWeight: '400', width: wp(60)
-                                        }}>Digilocker or
-                                            original -issued at
-                                            least 6 months ago</Text>
-                                    </View>
-                                </View>
-                                <View style={{
-                                    flexDirection: 'row',
-                                    marginTop: wp(3.5)
-                                }}>
-                                    <Image
-                                        source={require('../assets/id-card.png')}
-                                        style={{ height: 40, width: 40 }} />
-                                    <View style={{ marginHorizontal: wp(3) }}>
-                                        <Text style={{
-                                            fontSize: 16,
-                                            fontWeight: 'bold'
-                                        }}>Aadhar/Passport</Text>
-                                        <Text style={{
-                                            fontSize: 14,
-                                            color: '#64748B',
-                                            fontWeight: '400',
-                                            width: wp(60)
-                                        }}>Digilocker or
-                                            original or copy</Text>
-                                    </View>
+                                <View style={{ marginHorizontal: wp(3) }}>
+                                    <Text style={{
+                                        fontSize: 16,
+                                        fontWeight: 'bold'
+                                    }}>{carData && carData.user_documents}</Text>
                                 </View>
                             </View>
                         </Cardview>

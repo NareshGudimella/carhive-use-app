@@ -28,7 +28,7 @@ const BecomeHostScreen: React.FC<Componentprops> = (props) => {
     const [cars, setCars] = useState('');
     const [isFocus, setIsFocus] = useState(false);
     const [islocationFocus, setIslocationFocus] = useState(false);
-    const [selectLocation, setSelactLocation] = useState('')
+    const [selectLocation, setSelectLocation] = useState('')
     const [userName, setUserName] = useState<any>('')
     const [email, setEmail] = useState<any>('')
     const [number, setNumber] = useState<any>('')
@@ -66,9 +66,12 @@ const BecomeHostScreen: React.FC<Componentprops> = (props) => {
         console.log('host', response, userName, email, number, cars, selectLocation)
         if (response.code == 0) {
             props.navigation.navigate('ProfileScreen')
-        } else {
+        } else if (response.message == "EMAIL_EXIST") {
+            Alert.alert('Alert', 'This email is already registered.');
+        } else if (response.message == "MOBILE_NUM_EXIST") {
+            Alert.alert('Alert', 'This mobile number is already registered.');
+        } else  {
             Alert.alert('Alert', 'Error on Hosting')
-            return
         }
     }
     const handelCity = async () => {
@@ -166,11 +169,8 @@ const BecomeHostScreen: React.FC<Componentprops> = (props) => {
                             valueField="value"
                             placeholder="How many Cars you have"
                             value={cars}
-                            onFocus={() => setIsFocus(true)}
-                            onBlur={() => setIsFocus(false)}
                             onChange={(item) => {
                                 setCars(item.value);
-                                setIsFocus(false);
                             }}
                             renderLeftIcon={() => (
                                 <Image
@@ -221,14 +221,11 @@ const BecomeHostScreen: React.FC<Componentprops> = (props) => {
                             data={selectcity}
                             maxHeight={300}
                             labelField="cityname"
-                            valueField="cityname"
+                            valueField="cityId"
                             placeholder="Select city"
                             value={selectLocation}
-                            onFocus={() => setIslocationFocus(true)}
-                            onBlur={() => setIslocationFocus(false)}
                             onChange={(item) => {
-                                setSelactLocation(item.cityId);
-                                setIslocationFocus(false);
+                                setSelectLocation(item.cityId);
                             }}
                             renderLeftIcon={() => (
                                 <Image

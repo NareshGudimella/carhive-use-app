@@ -357,6 +357,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                             justifyContent: 'space-between',
                             flexDirection: 'row',
                             alignItems: 'center',
+                            width: wp(90)
                         }}>
                             <View style={{ alignItems: 'center' }}>
                                 <Text style={{

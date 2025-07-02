@@ -38,6 +38,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
     const [longitude, setLongitude] = useState('')
     const [latitude, setLatitude] = useState('')
     const [cityname, setCityname] = useState<any>([])
+
     useFocusEffect(
         useCallback(() => {
             handelBannerImage()
@@ -45,6 +46,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
             setDropTime(new Date(pickupTime.getTime() + 3 * 60 * 60 * 1000))
         }, [])
     )
+
     {/* Banner image api */ }
     const handelBannerImage = async () => {
         const response = await excuteGetResponse(`auth/banners`)
@@ -283,6 +285,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                     modal
                                     mode="time"
                                     open={open}
+                                    minimumDate={new Date()} 
                                     date={dateType === 'pickup' ? pickupTime : dropTime}
                                     onConfirm={(selectedtime) => {
                                         setOpen(false);
@@ -305,6 +308,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                     modal
                                     mode={"date"}
                                     open={open}
+                                    minimumDate={new Date()} 
                                     date={dateType === 'pickup' ? pickupDate : dropDate}
                                     onConfirm={(selectedDate) => {
                                         setOpen(false);
