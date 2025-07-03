@@ -139,7 +139,6 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
             }
         } else {
             Alert.alert('Alert', 'unable to get Booking Payment Details')
-            return
         }
     }
     const handelCouponCode = async () => {
@@ -794,7 +793,8 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                     <View style={{ marginHorizontal: wp(4) }}>
                                         <Text style={{
                                             fontSize: 16,
-                                            fontWeight: 'bold'
+                                            fontWeight: 'bold',
+                                            width: wp(60)
                                         }}>{carDetails && carDetails.reviews.length > 0 && carDetails.reviews[0].name}</Text>
                                         <View style={{
                                             flexDirection: 'row',

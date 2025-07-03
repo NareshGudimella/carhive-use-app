@@ -54,7 +54,6 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
         const response = await Login(phoneNumber)
         console.log('Login', response)
         if (response.code == 0) {
-            setMobileNumberModal(false)
             setOtpModal(true)
         } else {
             Alert.alert('Alert', 'Unable to get Phone number')
@@ -179,6 +178,7 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                 <View style={{ marginVertical: hp(2) }}>
                                     <PrimaryButton title='Request OTP'
                                         onclick={() => {
+                                            setMobileNumberModal(false)
                                             handelLogin()
                                         }}
                                     />
@@ -271,9 +271,9 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                         color: '#64748B'
                                     }}>I didn’t receive a code</Text>
                                     <TouchableOpacity onPress={async () => {
-                                            const response = await Login(phoneNumber)
-                                        }}>
-                                        <Text  style={{
+                                        const response = await Login(phoneNumber)
+                                    }}>
+                                        <Text style={{
                                             color: '#00354a',
                                             marginHorizontal: wp(2),
                                             fontSize: 16,

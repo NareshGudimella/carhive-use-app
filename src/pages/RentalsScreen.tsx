@@ -1,7 +1,7 @@
 import {
     Alert,
     Image, Linking, Modal, Platform, Pressable,
-    ScrollView, Settings, Text, TextInput, TouchableOpacity, View
+    ScrollView, Text, TextInput, TouchableOpacity, View
 } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { hp, wp } from "../utils/ResponsiveScreen";
@@ -9,7 +9,7 @@ import { input } from "../styles/TextInputStyle";
 import BottomTabNavigation from "../components/BottomTab";
 import { Cardview } from "../components/Cardview";
 import { RadioButton } from "react-native-paper";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import PrimaryButton from "../components/PrimaryButton";
 import { CenterModalView } from "../components/CenterModelView";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -25,6 +25,13 @@ import messaging from '@react-native-firebase/messaging';
 import DeviceInfo from "react-native-device-info";
 import { updateProfile } from "../storage/redux";
 import { useDispatch } from "react-redux";
+import {
+    CFPaymentGatewayService,
+} from 'react-native-cashfree-pg-sdk';
+import {
+    CFEnvironment,
+    CFSession,
+} from 'cashfree-pg-api-contract';
 
 class Componentprops extends Baseprops { }
 
@@ -41,12 +48,35 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
     const [otpModal, setOtpModal] = useState(false)
     const [phoneNumber, setPhoneNumber] = useState<any>('')
     const [otp, setOtp] = useState<any>('')
+    const [bookingd, setBookingId] = useState('')
 
     useFocusEffect(
         useCallback(() => {
             handelRentalDetails()
         }, [])
     )
+
+    useEffect(() => {
+        CFPaymentGatewayService.setCallback({
+            onVerify: (orderID) => {
+                console.log('orderId is :', orderID);
+                console.log('price :', price)
+                if (price != '') {
+                    props.navigation.navigate('PaymentSuccessScreen', { id: bookingd, amount: price })
+                }
+            },
+            onError: (error, orderID) => {
+                console.log(
+                    'exception is : ' + JSON.stringify(error) + '\norderId is :' + orderID
+                );
+            },
+        });
+
+        return () => {
+            console.log('UNMOUNTED');
+            CFPaymentGatewayService.removeCallback();
+        };
+    }, [price]);
 
     const handelRentalDetails = async () => {
         const token = await getToken()
@@ -120,10 +150,23 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
     }
     const handelExtendPayment = async (booking_car_id: any) => {
         const response = await excuteGetResponse(`secure/cars/extended_payment/${booking_car_id}`)
-        console.log('payment', response)
+        console.log('payment1', response)
         if (response.code == 0) {
-            props.navigation.navigate('PaymentSuccessScreen',
-                { id: response.data.booking_id, price: response.data.total_price })
+            if (response.code == 0) {
+                setBookingId(response.data.booking_id)
+                setPrice(response.data.order_amount)
+                try {
+                    const session = new CFSession(
+                        response.data.payment_session_id,
+                        response.data.order_id,
+                        response.data.env == CFEnvironment.PRODUCTION ? CFEnvironment.PRODUCTION : CFEnvironment.SANDBOX
+                    );
+                    console.log('Session', JSON.stringify(session));
+                    CFPaymentGatewayService.doWebPayment(session);
+                } catch (e: any) {
+                    console.log(e.message);
+                }
+            }
         } else {
             Alert.alert('Alert', 'unable to get Booking Payment Details')
             return
@@ -131,14 +174,23 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
 
     }
 
-
-
     const handelExtendKms = async (booking_car_id: any) => {
         const response = await excuteGetResponse(`secure/cars/extra_payment/${booking_car_id}`)
         console.log('payment', response)
         if (response.code == 0) {
-            props.navigation.navigate('PaymentSuccessScreen',
-                { id: response.data.booking_id, price: response.data.total_price })
+            setBookingId(response.data.booking_id)
+            setPrice(response.data.order_amount)
+            try {
+                const session = new CFSession(
+                    response.data.payment_session_id,
+                    response.data.order_id,
+                    response.data.env == CFEnvironment.PRODUCTION ? CFEnvironment.PRODUCTION : CFEnvironment.SANDBOX
+                );
+                console.log('Session', JSON.stringify(session));
+                CFPaymentGatewayService.doWebPayment(session);
+            } catch (e: any) {
+                console.log(e.message);
+            }
         } else {
             Alert.alert('Alert', 'unable to get Booking Payment Details')
             return
@@ -154,7 +206,6 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
         const response = await Login(phoneNumber)
         console.log('Login', response)
         if (response.code == 0) {
-            setMobileNumberModal(false)
             setOtpModal(true)
         } else {
             Alert.alert('Alert', 'Unable to get Phone number')
@@ -163,277 +214,281 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            {mobileNumberModal &&
-                <View>
-                    <Modal
-                        animationType="slide"
-                        transparent={true}
-                        visible={mobileNumberModal}
-                        onRequestClose={() => {
-                            setMobileNumberModal(!mobileNumberModal);
-                        }}>
-                        <BottomModelView onclick={() => setMobileNumberModal(false)}>
-                            <View style={{
-                                marginHorizontal: wp(5),
-                                marginVertical: hp(2)
+            <View>
+                {mobileNumberModal &&
+                    <View>
+                        <Modal
+                            animationType="slide"
+                            transparent={true}
+                            visible={mobileNumberModal}
+                            onRequestClose={() => {
+                                setMobileNumberModal(!mobileNumberModal);
                             }}>
-                                <Pressable
-                                    onPress={() => setMobileNumberModal(false)}
-                                    style={{
-                                        backgroundColor: '#EEEEEE80',
-                                        borderRadius: 20,
-                                        width: 35,
-                                        height: 35,
-                                        justifyContent: 'center',
-                                        alignItems: 'center'
-                                    }}>
-                                    <Image
-                                        source={require('../assets/close.png')}
+                            <BottomModelView onclick={() => setMobileNumberModal(false)}>
+                                <View style={{
+                                    marginHorizontal: wp(5),
+                                    marginVertical: hp(2)
+                                }}>
+                                    <Pressable
+                                        onPress={() => setMobileNumberModal(false)}
                                         style={{
-                                            height: 15,
-                                            width: 15
-                                        }} />
-                                </Pressable>
-                                <Text style={{
-                                    fontSize: 24,
-                                    fontWeight: 'bold',
-                                    marginTop: hp(2),
+                                            backgroundColor: '#EEEEEE80',
+                                            borderRadius: 20,
+                                            width: 35,
+                                            height: 35,
+                                            justifyContent: 'center',
+                                            alignItems: 'center'
+                                        }}>
+                                        <Image
+                                            source={require('../assets/close.png')}
+                                            style={{
+                                                height: 15,
+                                                width: 15
+                                            }} />
+                                    </Pressable>
+                                    <Text style={{
+                                        fontSize: 24,
+                                        fontWeight: 'bold',
+                                        marginTop: hp(2),
 
-                                }}>User Login</Text>
-                                <Text
-                                    style={{
-                                        fontSize: 17,
-                                        fontWeight: '400',
-                                        color: '#64748B',
-                                        marginTop: hp(1),
-                                        marginBottom: hp(1.5)
-                                    }}
-                                >Please enter a your mobile number
-                                    to login into your account</Text>
-                                <Textinput
-                                    image={require('../assets/call.png')}
-                                    placeholder='Enter your mobile number'
-                                    keyboardtype='numeric'
-                                    value={phoneNumber}
-                                    onChangeText={setPhoneNumber}
-                                    max={10}
-                                />
-                                <Text
-                                    style={{
-                                        fontSize: 15,
-                                        lineHeight: hp(2.5),
-                                        color: '#64748B',
-                                        marginVertical: hp(1),
-                                        marginHorizontal: wp(2)
-                                    }}
-                                >By continuing you agree
-                                    to our <Text
-                                        style={{
-                                            color: '#00354a'
-                                        }}> Terms of service
-                                    </Text> ,   &
+                                    }}>User Login</Text>
                                     <Text
                                         style={{
-                                            color: '#00354a'
-                                        }}>  Privacy policy</Text>
-                                </Text>
-                                <View style={{ marginVertical: hp(2) }}>
-                                    <PrimaryButton title='Request OTP'
-                                        onclick={() => {
-                                            handelLogin()
+                                            fontSize: 17,
+                                            fontWeight: '400',
+                                            color: '#64748B',
+                                            marginTop: hp(1),
+                                            marginBottom: hp(1.5)
+                                        }}
+                                    >Please enter a your mobile number
+                                        to login into your account</Text>
+                                    <Textinput
+                                        image={require('../assets/call.png')}
+                                        placeholder='Enter your mobile number'
+                                        keyboardtype='numeric'
+                                        value={phoneNumber}
+                                        onChangeText={setPhoneNumber}
+                                        max={10}
+                                    />
+                                    <Text
+                                        style={{
+                                            fontSize: 15,
+                                            lineHeight: hp(2.5),
+                                            color: '#64748B',
+                                            marginVertical: hp(1),
+                                            marginHorizontal: wp(2)
+                                        }}
+                                    >By continuing you agree
+                                        to our <Text
+                                            style={{
+                                                color: '#00354a'
+                                            }}> Terms of service
+                                        </Text> ,   &
+                                        <Text
+                                            style={{
+                                                color: '#00354a'
+                                            }}>  Privacy policy</Text>
+                                    </Text>
+                                    <View style={{ marginVertical: hp(2) }}>
+                                        <PrimaryButton title='Request OTP'
+                                            onclick={() => {
+                                                setMobileNumberModal(false)
+                                                handelLogin()
+                                            }}
+                                        />
+                                    </View>
+                                </View>
+                            </BottomModelView>
+                        </Modal>
+                    </View>
+                }
+            </View>
+
+            <View>
+                {otpModal &&
+                    <View>
+                        <Modal
+                            animationType="slide"
+                            transparent={true}
+                            visible={otpModal}
+                            onRequestClose={() => {
+                                setOtpModal(!otpModal);
+                            }}>
+                            <BottomModelView onclick={() => setOtpModal(false)}>
+                                <View style={{
+                                    marginHorizontal: wp(5),
+                                    marginVertical: hp(2)
+                                }}>
+                                    <Pressable
+                                        onPress={() => setOtpModal(false)}
+                                        style={{
+                                            backgroundColor: '#EEEEEE80',
+                                            borderRadius: 20,
+                                            width: 35,
+                                            height: 35,
+                                            justifyContent: 'center',
+                                            alignItems: 'center'
+                                        }}>
+                                        <Image
+                                            source={require('../assets/close.png')}
+                                            style={{
+                                                height: 15,
+                                                width: 15
+                                            }} />
+                                    </Pressable>
+                                    <Text style={{
+                                        fontSize: 24,
+                                        fontWeight: 'bold',
+                                        marginTop: hp(2),
+
+                                    }}>Enter OTP</Text>
+                                    <Text
+                                        style={{
+                                            fontSize: 17,
+                                            fontWeight: '400',
+                                            color: '#64748B',
+                                            marginTop: hp(1),
+                                            marginBottom: hp(1.5),
+                                            width: wp(80)
+                                        }}
+                                    >We’ve sent an SMS with an activation
+                                        code to your phone
+                                        <Text
+                                            style={{
+                                                color: '#00354a',
+                                                fontSize: 16
+                                            }}>  +91 {phoneNumber}</Text>
+                                    </Text>
+                                    <OtpInput
+                                        numberOfDigits={4}
+                                        focusColor="#E8ECF4"
+                                        focusStickBlinkingDuration={500}
+                                        onTextChange={(text) => setOtp(text)}
+                                        onFilled={(text) => console.log(`OTP is ${text}`)}
+                                        textInputProps={{
+                                            accessibilityLabel: "One-Time Password",
+                                        }}
+                                        theme={{
+                                            containerStyle: style.otpContainer,
+                                            pinCodeContainerStyle: style.otp,
+                                            pinCodeTextStyle: style.otpText,
                                         }}
                                     />
-                                </View>
-                            </View>
-                        </BottomModelView>
-                    </Modal>
-                </View>
-            }
-
-
-            {
-                otpModal &&
-                <View>
-                    <Modal
-                        animationType="slide"
-                        transparent={true}
-                        visible={otpModal}
-                        onRequestClose={() => {
-                            setOtpModal(!otpModal);
-                        }}>
-                        <BottomModelView onclick={() => setOtpModal(false)}>
-                            <View style={{
-                                marginHorizontal: wp(5),
-                                marginVertical: hp(2)
-                            }}>
-                                <Pressable
-                                    onPress={() => setOtpModal(false)}
-                                    style={{
-                                        backgroundColor: '#EEEEEE80',
-                                        borderRadius: 20,
-                                        width: 35,
-                                        height: 35,
+                                    <View style={{
+                                        flexDirection: 'row',
                                         justifyContent: 'center',
-                                        alignItems: 'center'
+                                        alignItems: 'center',
+                                        marginVertical: hp(3)
                                     }}>
-                                    <Image
-                                        source={require('../assets/close.png')}
-                                        style={{
-                                            height: 15,
-                                            width: 15
-                                        }} />
-                                </Pressable>
-                                <Text style={{
-                                    fontSize: 24,
-                                    fontWeight: 'bold',
-                                    marginTop: hp(2),
+                                        <Text style={{
+                                            fontSize: 16,
+                                            color: '#64748B'
+                                        }}>I didn’t receive a code</Text>
+                                        <TouchableOpacity onPress={async () => {
+                                            const response = await Login(phoneNumber)
+                                        }}>
+                                            <Text style={{
+                                                color: '#00354a',
+                                                marginHorizontal: wp(2),
+                                                fontSize: 16,
+                                                fontWeight: 'bold'
+                                            }}>Resend</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                    <View style={{ marginBottom: hp(2) }}>
+                                        <PrimaryButton
+                                            title='Verify'
+                                            onclick={() => {
+                                                handelOtp()
 
-                                }}>Enter OTP</Text>
-                                <Text
-                                    style={{
-                                        fontSize: 17,
-                                        fontWeight: '400',
-                                        color: '#64748B',
-                                        marginTop: hp(1),
-                                        marginBottom: hp(1.5),
-                                        width: wp(80)
-                                    }}
-                                >We’ve sent an SMS with an activation
-                                    code to your phone
-                                    <Text
-                                        style={{
-                                            color: '#00354a',
-                                            fontSize: 16
-                                        }}>  +91 {phoneNumber}</Text>
-                                </Text>
-                                <OtpInput
-                                    numberOfDigits={4}
-                                    focusColor="#E8ECF4"
-                                    focusStickBlinkingDuration={500}
-                                    onTextChange={(text) => setOtp(text)}
-                                    onFilled={(text) => console.log(`OTP is ${text}`)}
-                                    textInputProps={{
-                                        accessibilityLabel: "One-Time Password",
-                                    }}
-                                    theme={{
-                                        containerStyle: style.otpContainer,
-                                        pinCodeContainerStyle: style.otp,
-                                        pinCodeTextStyle: style.otpText,
-                                    }}
-                                />
+                                            }}
+                                        />
+                                    </View>
+                                </View>
+                            </BottomModelView>
+                        </Modal>
+                    </View>
+                }
+            </View>
+
+            <View>
+                {extendServiceModal &&
+                    <View>
+                        <Modal
+                            animationType="slide"
+                            transparent={true}
+                            visible={extendServiceModal}
+                            onRequestClose={() => {
+                                setExtendServiceModal(!extendServiceModal);
+                            }}
+                        >
+                            <CenterModalView>
                                 <View style={{
-                                    flexDirection: 'row',
+                                    padding: hp(2),
                                     justifyContent: 'center',
                                     alignItems: 'center',
-                                    marginVertical: hp(3)
+                                    paddingVertical: hp(3)
                                 }}>
                                     <Text style={{
                                         fontSize: 16,
-                                        color: '#64748B'
-                                    }}>I didn’t receive a code</Text>
-                                    <TouchableOpacity onPress={async () => {
-                                        const response = await Login(phoneNumber)
+                                        fontWeight: 'bold',
+                                        width: wp(60),
+                                        textAlign: 'center'
+                                    }}>Are you sure want to extend your service?</Text>
+                                    <Text style={{
+                                        fontSize: 22,
+                                        fontWeight: '500',
+                                        marginVertical: hp(2)
+                                    }}>₹{price}<Text
+                                        style={{ color: '#64748B' }}>/Km</Text></Text>
+                                    <View style={{
+                                        flexDirection: 'row',
+                                        justifyContent: 'space-between',
+                                        marginVertical: hp(0.5),
+                                        marginTop: hp(2)
                                     }}>
-                                        <Text style={{
-                                            color: '#00354a',
-                                            marginHorizontal: wp(2),
-                                            fontSize: 16,
-                                            fontWeight: 'bold'
-                                        }}>Resend</Text>
-                                    </TouchableOpacity>
+                                        <Pressable
+                                            onPress={() => setExtendServiceModal(false)}
+                                            style={{
+                                                borderWidth: 1,
+                                                paddingHorizontal: wp(7),
+                                                paddingVertical: hp(1.3),
+                                                borderRadius: 10,
+                                                borderColor: '#00354a',
+                                                marginHorizontal: wp(2)
+                                            }}>
+                                            <Text style={{
+                                                color: '#00354a',
+                                                fontWeight: 'bold'
+                                            }}>No, Continue</Text>
+                                        </Pressable>
+                                        <Pressable
+                                            onPress={() => {
+                                                props.navigation.navigate('ExtendServiceRequestScreen', { id: carId }),
+                                                    setExtendServiceModal(false)
+                                            }}
+                                            style={{
+                                                borderWidth: 1,
+                                                paddingHorizontal: wp(7),
+                                                paddingVertical: hp(1.3),
+                                                borderRadius: 10,
+                                                borderColor: '#00354a',
+                                                backgroundColor: '#00354a',
+                                                marginHorizontal: wp(2)
+                                            }}>
+                                            <Text style={{
+                                                fontWeight: '500',
+                                                color: '#ffffff'
+                                            }}>Extend Now</Text>
+                                        </Pressable>
+                                    </View>
                                 </View>
-                                <View style={{ marginBottom: hp(2) }}>
-                                    <PrimaryButton
-                                        title='Verify'
-                                        onclick={() => {
-                                            handelOtp()
+                            </CenterModalView>
+                        </Modal>
+                    </View>
+                }
+            </View>
 
-                                        }}
-                                    />
-                                </View>
-                            </View>
-                        </BottomModelView>
-                    </Modal>
-                </View>
-            }
-
-
-
-            {extendServiceModal &&
-                <View>
-                    <Modal
-                        animationType="slide"
-                        transparent={true}
-                        visible={extendServiceModal}
-                        onRequestClose={() => {
-                            setExtendServiceModal(!extendServiceModal);
-                        }}
-                    >
-                        <CenterModalView>
-                            <View style={{
-                                padding: hp(2),
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                paddingVertical: hp(3)
-                            }}>
-                                <Text style={{
-                                    fontSize: 16,
-                                    fontWeight: 'bold',
-                                    width: wp(60),
-                                    textAlign: 'center'
-                                }}>Are you sure want to extend your service?</Text>
-                                <Text style={{
-                                    fontSize: 22,
-                                    fontWeight: '500',
-                                    marginVertical: hp(2)
-                                }}>₹{price}<Text
-                                    style={{ color: '#64748B' }}>/Km</Text></Text>
-                                <View style={{
-                                    flexDirection: 'row',
-                                    justifyContent: 'space-between',
-                                    marginVertical: hp(0.5),
-                                    marginTop: hp(2)
-                                }}>
-                                    <Pressable
-                                        onPress={() => setExtendServiceModal(false)}
-                                        style={{
-                                            borderWidth: 1,
-                                            paddingHorizontal: wp(7),
-                                            paddingVertical: hp(1.3),
-                                            borderRadius: 10,
-                                            borderColor: '#00354a',
-                                            marginHorizontal: wp(2)
-                                        }}>
-                                        <Text style={{
-                                            color: '#00354a',
-                                            fontWeight: 'bold'
-                                        }}>No, Continue</Text>
-                                    </Pressable>
-                                    <Pressable
-                                        onPress={() => {
-                                            props.navigation.navigate('ExtendServiceRequestScreen', { id: carId }),
-                                                setExtendServiceModal(false)
-                                        }}
-                                        style={{
-                                            borderWidth: 1,
-                                            paddingHorizontal: wp(7),
-                                            paddingVertical: hp(1.3),
-                                            borderRadius: 10,
-                                            borderColor: '#00354a',
-                                            backgroundColor: '#00354a',
-                                            marginHorizontal: wp(2)
-                                        }}>
-                                        <Text style={{
-                                            fontWeight: '500',
-                                            color: '#ffffff'
-                                        }}>Extend Now</Text>
-                                    </Pressable>
-                                </View>
-                            </View>
-                        </CenterModalView>
-                    </Modal>
-                </View>
-            }
             <View style={{
                 backgroundColor: '#ffffff',
                 padding: hp(2),

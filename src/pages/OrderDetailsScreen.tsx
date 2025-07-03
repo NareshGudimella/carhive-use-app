@@ -219,7 +219,8 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                     }}>
                                         <Text style={{
                                             fontSize: 16,
-                                            fontWeight: 'bold'
+                                            fontWeight: 'bold',
+                                            width: wp(50)
                                         }}>{orderDetails && orderDetails.vendor_name}</Text>
                                         <Text
                                             style={{

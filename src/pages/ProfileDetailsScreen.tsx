@@ -1,4 +1,7 @@
-import { Alert, Image, TextInput, Pressable, ScrollView, Text, View } from "react-native";
+import {
+    Alert, Image, TextInput, Pressable,
+    ScrollView, Text, View
+} from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { wp, hp } from "../utils/ResponsiveScreen";
 import { Cardview } from "../components/Cardview";
@@ -10,8 +13,6 @@ import { useFocusEffect } from "@react-navigation/native";
 import { Dropdown } from "react-native-element-dropdown";
 import moment from "moment";
 import { useDispatch } from "react-redux";
-import { updateProfile } from "../storage/redux";
-import DatePicker from "react-native-date-picker";
 
 class Componentprops extends Baseprops { }
 
@@ -40,7 +41,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
             setProfileDetails(response.data)
             handleInputChangeValue('name', response.data && response.data.name)
             handleInputChangeValue('email', response.data && response.data.email)
-            handleInputChangeValue('gender',  response.data && response.data.gender)
+            handleInputChangeValue('gender', response.data && response.data.gender)
             setDate(response.data.dob)
         } else {
             Alert.alert('Alert', 'Login your account')
@@ -157,6 +158,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                 <TextInput
                                     placeholder='Enter Email'
                                     placeholderTextColor='#000000'
+                                    editable={false}
                                     value={userDetailsObj.email}
                                     onChangeText={text => handleInputChangeValue('email', text)}
                                     style={{

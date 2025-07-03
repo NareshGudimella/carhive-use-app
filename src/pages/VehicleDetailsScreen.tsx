@@ -24,11 +24,14 @@ import moment from "moment";
 import CameraModalScreen from "../components/CameraModel";
 import { Asset } from "react-native-image-picker";
 import { CameraView } from "../components/CameraView";
+import { updateProfile } from "../storage/redux";
+import { useDispatch } from "react-redux";
 
 
 class Componentprops extends Baseprops { }
 
 const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
+
     const [textExpanded, setTextExpanded] = useState(false);
     const [mobileNumberModal, setMobileNumberModal] = useState(false)
     const [otpModal, setOtpModal] = useState(false)
@@ -53,6 +56,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
     const [targetType, setTargetType] = useState('');
     const [userDetailsObj, setUserDetailsObj] = useState<any>({})
     const [indicator, setIndiCator] = useState(false)
+    const dispatch = useDispatch()
 
     useFocusEffect(
         useCallback(() => {
@@ -123,6 +127,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                 const profileresponse = await excuteGetResponse('secure/profile')
                 setIndiCator(false)
                 if (profileresponse.code == 0) {
+                    dispatch(updateProfile(profileresponse.data));
                     if (profileresponse.data.aadhar_verfy_flag == 0) {
                         setOtpModal(false)
                         setAadharmodal(true)
@@ -1206,7 +1211,8 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                                 <View style={{ marginHorizontal: wp(3) }}>
                                                     <Text style={{
                                                         fontSize: 18,
-                                                        fontWeight: 'bold'
+                                                        fontWeight: 'bold',
+                                                        width: wp(60),
                                                     }}>{item.name}</Text>
                                                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                                         <Rating
