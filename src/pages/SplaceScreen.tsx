@@ -56,7 +56,8 @@ const SplaceScreen: React.FC<Componentprops> = (props) => {
             <Image source={require('../assets/appicon.png')}
                 style={{
                     height: hp(40),
-                    width: wp(70)
+                    width: wp(70),
+                    alignSelf: 'center'
                 }} />
         </SafeAreaView>
     )

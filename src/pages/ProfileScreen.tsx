@@ -402,7 +402,7 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                 style={{
                                     fontSize: 20,
                                     fontWeight: 'bold',
-                                }}>Hi, {user && user.aadharcard_name}</Text>
+                                }}>Hi, {user && user.name}</Text>
                             <Text
                                 style={{
                                     color: '#64748B',
@@ -420,12 +420,11 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                 marginHorizontal: wp(4),
                                 marginVertical: hp(2)
                             }}>
-                                <Pressable
+                                {tokenFlag && <><Pressable
                                     onPress={() => props.navigation.navigate('ProfileDetailsScreen')}
                                     style={{
                                         flexDirection: 'row',
                                         alignItems: 'center',
-
                                     }}>
                                     <View style={{
                                         backgroundColor: '#F4F6FA',
@@ -455,14 +454,13 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                             }}>Update your personal
                                             info conveniently</Text>
                                     </View>
-                                </Pressable>
-                                <View
-                                    style={{
-                                        borderWidth: 1,
-                                        borderColor: '#F4F6FA',
-                                        marginHorizontal: wp(2),
-                                        marginVertical: hp(1.5)
-                                    }} />
+                                </Pressable><View
+                                        style={{
+                                            borderWidth: 1,
+                                            borderColor: '#F4F6FA',
+                                            marginHorizontal: wp(2),
+                                            marginVertical: hp(1.5)
+                                        }} /></> }
                                 <Pressable
                                     onPress={() => props.navigation.navigate('HostScreen')}
                                     style={{

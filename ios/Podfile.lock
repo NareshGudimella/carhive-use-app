@@ -1472,7 +1472,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-safe-area-context (5.5.0):
+  - react-native-safe-area-context (5.5.1):
     - React-Core
   - React-NativeModulesApple (0.79.1):
     - glog
@@ -1808,7 +1808,7 @@ PODS:
     - FirebaseCoreExtension
     - React-Core
     - RNFBApp
-  - RNGestureHandler (2.26.0):
+  - RNGestureHandler (2.27.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2361,7 +2361,7 @@ SPEC CHECKSUMS:
   react-native-date-picker: 2eca217a8fb09c517f5bb6b23978718c6cec59ec
   react-native-geolocation: ec15ffebc53790314885eb9e5f2132132fbc2600
   react-native-image-picker: 7babe45e727db306b3f00d08c72eda3586d6e9c1
-  react-native-safe-area-context: 7f6ffa9a73488f84feee2de12e2dcdccfb601967
+  react-native-safe-area-context: 827032edf27079702cbd006f11dc79451a2d744b
   React-NativeModulesApple: 8a465be9a58afc56f48c1322331ffbdecd3d4877
   React-oscompat: 74eb4badd12e93899f37a5dbb03d8a638011a292
   React-perflogger: dba4ffef10c54537fa33cb2580cf6d4c48458d36
@@ -2397,7 +2397,7 @@ SPEC CHECKSUMS:
   RNDeviceInfo: d863506092aef7e7af3a1c350c913d867d795047
   RNFBApp: 557f15b87d602ed5879a1cbd6dc574481bccb278
   RNFBMessaging: e6480aaf434826565d5a40b01c422fb0f58fc8a9
-  RNGestureHandler: 5594938ba75e71a47c19c90b300011b7777bce48
+  RNGestureHandler: 5db57b7d9f742960f9747f029fe7230154cceae4
   RNNotifee: 5e3b271e8ea7456a36eec994085543c9adca9168
   RNPermissions: 68b7666e3a016b4d10ff01856ddc1585bf6cbdc7
   RNReanimated: 0719175a224f57c0e6bd16e0a420806816bc9b17

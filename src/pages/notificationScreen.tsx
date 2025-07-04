@@ -59,7 +59,6 @@ const NotificationScreen: React.FC<Componentprops> = (props) => {
         const response = await Login(phoneNumber)
         console.log('Login', response)
         if (response.code == 0) {
-            setMobileNumberModal(false)
             setOtpModal(true)
         } else {
             Alert.alert('Alert', 'Unable to get Phone number')
@@ -175,6 +174,7 @@ const NotificationScreen: React.FC<Componentprops> = (props) => {
                                 <View style={{ marginVertical: hp(2) }}>
                                     <PrimaryButton title='Request OTP'
                                         onclick={() => {
+                                            setMobileNumberModal(false)
                                             handelLogin()
                                         }}
                                     />
@@ -282,7 +282,6 @@ const NotificationScreen: React.FC<Componentprops> = (props) => {
                                         title='Verify'
                                         onclick={() => {
                                             handelOtp()
-
                                         }}
                                     />
                                 </View>

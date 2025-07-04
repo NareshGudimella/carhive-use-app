@@ -46,7 +46,15 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                 console.log('orderId is :' , orderID);
                 console.log('price :' , price)
                 if (price != '') {
-                    props.navigation.navigate('PaymentSuccessScreen', { amount: price })
+                    props.navigation.reset({
+                        index: 0,
+                        routes: [
+                          {
+                            name: 'PaymentSuccessScreen',
+                            params: { amount: price }
+                          }
+                        ],
+                      });
                 }
             },
             onError: (error, orderID) => {

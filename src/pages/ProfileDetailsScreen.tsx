@@ -227,7 +227,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                             </Cardview>
                         </View>
                     </Cardview>
-                    <View style={{
+                    {(profilDetails && (profilDetails.aadhar_verfy_flag == 1 || profilDetails.driving_licence_flag == 1)) && <View style={{
                         marginVertical: hp(2)
                     }}>
                         <Cardview>
@@ -235,152 +235,135 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                 marginHorizontal: wp(4),
                                 marginVertical: hp(1)
                             }}>
-                                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                {profilDetails && profilDetails.aadhar_verfy_flag == 1 && <><View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                                     <Text style={{
                                         fontSize: 18,
                                         fontWeight: 'bold',
                                         marginVertical: hp(1)
                                     }}>Aadhar card</Text>
                                     {profilDetails && profilDetails.aadhar_verfy_flag == 1 &&
-                                        <Image resizeMode='contain' style={{ width: 30, height: 30 }} source={require('../assets/check.png')} />
-                                    }
-                                </View>
-
-                                <View style={{
+                                        <Image resizeMode='contain' style={{ width: 30, height: 30 }} source={require('../assets/check.png')} />}
+                                </View><View style={{
                                     flexDirection: 'row',
                                     justifyContent: 'space-between',
                                     marginVertical: hp(1)
                                 }}>
-                                    <View style={{
-                                        width: wp(38)
-                                    }}>
-                                        <Cardview>
-                                            {profilDetails && profilDetails.documents.aadhar_front ?
-                                                <Pressable
-                                                    style={{
-                                                        justifyContent: 'center',
-                                                        alignItems: 'center',
-                                                        paddingVertical: hp(1)
-                                                    }}>
-                                                    <Image
-                                                        source={{ uri: profilDetails.documents.aadhar_front }}
+                                        <View style={{
+                                            width: wp(38)
+                                        }}>
+                                            <Cardview>
+                                                {profilDetails && profilDetails.documents.aadhar_front ?
+                                                    <Pressable
                                                         style={{
-                                                            width: 120,
-                                                            height: 90,
-                                                            resizeMode: 'cover',
-                                                            borderRadius: 10
-                                                        }}
-                                                    />
-                                                </Pressable>
-                                                :
-                                                <CameraView
-                                                    image={
-                                                        require('../assets/Huge.png')}
-                                                    title="Upload Front"
-                                                />
-                                            }
-                                        </Cardview>
-                                    </View>
-                                    <View style={{
-                                        width: wp(38)
-                                    }}>
-                                        <Cardview>
-                                            {profilDetails && profilDetails.documents.aadhar_front ?
-                                                <Pressable
-                                                    style={{
-                                                        justifyContent: 'center', alignItems: 'center',
-                                                        paddingVertical: hp(1)
-                                                    }}>
-                                                    <Image
-                                                        source={{ uri: profilDetails.documents.aadhar_front }}
+                                                            justifyContent: 'center',
+                                                            alignItems: 'center',
+                                                            paddingVertical: hp(1)
+                                                        }}>
+                                                        <Image
+                                                            source={{ uri: profilDetails.documents.aadhar_front }}
+                                                            style={{
+                                                                width: 120,
+                                                                height: 90,
+                                                                resizeMode: 'cover',
+                                                                borderRadius: 10
+                                                            }} />
+                                                    </Pressable>
+                                                    :
+                                                    <CameraView
+                                                        image={require('../assets/Huge.png')}
+                                                        title="Upload Front" />}
+                                            </Cardview>
+                                        </View>
+                                        <View style={{
+                                            width: wp(38)
+                                        }}>
+                                            <Cardview>
+                                                {profilDetails && profilDetails.documents.aadhar_front ?
+                                                    <Pressable
                                                         style={{
-                                                            width: 120,
-                                                            height: 90,
-                                                            resizeMode: 'cover',
-                                                            borderRadius: 10
-                                                        }}
-                                                    />
-                                                </Pressable>
-                                                :
-                                                <CameraView
-                                                    image={
-                                                        require('../assets/Huge.png')}
-                                                    title="Upload Back"
-
-                                                />}
-                                        </Cardview>
-                                    </View>
-                                </View>
-                                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                                            justifyContent: 'center', alignItems: 'center',
+                                                            paddingVertical: hp(1)
+                                                        }}>
+                                                        <Image
+                                                            source={{ uri: profilDetails.documents.aadhar_front }}
+                                                            style={{
+                                                                width: 120,
+                                                                height: 90,
+                                                                resizeMode: 'cover',
+                                                                borderRadius: 10
+                                                            }} />
+                                                    </Pressable>
+                                                    :
+                                                    <CameraView
+                                                        image={require('../assets/Huge.png')}
+                                                        title="Upload Back" />}
+                                            </Cardview>
+                                        </View>
+                                    </View></>}
+                                {profilDetails && profilDetails.driving_licence_flag == 1 && <><View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                                     <Text style={{
                                         fontSize: 18,
                                         fontWeight: 'bold',
                                         marginVertical: hp(1)
                                     }}>Driving License</Text>
                                     {profilDetails && profilDetails.driving_licence_flag == 1 &&
-                                        <Image resizeMode='contain' style={{ width: 30, height: 30 }} source={require('../assets/check.png')} />
-                                    }
-                                </View>
-                                <View style={{
+                                        <Image resizeMode='contain' style={{ width: 30, height: 30 }} source={require('../assets/check.png')} />}
+                                </View><View style={{
                                     flexDirection: 'row',
                                     justifyContent: 'space-between',
                                     marginVertical: hp(1),
                                     marginBottom: hp(2)
                                 }}>
-                                    <View style={{ width: wp(38) }}>
-                                        <Cardview>
-                                            {profilDetails && profilDetails.documents.license_front ?
-                                                <Pressable
-                                                    style={{
-                                                        justifyContent: 'center', alignItems: 'center',
-                                                        paddingVertical: hp(2)
-                                                    }}>
-                                                    <Image
-                                                        source={{ uri: profilDetails.documents.license_front }}
+                                        <View style={{ width: wp(38) }}>
+                                            <Cardview>
+                                                {profilDetails && profilDetails.documents.license_front ?
+                                                    <Pressable
                                                         style={{
-                                                            width: 110,
-                                                            height: 75,
-                                                            resizeMode: 'cover',
-                                                            borderRadius: 10
-                                                        }}
-                                                    />
-                                                </Pressable>
-                                                :
-                                                <CameraView
-                                                    image={require('../assets/Huge.png')}
-                                                    title="Upload Front"
-                                                />}
-                                        </Cardview>
-                                    </View>
-                                    <View style={{ width: wp(38) }}>
-                                        <Cardview>
-                                            {profilDetails && profilDetails.documents.license_back ?
-                                                <Pressable
-                                                    style={{
-                                                        justifyContent: 'center', alignItems: 'center',
-                                                        paddingVertical: hp(2)
-                                                    }}>
-                                                    <Image
-                                                        source={{ uri: profilDetails.documents.license_back }}
+                                                            justifyContent: 'center', alignItems: 'center',
+                                                            paddingVertical: hp(2)
+                                                        }}>
+                                                        <Image
+                                                            source={{ uri: profilDetails.documents.license_front }}
+                                                            style={{
+                                                                width: 110,
+                                                                height: 75,
+                                                                resizeMode: 'cover',
+                                                                borderRadius: 10
+                                                            }} />
+                                                    </Pressable>
+                                                    :
+                                                    <CameraView
+                                                        image={require('../assets/Huge.png')}
+                                                        title="Upload Front" />}
+                                            </Cardview>
+                                        </View>
+                                        <View style={{ width: wp(38) }}>
+                                            <Cardview>
+                                                {profilDetails && profilDetails.documents.license_back ?
+                                                    <Pressable
                                                         style={{
-                                                            width: 110,
-                                                            height: 75,
-                                                            resizeMode: 'cover',
-                                                            borderRadius: 10
-                                                        }}
-                                                    />
-                                                </Pressable>
-                                                :
-                                                <CameraView
-                                                    image={require('../assets/Huge.png')}
-                                                    title="Upload Back"
-                                                />}
-                                        </Cardview>
-                                    </View>
-                                </View>
+                                                            justifyContent: 'center', alignItems: 'center',
+                                                            paddingVertical: hp(2)
+                                                        }}>
+                                                        <Image
+                                                            source={{ uri: profilDetails.documents.license_back }}
+                                                            style={{
+                                                                width: 110,
+                                                                height: 75,
+                                                                resizeMode: 'cover',
+                                                                borderRadius: 10
+                                                            }} />
+                                                    </Pressable>
+                                                    :
+                                                    <CameraView
+                                                        image={require('../assets/Huge.png')}
+                                                        title="Upload Back" />}
+                                            </Cardview>
+                                        </View>
+                                    </View></>}
                             </View>
                         </Cardview>
-                    </View>
+                    </View>}
                 </View>
             </ScrollView>
         </SafeAreaView>
