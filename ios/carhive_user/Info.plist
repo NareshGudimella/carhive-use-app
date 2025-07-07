@@ -42,7 +42,7 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string></string>
+	<string>This app requires access to the camera to take photos or record videos.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We use your location to show nearby car listings.</string>
 	<key>NSMicrophoneUsageDescription</key>

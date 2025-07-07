@@ -460,7 +460,7 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                             borderColor: '#F4F6FA',
                                             marginHorizontal: wp(2),
                                             marginVertical: hp(1.5)
-                                        }} /></> }
+                                        }} /></>}
                                 <Pressable
                                     onPress={() => props.navigation.navigate('HostScreen')}
                                     style={{
@@ -621,7 +621,37 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                         style={{
                                             fontSize: 16,
                                             fontWeight: 'bold'
-                                        }}>Logout</Text></>
+                                        }}>Logout</Text>
+                                        <View
+                                    style={{
+                                        borderWidth: 0.5,
+                                        borderColor: '#F4F6FA',
+                                        marginVertical: hp(2)
+                                    }} />
+                                <Text
+                                    onPress={() => {
+                                        Alert.alert('Alert!', 'Are you sure you want to delete your account?', [
+                                            {
+                                                text: 'Cancel',
+                                                onPress: () => console.log('Cancel Pressed'),
+                                                style: 'cancel',
+                                            },
+                                            {
+                                                text: 'OK', onPress: async () => {
+                                                    dispatch(removeProfile(null))
+                                                    await removeToken()
+                                                    props.navigation.reset({
+                                                        index: 0,
+                                                        routes: [{ name: 'HomeScreen' }]
+                                                    })
+                                                }
+                                            },
+                                        ]);
+                                    }}
+                                    style={{
+                                        fontSize: 16,
+                                        fontWeight: 'bold'
+                                    }}>Delete Account</Text></>
                                     :
                                     <><View
                                         style={{
@@ -635,6 +665,7 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                                 fontWeight: 'bold'
                                             }}>Login</Text></>
                                 }
+                                
 
                             </View>
                         </Cardview>
