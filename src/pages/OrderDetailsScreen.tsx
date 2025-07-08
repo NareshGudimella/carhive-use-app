@@ -161,7 +161,7 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                         fontWeight: '500',
                                         marginTop: 2,
                                         fontSize: 13
-                                    }}>{orderDetails && moment(orderDetails.from_date).format('HH:MM A')}</Text>
+                                    }}>{orderDetails && moment(orderDetails.from_date).format('HH:mm A')}</Text>
                                 </View>
                                 <Image
                                     source={require('../assets/arrow.png')}
@@ -180,7 +180,7 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                         fontWeight: '500',
                                         marginTop: 2,
                                         fontSize: 13
-                                    }}>{orderDetails && moment(orderDetails.to_date).format('HH:MM A')}</Text>
+                                    }}>{orderDetails && moment(orderDetails.to_date).format('HH:mm A')}</Text>
                                 </View>
                             </View>
                         </Cardview>

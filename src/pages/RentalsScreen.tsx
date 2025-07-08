@@ -604,8 +604,8 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                         marginHorizontal: wp(5),
                                                         marginVertical: hp(2),
                                                         textAlign: 'center'
-                                                    }}>{moment(e.from_date).format('DD MMM YYYY HH:DD A')} -
-                                                    {moment(e.to_date).format('DD MMM YYYY HH:DD A')}</Text>
+                                                    }}>{moment(e.from_date).format('DD MMM YYYY HH:mm A')} -
+                                                    {moment(e.to_date).format('DD MMM YYYY HH:mm A')}</Text>
                                             </View>
                                             <Pressable
                                                 onPress={() => {
@@ -696,7 +696,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                                 fontWeight: 'bold',
                                                                 color: '#64748B'
                                                             }}>
-                                                            Delivery date :{moment(e.to_date).format('DD MMM YYYY HH:DD A')}
+                                                            Delivery date :{moment(e.to_date).format('DD MMM YYYY HH:mm A')}
                                                         </Text>
                                                         <Text
                                                             style={{
@@ -873,7 +873,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                                     fontSize: 12,
                                                                     fontWeight: 'bold',
 
-                                                                }}> {moment(e.to_date).format('DD MMM YYYY HH:DD A')}
+                                                                }}> {moment(e.to_date).format('DD MMM YYYY HH:mm A')}
                                                             </Text>
                                                         </View>
 
@@ -1047,8 +1047,8 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                                     marginHorizontal: wp(5),
                                                                     marginVertical: hp(2),
                                                                     textAlign: 'center'
-                                                                }}>{moment(e.from_date).format('DD MMM YYYY HH:DD A')}
-                                                                - {moment(e.to_date).format('DD MMM YYYY HH:DD A')}</Text>
+                                                                }}>{moment(e.from_date).format('DD MMM YYYY HH:mm A')}
+                                                                - {moment(e.to_date).format('DD MMM YYYY HH:mm A')}</Text>
                                                             {e.rating_flag == 1 ? <View style={{
                                                                 marginBottom: hp(2),
                                                                 marginHorizontal: wp(10)
@@ -1134,7 +1134,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                                             fontSize: 12,
                                                                             fontWeight: 'bold',
 
-                                                                        }}> {moment(e.extended_date).format('DD MMM YYYY HH:DD A')}
+                                                                        }}> {moment(e.extended_date).format('DD MMM YYYY HH:mm A')}
                                                                     </Text>
                                                                 </View>
                                                                 {
@@ -1241,7 +1241,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                                                 fontSize: 12,
                                                                                 fontWeight: 'bold',
 
-                                                                            }}> {moment(e.extended_date).format('DD MMM YYYY HH:DD A')}
+                                                                            }}> {moment(e.extended_date).format('DD MMM YYYY HH:mm A')}
                                                                         </Text>
                                                                     </View>
                                                                     {e.pay_flag == 1 ?
