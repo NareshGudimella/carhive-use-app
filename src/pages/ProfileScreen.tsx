@@ -8,7 +8,7 @@ import { BottomModelView } from "../components/BottomModelView";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";
 import { removeProfile, updateProfile } from "../storage/redux";
-import { getToken, removeToken, setToken } from "../storage/AsyncStorage";
+import { getCity, getToken, removeToken, setToken } from "../storage/AsyncStorage";
 import { useFocusEffect } from "@react-navigation/native";
 import PrimaryButton from "../components/PrimaryButton";
 import { style } from "../styles/OtpStyle";
@@ -30,12 +30,20 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
     const [otpModal, setOtpModal] = useState(false)
     const [phoneNumber, setPhoneNumber] = useState<any>('')
     const [otp, setOtp] = useState<any>('')
+    const [cityCustomerCare, setCityCustomerCare] = useState<any>(null)
 
     useFocusEffect(
         useCallback(() => {
             loadToken()
+            loadCityName()
         }, [])
     )
+
+    const loadCityName = async () => {
+        const city: any = await getCity();
+        const number = JSON.parse(city)
+        setCityCustomerCare(number)
+    }
 
     const handelLogout = async () => {
         dispatch(removeProfile(null))
@@ -504,7 +512,7 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                         marginVertical: hp(1.5)
                                     }} />
                                 <Pressable
-                                    onPress={() => Linking.openURL(`tel: ${9985044556}`)} style={{
+                                    onPress={() => Linking.openURL(`tel: ${cityCustomerCare && cityCustomerCare.customer_care_number}`)} style={{
                                         flexDirection: 'row',
                                         alignItems: 'center',
 
@@ -622,36 +630,36 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                             fontSize: 16,
                                             fontWeight: 'bold'
                                         }}>Logout</Text>
-                                        <View
-                                    style={{
-                                        borderWidth: 0.5,
-                                        borderColor: '#F4F6FA',
-                                        marginVertical: hp(2)
-                                    }} />
-                                <Text
-                                    onPress={() => {
-                                        Alert.alert('Alert!', 'Are you sure you want to delete your account?', [
-                                            {
-                                                text: 'Cancel',
-                                                onPress: () => console.log('Cancel Pressed'),
-                                                style: 'cancel',
-                                            },
-                                            {
-                                                text: 'OK', onPress: async () => {
-                                                    dispatch(removeProfile(null))
-                                                    await removeToken()
-                                                    props.navigation.reset({
-                                                        index: 0,
-                                                        routes: [{ name: 'HomeScreen' }]
-                                                    })
-                                                }
-                                            },
-                                        ]);
-                                    }}
-                                    style={{
-                                        fontSize: 16,
-                                        fontWeight: 'bold'
-                                    }}>Delete Account</Text></>
+                                    <View
+                                        style={{
+                                            borderWidth: 0.5,
+                                            borderColor: '#F4F6FA',
+                                            marginVertical: hp(2)
+                                        }} />
+                                    <Text
+                                        onPress={() => {
+                                            Alert.alert('Alert!', 'Are you sure you want to delete your account?', [
+                                                {
+                                                    text: 'Cancel',
+                                                    onPress: () => console.log('Cancel Pressed'),
+                                                    style: 'cancel',
+                                                },
+                                                {
+                                                    text: 'OK', onPress: async () => {
+                                                        dispatch(removeProfile(null))
+                                                        await removeToken()
+                                                        props.navigation.reset({
+                                                            index: 0,
+                                                            routes: [{ name: 'HomeScreen' }]
+                                                        })
+                                                    }
+                                                },
+                                            ]);
+                                        }}
+                                        style={{
+                                            fontSize: 16,
+                                            fontWeight: 'bold'
+                                        }}>Delete Account</Text></>
                                     :
                                     <><View
                                         style={{
@@ -665,7 +673,7 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                                 fontWeight: 'bold'
                                             }}>Login</Text></>
                                 }
-                                
+
 
                             </View>
                         </Cardview>

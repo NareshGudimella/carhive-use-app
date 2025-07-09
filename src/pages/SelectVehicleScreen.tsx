@@ -604,7 +604,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                     <Text style={{
                                                         marginHorizontal: 1,
                                                         fontWeight: '500'
-                                                    }}>{e.distance} away</Text>
+                                                    }}>{e.distance} away {e.carArea}</Text>
                                                 </View>
                                                 <View style={{
                                                     flexDirection: 'row',
