@@ -1,4 +1,7 @@
-import { ActivityIndicator, Alert, Image, Modal, Platform, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+    ActivityIndicator, Alert, Image, Modal, Platform, Pressable,
+    ScrollView, Text, TouchableOpacity, View
+} from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { hp, wp } from "../utils/ResponsiveScreen";
 import { BackButtonStyle } from "../styles/BackButtonStyle";
@@ -12,7 +15,10 @@ import Textinput from "../components/TextInput";
 import { OtpInput } from "react-native-otp-entry";
 import { style } from "../styles/OtpStyle";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { aadharnumberverify, aadharotpverify, carDetails, excuteGetResponse, firebasemessage, licenceverify, Login, Otp, } from "../apis/api";
+import {
+    aadharnumberverify, aadharotpverify, carDetails, excuteGetResponse,
+    firebasemessage, licenceverify, Login, Otp,
+} from "../apis/api";
 import { getToken, setToken } from "../storage/AsyncStorage";
 import { useFocusEffect } from "@react-navigation/native";
 import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
@@ -1117,7 +1123,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                         width: 60,
                                         borderRadius: 30
                                     }} />
-                                <View style={{ width: wp(60), marginStart: wp(3)  }}>
+                                <View style={{ width: wp(60), marginStart: wp(3) }}>
                                     <Text style={{
                                         fontSize: 18,
                                         fontWeight: 'bold'

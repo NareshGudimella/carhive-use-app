@@ -25,13 +25,8 @@ import messaging from '@react-native-firebase/messaging';
 import DeviceInfo from "react-native-device-info";
 import { updateProfile } from "../storage/redux";
 import { useDispatch } from "react-redux";
-import {
-    CFPaymentGatewayService,
-} from 'react-native-cashfree-pg-sdk';
-import {
-    CFEnvironment,
-    CFSession,
-} from 'cashfree-pg-api-contract';
+//@ts-ignore
+import RazorpayCheckout from 'react-native-razorpay';
 
 class Componentprops extends Baseprops { }
 
@@ -55,36 +50,6 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
             handelRentalDetails()
         }, [])
     )
-
-    useEffect(() => {
-        CFPaymentGatewayService.setCallback({
-            onVerify: (orderID) => {
-                console.log('orderId is :', orderID);
-                console.log('price :', price)
-                if (price != '') {
-                    props.navigation.reset({
-                        index: 0,
-                        routes: [
-                          {
-                            name: 'PaymentSuccessScreen',
-                            params: { amount: price }
-                          }
-                        ],
-                      });
-                }
-            },
-            onError: (error, orderID) => {
-                console.log(
-                    'exception is : ' + JSON.stringify(error) + '\norderId is :' + orderID
-                );
-            },
-        });
-
-        return () => {
-            console.log('UNMOUNTED');
-            CFPaymentGatewayService.removeCallback();
-        };
-    }, [price]);
 
     const handelRentalDetails = async () => {
         const token = await getToken()
@@ -163,21 +128,37 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
             if (response.code == 0) {
                 setBookingId(response.data.booking_id)
                 setPrice(response.data.order_amount)
-                try {
-                    const session = new CFSession(
-                        response.data.payment_session_id,
-                        response.data.order_id,
-                        response.data.env == CFEnvironment.PRODUCTION ? CFEnvironment.PRODUCTION : CFEnvironment.SANDBOX
-                    );
-                    console.log('Session', JSON.stringify(session));
-                    CFPaymentGatewayService.doWebPayment(session);
-                } catch (e: any) {
-                    console.log(e.message);
+                var options = {
+                    description: 'Credits towards consultation',
+                    image: 'https://i.imgur.com/3g7nmJC.png',
+                    currency: 'INR',
+                    key: '', // Your api key
+                    amount: '5000',
+                    name: 'foo',
+                    prefill: {
+                        email: 'void@razorpay.com',
+                        contact: '9191919191',
+                        name: 'Razorpay Software'
+                    },
+                    theme: { color: '#F37254' }
                 }
+                RazorpayCheckout.open(options).then((data: any) => {
+                    props.navigation.reset({
+                        index: 0,
+                        routes: [
+                            {
+                                name: 'PaymentSuccessScreen',
+                                params: { amount: price }
+                            }
+                        ],
+                    });
+                    Alert.alert(`Success: ${data.razorpay_payment_id}`);
+                }).catch((error: any) => {
+                    Alert.alert(`Error: ${error.code} | ${error.description}`);
+                });
             }
         } else {
             Alert.alert('Alert', 'unable to get Booking Payment Details')
-            return
         }
 
     }
@@ -188,20 +169,36 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
         if (response.code == 0) {
             setBookingId(response.data.booking_id)
             setPrice(response.data.order_amount)
-            try {
-                const session = new CFSession(
-                    response.data.payment_session_id,
-                    response.data.order_id,
-                    response.data.env == CFEnvironment.PRODUCTION ? CFEnvironment.PRODUCTION : CFEnvironment.SANDBOX
-                );
-                console.log('Session', JSON.stringify(session));
-                CFPaymentGatewayService.doWebPayment(session);
-            } catch (e: any) {
-                console.log(e.message);
+            var options = {
+                description: 'Credits towards consultation',
+                image: 'https://i.imgur.com/3g7nmJC.png',
+                currency: 'INR',
+                key: '', // Your api key
+                amount: '5000',
+                name: 'foo',
+                prefill: {
+                    email: 'void@razorpay.com',
+                    contact: '9191919191',
+                    name: 'Razorpay Software'
+                },
+                theme: { color: '#F37254' }
             }
+            RazorpayCheckout.open(options).then((data: any) => {
+                props.navigation.reset({
+                    index: 0,
+                    routes: [
+                        {
+                            name: 'PaymentSuccessScreen',
+                            params: { amount: price }
+                        }
+                    ],
+                });
+                Alert.alert(`Success: ${data.razorpay_payment_id}`);
+            }).catch((error: any) => {
+                Alert.alert(`Error: ${error.code} | ${error.description}`);
+            });
         } else {
             Alert.alert('Alert', 'unable to get Booking Payment Details')
-            return
         }
 
     }

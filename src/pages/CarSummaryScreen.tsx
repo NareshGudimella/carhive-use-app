@@ -1,4 +1,7 @@
-import { Alert, Image, Modal, Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import {
+    Alert, Image, Modal, Pressable, ScrollView, Text,
+    TextInput, View
+} from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { hp, wp } from "../utils/ResponsiveScreen";
 import { Cardview } from "../components/Cardview";
@@ -10,13 +13,9 @@ import { Checkbox } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { carBookings, excuteGetResponse, summery } from "../apis/api";
 import { useFocusEffect } from "@react-navigation/native";
-import {
-    CFPaymentGatewayService,
-} from 'react-native-cashfree-pg-sdk';
-import {
-    CFEnvironment,
-    CFSession,
-} from 'cashfree-pg-api-contract';
+//@ts-ignore
+import RazorpayCheckout from 'react-native-razorpay';
+
 class Componentprops extends Baseprops { }
 
 const CarSummaryScreen: React.FC<Componentprops> = (props) => {
@@ -40,40 +39,11 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
             handelCouponCode()
         }, [])
     )
-    useEffect(() => {
-        CFPaymentGatewayService.setCallback({
-            onVerify: (orderID) => {
-                console.log('orderId is :' , orderID);
-                console.log('price :' , price)
-                if (price != '') {
-                    props.navigation.reset({
-                        index: 0,
-                        routes: [
-                          {
-                            name: 'PaymentSuccessScreen',
-                            params: { amount: price }
-                          }
-                        ],
-                      });
-                }
-            },
-            onError: (error, orderID) => {
-                console.log(
-                    'exception is : ' + JSON.stringify(error) + '\norderId is :' + orderID
-                );
-            },
-        });
-
-        return () => {
-            console.log('UNMOUNTED');
-            CFPaymentGatewayService.removeCallback();
-        };
-    }, [price]);
-
 
     useEffect(() => {
-        if (couponcode != '')
+        if (couponcode != '') {
             loadSummeryScreen(props.route.params && props.route.params.carid, couponcode)
+        }
     }, [couponcode])
 
     const loadSummeryScreen = async (carid: any, offercode?: any) => {
@@ -133,17 +103,36 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
             console.log('paymentmethod', response1)
             if (response1.code == 0) {
                 setPrice(response1.data.order_amount)
-                try {
-                    const session = new CFSession(
-                        response1.data.payment_session_id,
-                        response1.data.order_id,
-                        response1.data.env == CFEnvironment.PRODUCTION ? CFEnvironment.PRODUCTION : CFEnvironment.SANDBOX
-                    );
-                    console.log('Session', JSON.stringify(session));
-                    CFPaymentGatewayService.doWebPayment(session);
-                } catch (e: any) {
-                    console.log(e.message);
+                var options = {
+                    description: 'Credits towards consultation',
+                    image: 'https://i.imgur.com/3g7nmJC.png',
+                    currency: 'INR',
+                    key: '', // Your api key
+                    amount: '5000',
+                    name: 'foo',
+                    prefill: {
+                        email: 'void@razorpay.com',
+                        contact: '9191919191',
+                        name: 'Razorpay Software'
+                    },
+                    theme: { color: '#F37254' }
                 }
+                RazorpayCheckout.open(options).then((data: any) => {
+                    // handle success
+                    props.navigation.reset({
+                        index: 0,
+                        routes: [
+                            {
+                                name: 'PaymentSuccessScreen',
+                                params: { amount: price }
+                            }
+                        ],
+                    });
+                    Alert.alert(`Success: ${data.razorpay_payment_id}`);
+                }).catch((error: any) => {
+                    // handle failure
+                    Alert.alert(`Error: ${error.code} | ${error.description}`);
+                });
             }
         } else {
             Alert.alert('Alert', 'unable to get Booking Payment Details')
