@@ -24,7 +24,7 @@ import { style } from "../styles/OtpStyle";
 import messaging from '@react-native-firebase/messaging';
 import DeviceInfo from "react-native-device-info";
 import { updateProfile } from "../storage/redux";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 //@ts-ignore
 import RazorpayCheckout from 'react-native-razorpay';
 
@@ -33,6 +33,7 @@ class Componentprops extends Baseprops { }
 const RentalsScreen: React.FC<Componentprops> = (props) => {
 
     const dispatch = useDispatch()
+    const user = useSelector((state: any) => state.profile)
     const [addressChecked, setAddressChecked] = useState('address');
     const [extendServiceModal, setExtendServiceModal] = useState(false)
     const [rentalData, setRentalData] = useState<any>([])
@@ -123,40 +124,41 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
     }
     const handelExtendPayment = async (booking_car_id: any) => {
         const response = await excuteGetResponse(`secure/cars/extended_payment/${booking_car_id}`)
-        console.log('payment1', response)
         if (response.code == 0) {
-            if (response.code == 0) {
-                setBookingId(response.data.booking_id)
-                setPrice(response.data.order_amount)
-                var options = {
-                    description: 'Credits towards consultation',
-                    image: 'https://i.imgur.com/3g7nmJC.png',
-                    currency: 'INR',
-                    key: '', // Your api key
-                    amount: '5000',
-                    name: 'foo',
-                    prefill: {
-                        email: 'void@razorpay.com',
-                        contact: '9191919191',
-                        name: 'Razorpay Software'
-                    },
-                    theme: { color: '#F37254' }
-                }
-                RazorpayCheckout.open(options).then((data: any) => {
-                    props.navigation.reset({
-                        index: 0,
-                        routes: [
-                            {
-                                name: 'PaymentSuccessScreen',
-                                params: { amount: price }
-                            }
-                        ],
-                    });
-                    Alert.alert(`Success: ${data.razorpay_payment_id}`);
-                }).catch((error: any) => {
-                    Alert.alert(`Error: ${error.code} | ${error.description}`);
-                });
+            var options = {
+                description: 'Payment for booking',
+                image: response.data.image,
+                currency: 'INR',
+                key: response.data.key,
+                amount: response.data.amount,
+                name: 'CARHIVE SERVICES',
+                prefill: {
+                    email: user.email,
+                    contact: user.mobile,
+                    name: user.name
+                },
+                order_id: response.data.id,
+                theme: { color: '#F37254' }
             }
+            RazorpayCheckout.open(options).then((data: any) => {
+                console.log('data', data)
+                props.navigation.reset({
+                    index: 0,
+                    routes: [
+                        {
+                            name: 'PaymentSuccessScreen',
+                            params: { amount: response.data.actual_amount }
+                        }
+                    ],
+                });
+            }).catch((error: any) => {
+                console.log('ERROR', error)
+                Alert.alert('Payment failed', 'Please try again.',
+                    [
+                        { text: 'OK', onPress: () => console.log('OK Pressed') }
+                    ],
+                );
+            });
         } else {
             Alert.alert('Alert', 'unable to get Booking Payment Details')
         }
@@ -165,37 +167,41 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
 
     const handelExtendKms = async (booking_car_id: any) => {
         const response = await excuteGetResponse(`secure/cars/extra_payment/${booking_car_id}`)
-        console.log('payment', response)
         if (response.code == 0) {
             setBookingId(response.data.booking_id)
-            setPrice(response.data.order_amount)
             var options = {
-                description: 'Credits towards consultation',
-                image: 'https://i.imgur.com/3g7nmJC.png',
+                description: 'Payment for booking',
+                image: response.data.image,
                 currency: 'INR',
-                key: '', // Your api key
-                amount: '5000',
-                name: 'foo',
+                key: response.data.key,
+                amount: response.data.amount,
+                name: 'CARHIVE SERVICES',
                 prefill: {
-                    email: 'void@razorpay.com',
-                    contact: '9191919191',
-                    name: 'Razorpay Software'
+                    email: user.email,
+                    contact: user.mobile,
+                    name: user.name
                 },
+                order_id: response.data.id,
                 theme: { color: '#F37254' }
             }
             RazorpayCheckout.open(options).then((data: any) => {
+                console.log('data', data)
                 props.navigation.reset({
                     index: 0,
                     routes: [
                         {
                             name: 'PaymentSuccessScreen',
-                            params: { amount: price }
+                            params: { amount: response.data.actual_amount }
                         }
                     ],
                 });
-                Alert.alert(`Success: ${data.razorpay_payment_id}`);
             }).catch((error: any) => {
-                Alert.alert(`Error: ${error.code} | ${error.description}`);
+                console.log('ERROR', error)
+                Alert.alert('Payment failed', 'Please try again.',
+                    [
+                        { text: 'OK', onPress: () => console.log('OK Pressed') }
+                    ],
+                );
             });
         } else {
             Alert.alert('Alert', 'unable to get Booking Payment Details')
@@ -734,7 +740,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                                     }}>{e.vendor_name
                                                                     }</Text>
                                                             </View>
-                                                            <Pressable onPress={() => Linking.openURL(`tel${e.vendor_mobile}`)}>
+                                                            <Pressable onPress={() => Linking.openURL(`tel: ${e.vendor_mobile}`)}>
                                                                 <Image
                                                                     source={require('../assets/call1.png')}
                                                                     style={{

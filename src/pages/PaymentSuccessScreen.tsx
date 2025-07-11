@@ -1,11 +1,37 @@
-import { Image, Text, View } from "react-native";
+import { Alert, Image, Text, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { hp, wp } from "../utils/ResponsiveScreen";
 import PrimaryButton from "../components/PrimaryButton";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { excuteGetResponse } from "../apis/api";
+import { useCallback, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 
 class Componentprops extends Baseprops { }
+
 const PaymentSuccessScreen: React.FC<Componentprops> = (props) => {
+
+    const [orderDetails, setOrderDetails] = useState<any>(null)
+
+    useFocusEffect(
+        useCallback(() => {
+            console.log(props.route.params.Id)
+            if (props.route.params && props.route.params.Id) {
+                handelOrderDetails(props.route.params.Id)
+            }
+        }, [])
+    )
+
+    const handelOrderDetails = async (car_booking_id: any) => {
+        const response = await excuteGetResponse(`secure/cars/bookings/details/${car_booking_id}`)
+        console.log('orderDetails', response)
+        if (response.code == 0) {
+            setOrderDetails(response.data)
+        } else {
+            Alert.alert('Alert', 'unable to get details')
+        }
+    }
+
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <View style={{

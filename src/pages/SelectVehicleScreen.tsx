@@ -95,6 +95,8 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
 
         if (response.code == 0) {
             setCarsList(response.data)
+        } else if (response.message == "The time difference between from_date and to_date must be at least 3 hours.") {
+            Alert.alert('Alert!', "The time difference between from_date and to_date must be at least 3 hours.")
         } else {
             Alert.alert('Alert', 'unable to get details ', [
                 {
@@ -103,7 +105,6 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                     style: 'cancel',
                 }
             ])
-            return
         }
     }
     {/* Car model List */ }

@@ -15,14 +15,15 @@ import { carBookings, excuteGetResponse, summery } from "../apis/api";
 import { useFocusEffect } from "@react-navigation/native";
 //@ts-ignore
 import RazorpayCheckout from 'react-native-razorpay';
+import { useSelector } from "react-redux";
 
 class Componentprops extends Baseprops { }
 
 const CarSummaryScreen: React.FC<Componentprops> = (props) => {
 
+    const user = useSelector((state: any) => state.profile)
     const [termsAndConditions, setTermsAndCondition] = useState(false)
     const [typeofTandC, setTypeTandC] = useState('t&c')
-    const [eligiabilityCheck, setEligiabilityCheck] = useState(false)
     const [eligiabilityflag, setEligiabilityflag] = useState('')
     const [eligiabilityModal, setEligiabilityModal] = useState(false)
     const [terms_condition_flag, setTerms_condition_flag] = useState('')
@@ -31,12 +32,12 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
     const [couponModalScreen, setCoupanModalScreen] = useState(false)
     const [cuopon, setCoupons] = useState([])
     const [couponcode, setCouponcode] = useState<any>('')
-    const [price, setPrice] = useState('')
 
     useFocusEffect(
         useCallback(() => {
             loadSummeryScreen(props.route.params && props.route.params.carid)
             handelCouponCode()
+            console.log('User', user)
         }, [])
     )
 
@@ -99,39 +100,42 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
         console.log('paymentDetails', response, couponcode)
         if (response.code == 0) {
             setEligiabilityModal(false)
-            const response1 = await excuteGetResponse(`secure/cars/payment/${response.booking_car_id}`)
-            console.log('paymentmethod', response1)
-            if (response1.code == 0) {
-                setPrice(response1.data.order_amount)
+            const paymentResponse = await excuteGetResponse(`secure/cars/payment/${response.booking_car_id}`)
+            console.log('paymentmethod', paymentResponse)
+            if (paymentResponse.code == 0) {
                 var options = {
-                    description: 'Credits towards consultation',
-                    image: 'https://i.imgur.com/3g7nmJC.png',
+                    description: 'Payment for booking',
+                    image: paymentResponse.data.image,
                     currency: 'INR',
-                    key: '', // Your api key
-                    amount: '5000',
-                    name: 'foo',
+                    key: paymentResponse.data.key,
+                    amount: paymentResponse.data.amount,
+                    name: 'CARHIVE SERVICES',
                     prefill: {
-                        email: 'void@razorpay.com',
-                        contact: '9191919191',
-                        name: 'Razorpay Software'
+                        email: user.email,
+                        contact: user.mobile,
+                        name: user.name
                     },
+                    order_id: paymentResponse.data.id,
                     theme: { color: '#F37254' }
                 }
                 RazorpayCheckout.open(options).then((data: any) => {
-                    // handle success
+                    console.log('data', data)
                     props.navigation.reset({
                         index: 0,
                         routes: [
                             {
                                 name: 'PaymentSuccessScreen',
-                                params: { amount: price }
+                                params: { amount: paymentResponse.data.actual_amount }
                             }
                         ],
                     });
-                    Alert.alert(`Success: ${data.razorpay_payment_id}`);
                 }).catch((error: any) => {
-                    // handle failure
-                    Alert.alert(`Error: ${error.code} | ${error.description}`);
+                    console.log('ERROR', error)
+                    Alert.alert('Payment failed', 'Please try again.',
+                        [
+                            { text: 'OK', onPress: () => console.log('OK Pressed') }
+                        ],
+                    );
                 });
             }
         } else {

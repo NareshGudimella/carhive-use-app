@@ -22,6 +22,7 @@ const shippingdata = [
 const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
 
     const [orderDetails, setOrderDetails] = useState<any>(null)
+    
     useFocusEffect(
         useCallback(() => {
             console.log(props.route.params.Id)
