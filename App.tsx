@@ -1,6 +1,8 @@
 import * as React from 'react';
-import { View, Text, Alert, Platform } from 'react-native';
-import { createNavigationContainerRef, NavigationContainer } from '@react-navigation/native';
+import {
+  createNavigationContainerRef,
+  NavigationContainer
+} from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './src/pages/HomeScreen';
 import SelectVehicleScreen from './src/pages/SelectVehicleScreen';
