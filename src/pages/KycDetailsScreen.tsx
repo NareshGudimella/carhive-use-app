@@ -18,6 +18,7 @@ import { KycDetails } from "../apis/api";
 class Componentprops extends Baseprops { }
 
 const KycDetailsScreen: React.FC<Componentprops> = (props) => {
+    
     const [cameraModal, SetCaremaModal] = useState(false)
     const [successKycModal, setSuccessKycModal] = useState(false)
     const [aadharfront, setAadharfront] = useState<Asset | null>(null)

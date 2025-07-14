@@ -286,7 +286,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                     modal
                                     mode="time"
                                     open={open}
-                                    minimumDate={new Date()} 
+                                    minimumDate={(pickupDate && pickupDate.getTime() > new Date().getTime()) ? new Date(new Date().setHours(0, 0, 0, 0)) : new Date()}
                                     date={dateType === 'pickup' ? pickupTime : dropTime}
                                     onConfirm={(selectedtime) => {
                                         setOpen(false);
@@ -309,7 +309,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                     modal
                                     mode={"date"}
                                     open={open}
-                                    minimumDate={new Date()} 
+                                    minimumDate={new Date()}
                                     date={dateType === 'pickup' ? pickupDate : dropDate}
                                     onConfirm={(selectedDate) => {
                                         setOpen(false);
