@@ -43,7 +43,8 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
         useCallback(() => {
             handelBannerImage()
             VerifyLocationPermission()
-            setDropTime(new Date(pickupTime.getTime() + 3 * 60 * 60 * 1000))
+            setDropTime(new Date(pickupTime.getTime() + 12 * 60 * 60 * 1000))
+            setDropDate(new Date(dropDate.getTime() + 12 * 60 * 60 * 1000))
         }, [])
     )
 
@@ -291,7 +292,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                         setOpen(false);
                                         if (dateType === 'pickup') {
                                             setPickupTime(selectedtime);
-                                            setDropTime(new Date(selectedtime.getTime() + 3 * 60 * 60 * 1000))
+                                            setDropTime(new Date(selectedtime.getTime() + 12 * 60 * 60 * 1000))
                                         } else if (dateType === 'drop') {
                                             setDropTime(selectedtime);
                                         }
