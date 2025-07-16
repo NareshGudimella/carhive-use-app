@@ -27,6 +27,7 @@ import { updateProfile } from "../storage/redux";
 import { useDispatch, useSelector } from "react-redux";
 //@ts-ignore
 import RazorpayCheckout from 'react-native-razorpay';
+import { Foregroundmessage, requestfirebasePermissions } from "../firebase/firebase";
 
 class Componentprops extends Baseprops { }
 
@@ -60,7 +61,6 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
             if (response.code == 0) {
                 setRentalData(response.data)
             } else {
-
                 Alert.alert(
                     'Alert',
                     'Unable to get Rental Details',
@@ -81,10 +81,10 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
         if (response.code == 0) {
             setToken(response.data.token)
             if (response.data.token && response.data.token != '') {
-                const token = await messaging().getToken();
-                await firebasemessage(token, Platform.OS, await DeviceInfo.getBuildNumber(), Platform.Version,)
                 const profileresponse = await excuteGetResponse('secure/profile')
                 if (profileresponse.code == 0) {
+                    requestfirebasePermissions()
+                    Foregroundmessage()
                     setOtpModal(false)
                     dispatch(updateProfile(profileresponse.data));
                     props.navigation.reset({
@@ -214,8 +214,8 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
             Alert.alert('Alert', 'Invalid mobile number')
             return
         }
+        setMobileNumberModal(false)
         const response = await Login(phoneNumber)
-        console.log('Login', response)
         if (response.code == 0) {
             setOtpModal(true)
         } else {
@@ -303,7 +303,6 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                     <View style={{ marginVertical: hp(2) }}>
                                         <PrimaryButton title='Request OTP'
                                             onclick={() => {
-                                                setMobileNumberModal(false)
                                                 handelLogin()
                                             }}
                                         />

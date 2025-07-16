@@ -1,4 +1,4 @@
-import { Alert, Image, Linking, Modal, PermissionsAndroid, Platform, Pressable, ScrollView, Text, View } from "react-native";
+import { Alert, AppState, BackHandler, Image, Linking, Modal, PermissionsAndroid, Platform, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { Background } from "../styles/BackgroundColor";
 import BottomTabNavigation from "../components/BottomTab";
@@ -8,7 +8,7 @@ import {
 } from 'react-native-responsive-screen';
 import { SelectorBoxStyle } from "../styles/Selectorbox";
 import { BottomTabstyles } from "../styles/BottomTabstyles";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import PrimaryButton from "../components/PrimaryButton";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
@@ -35,14 +35,12 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
     const ref = React.useRef<ICarouselInstance>(null);
     const [pickupTime, setPickupTime] = useState(new Date());
     const [dropTime, setDropTime] = useState(new Date())
-    const [longitude, setLongitude] = useState('')
-    const [latitude, setLatitude] = useState('')
     const [cityname, setCityname] = useState<any>([])
+    const [locationDeniedFlag, setLocationDeniedFlag] = useState(false)
 
     useFocusEffect(
         useCallback(() => {
             handelBannerImage()
-            VerifyLocationPermission()
             setDropTime(new Date(pickupTime.getTime() + 12 * 60 * 60 * 1000))
             setDropDate(new Date(dropDate.getTime() + 12 * 60 * 60 * 1000))
         }, [])
@@ -63,7 +61,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
         }
     }
     {/*pickup date and drop date picker*/ }
-    const handelCheckDate = () => {
+    const handelCheckDate = (latitude: any, longitude: any) => {
         if (!pickupDate) {
             Alert.alert('Alert', 'Select the Pickup date');
             return;
@@ -113,7 +111,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
         }
 
     };
-    {/*location fetching */ }
+
     const VerifyLocationPermission = async () => {
         if (Platform.OS == 'android') {
             const granted = await
@@ -123,9 +121,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
             if (granted && granted1) {
                 Geolocation.getCurrentPosition(position => {
                     const { latitude, longitude } = position.coords
-                    setLatitude(latitude.toString());
-                    setLongitude(longitude.toString());
-                    console.log(latitude, longitude)
+                    handelCheckDate(latitude, longitude)
                 }, error => {
                     console.log(error)
                 })
@@ -142,14 +138,12 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                 ) {
                     Geolocation.getCurrentPosition(position => {
                         const { latitude, longitude } = position.coords
-                        setLatitude(latitude.toString());
-                        setLongitude(longitude.toString());
-                        console.log(latitude, longitude)
+                        handelCheckDate(latitude, longitude)
                     }, error => {
                         console.log(error)
                     })
                 } else {
-                    Linking.openSettings()
+                    setLocationDeniedFlag(true)
                 }
             }
         } else if (Platform.OS == 'ios') {
@@ -157,8 +151,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
             if (granted == 'granted') {
                 Geolocation.getCurrentPosition(position => {
                     const { latitude, longitude } = position.coords
-                    setLatitude(latitude.toString());
-                    setLongitude(longitude.toString());
+                    handelCheckDate(latitude, longitude)
                 }, error => {
                     console.log(error)
                 })
@@ -167,21 +160,61 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                 if (granted == 'granted') {
                     Geolocation.getCurrentPosition(position => {
                         const { latitude, longitude } = position.coords
-                        setLatitude(latitude.toString());
-                        setLongitude(longitude.toString());
+                        handelCheckDate(latitude, longitude)
                     }, error => {
                         console.log(error)
                     })
                 } else {
-                    Linking.openSettings()
+                    setLocationDeniedFlag(true)
                 }
             }
         }
     }
 
+    const handleOpenSettings = async () => {
+        setLocationDeniedFlag(false)
+        Linking.openSettings()
+    }
+
     return (
         <GestureHandlerRootView style={[Background.bgcolor, { flex: 1 }]}>
             <SafeAreaView style={{ flex: 1 }}>
+
+                <View>
+                    {locationDeniedFlag && <Modal
+                        animationType="slide"
+                        transparent={true}
+                        visible={locationDeniedFlag}
+                    >
+                        <View style={styles.centeredView}>
+                            <View style={styles.modalView}>
+                                <Text style={{ color: '#000000', fontWeight: 'bold', fontSize: 18, textAlign: 'center' }}>Location Permission Required!</Text>
+                                <Text style={{ color: '#000000', fontWeight: '500', fontSize: 16, marginTop: hp(1), width: wp(60), textAlign: 'center', alignSelf: 'center' }}>We couldn't access your location. Please enable location services in your device settings.</Text>
+                                <View style={{ width: wp(50), alignSelf: 'center', marginTop: hp(3) }}>
+                                    <PrimaryButton title="Open settings"
+                                        onclick={() => {
+                                            handleOpenSettings()
+                                        }} />
+                                </View>
+                                <View style={{ width: wp(50), alignSelf: 'center', marginTop: hp(1) }}>
+                                    <PrimaryButton title={Platform.OS == 'android' ? "Close App" : "Close"}
+                                        onclick={() => {
+                                            if (Platform.OS == 'android') {
+                                                BackHandler.exitApp()
+                                            } else {
+                                                props.navigation.reset({
+                                                    index: 0,
+                                                    routes: [{ name: 'HomeScreen' }],
+                                                  });
+                                            }
+                                        }
+                                        } />
+                                </View>
+                            </View>
+                        </View>
+                    </Modal>}
+                </View>
+
                 <ScrollView style={{ flex: 1 }}>
 
                     <View style={{
@@ -467,7 +500,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                 </View>
                                 {/* Primary button for navigation cars list */}
                                 <PrimaryButton title="Search"
-                                    onclick={() => handelCheckDate()} />
+                                    onclick={() => VerifyLocationPermission()} />
                             </View>
                             {/* Banner carousel */}
                         </Cardview>
@@ -495,4 +528,28 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
         </GestureHandlerRootView>
     )
 }
+
+const styles = StyleSheet.create({
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        backgroundColor: 'rgba(0,0,0,0.7)'
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        paddingVertical: hp(3),
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+
+});
+
 export default HomeScreen

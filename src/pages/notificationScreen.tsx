@@ -1,10 +1,13 @@
 import React, { useCallback, useState } from 'react';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Baseprops } from "../utils/navigation";
-import { Image, Pressable, ScrollView, Text, View, Dimensions, Alert, Modal, Platform, TouchableOpacity } from "react-native";
+import {
+    Image, Pressable, ScrollView, Text, View, Dimensions,
+    Alert, Modal, TouchableOpacity
+} from "react-native";
 import AutoHeightImage from 'react-native-auto-height-image';
 import { hp, wp } from "../utils/ResponsiveScreen";
-import { excuteGetResponse, firebasemessage, Login, Otp } from '../apis/api';
+import { excuteGetResponse, Login, Otp } from '../apis/api';
 import { useFocusEffect } from '@react-navigation/native';
 import { getToken, setToken } from '../storage/AsyncStorage';
 import { BottomModelView } from '../components/BottomModelView';
@@ -12,10 +15,12 @@ import Textinput from '../components/TextInput';
 import PrimaryButton from '../components/PrimaryButton';
 import { OtpInput } from 'react-native-otp-entry';
 import { style } from '../styles/OtpStyle';
-import messaging from '@react-native-firebase/messaging';
-import DeviceInfo from "react-native-device-info";
 import { updateProfile } from '../storage/redux';
 import { useDispatch } from 'react-redux';
+import {
+    Foregroundmessage,
+    requestfirebasePermissions
+} from '../firebase/firebase';
 
 class Componentprops extends Baseprops { }
 
@@ -56,6 +61,7 @@ const NotificationScreen: React.FC<Componentprops> = (props) => {
             Alert.alert('Alert', 'Invalid mobile number')
             return
         }
+        setMobileNumberModal(false)
         const response = await Login(phoneNumber)
         console.log('Login', response)
         if (response.code == 0) {
@@ -75,10 +81,10 @@ const NotificationScreen: React.FC<Componentprops> = (props) => {
         if (response.code == 0) {
             setToken(response.data.token)
             if (response.data.token && response.data.token != '') {
-                const token = await messaging().getToken();
-                await firebasemessage(token, Platform.OS, await DeviceInfo.getBuildNumber(), Platform.Version,)
                 const profileresponse = await excuteGetResponse('secure/profile')
                 if (profileresponse.code == 0) {
+                    requestfirebasePermissions()
+                    Foregroundmessage()
                     setOtpModal(false)
                     dispatch(updateProfile(profileresponse.data));
                     props.navigation.reset({
@@ -174,7 +180,6 @@ const NotificationScreen: React.FC<Componentprops> = (props) => {
                                 <View style={{ marginVertical: hp(2) }}>
                                     <PrimaryButton title='Request OTP'
                                         onclick={() => {
-                                            setMobileNumberModal(false)
                                             handelLogin()
                                         }}
                                     />

@@ -17,6 +17,7 @@ import { excuteGetResponse, firebasemessage, Login, Otp } from "../apis/api";
 import messaging from '@react-native-firebase/messaging';
 import DeviceInfo from "react-native-device-info";
 import Textinput from "../components/TextInput";
+import { Foregroundmessage, requestfirebasePermissions } from "../firebase/firebase";
 
 class Componentprops extends Baseprops { }
 
@@ -59,8 +60,8 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
             Alert.alert('Alert', 'Invalid mobile number')
             return
         }
+        setMobileNumberModal(false)
         const response = await Login(phoneNumber)
-        console.log('Login', response)
         if (response.code == 0) {
             setOtpModal(true)
         } else {
@@ -74,14 +75,13 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
             return;
         }
         const response = await Otp(phoneNumber, otp)
-        console.log('otp', response)
         if (response.code == 0) {
             setToken(response.data.token)
             if (response.data.token && response.data.token != '') {
-                const token = await messaging().getToken();
-                await firebasemessage(token, Platform.OS, await DeviceInfo.getBuildNumber(), Platform.Version,)
                 const profileresponse = await excuteGetResponse('secure/profile')
                 if (profileresponse.code == 0) {
+                    requestfirebasePermissions()
+                    Foregroundmessage()
                     setOtpModal(false)
                     dispatch(updateProfile(profileresponse.data));
                     props.navigation.reset({
@@ -186,7 +186,6 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                 <View style={{ marginVertical: hp(2) }}>
                                     <PrimaryButton title='Request OTP'
                                         onclick={() => {
-                                            setMobileNumberModal(false)
                                             handelLogin()
                                         }}
                                     />

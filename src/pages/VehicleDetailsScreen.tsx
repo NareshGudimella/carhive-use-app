@@ -32,6 +32,7 @@ import { Asset } from "react-native-image-picker";
 import { CameraView } from "../components/CameraView";
 import { updateProfile } from "../storage/redux";
 import { useDispatch } from "react-redux";
+import { Foregroundmessage, requestfirebasePermissions } from "../firebase/firebase";
 
 
 class Componentprops extends Baseprops { }
@@ -128,11 +129,11 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
             setToken(response.data.token)
             const token = await getToken()
             if (token && token != '') {
-                const token = await messaging().getToken();
-                const firebaserresponse = await firebasemessage(token, Platform.OS, await DeviceInfo.getBuildNumber(), Platform.Version,)
                 const profileresponse = await excuteGetResponse('secure/profile')
                 setIndiCator(false)
                 if (profileresponse.code == 0) {
+                    requestfirebasePermissions()
+                    Foregroundmessage()
                     dispatch(updateProfile(profileresponse.data));
                     if (profileresponse.data.aadhar_verfy_flag == 0) {
                         setOtpModal(false)

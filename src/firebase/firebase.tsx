@@ -1,6 +1,8 @@
 import messaging from '@react-native-firebase/messaging';
 import { Linking, PermissionsAndroid, Platform } from 'react-native';
 import notifee from '@notifee/react-native';
+import { firebasemessage } from '../apis/api';
+import DeviceInfo from 'react-native-device-info';
 
 export const requestfirebasePermissions = async () => {
     const authStatus = await messaging().requestPermission();
@@ -29,6 +31,9 @@ export const requestfirebasePermissions = async () => {
 export const Token = async () => {
     try {
         const token = await messaging().getToken();
+        if (token && token != '') {
+            await firebasemessage(token, Platform.OS, await DeviceInfo.getBuildNumber(), Platform.Version,)
+        }
         console.log('FCM token:', token)
     } catch (error) {
         console.log('failed to get the FCM token', error)
