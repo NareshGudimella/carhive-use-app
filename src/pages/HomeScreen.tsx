@@ -1,4 +1,8 @@
-import { Alert, AppState, BackHandler, Image, Linking, Modal, PermissionsAndroid, Platform, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+    Alert, AppState, BackHandler, Image, Linking, Modal,
+    PermissionsAndroid, Platform, Pressable, ScrollView,
+    StyleSheet, Text, View
+} from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { Background } from "../styles/BackgroundColor";
 import BottomTabNavigation from "../components/BottomTab";
@@ -57,7 +61,6 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
             setCityname(citiedata)
         } else {
             Alert.alert('ALert', 'unable to get banner')
-            return
         }
     }
     {/*pickup date and drop date picker*/ }
@@ -205,7 +208,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                                 props.navigation.reset({
                                                     index: 0,
                                                     routes: [{ name: 'HomeScreen' }],
-                                                  });
+                                                });
                                             }
                                         }
                                         } />
@@ -255,12 +258,20 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                 source={require('../assets/Location.png')}
                                 style={{ height: 26, width: 26, tintColor: '#00354a' }}
                             />
+                            {(cityname && cityname != '') ? 
                             <Text style={{
                                 marginHorizontal: wp(2),
                                 fontWeight: 'bold'
                             }}>
-                                {cityname && cityname !== '' ? cityname.cityname : 'Select city'}
+                                {cityname.cityname}
                             </Text>
+                                :
+                                <Text style={{
+                                    marginHorizontal: wp(2),
+                                    fontWeight: 'bold'
+                                }}>
+                                    Select City
+                                </Text>}
                             <Image
                                 source={require('../assets/mingcute_down-fill.png')}
                                 style={{ height: 10, width: 25, tintColor: '#00354a' }}
