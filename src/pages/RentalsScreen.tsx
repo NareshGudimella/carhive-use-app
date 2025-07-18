@@ -122,6 +122,14 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
         ])
         return
     }
+
+    const openLocationInGoogleMaps = (lat: number, lng: number) => {
+        const url = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+        Linking.openURL(url).catch(err => {
+            Alert.alert('Error', 'Could not open the map. Please try again.');
+        });
+    };
+
     const handelExtendPayment = async (booking_car_id: any) => {
         const response = await excuteGetResponse(`secure/cars/extended_payment/${booking_car_id}`)
         if (response.code == 0) {
@@ -755,7 +763,10 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                                 color: '#64748B'
                                                             }}>Pickup Location</Text>
                                                         <Pressable
-                                                            onPress={() => setAddressChecked('address')}
+                                                            onPress={() => {
+                                                                openLocationInGoogleMaps(e.latitude, e.longitude),
+                                                                setAddressChecked('address')
+                                                            } }
                                                             style={{
                                                                 flexDirection: 'row',
                                                                 alignItems: 'center',

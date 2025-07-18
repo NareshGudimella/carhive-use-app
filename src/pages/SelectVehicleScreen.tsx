@@ -455,6 +455,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                 { fromdate: carsList.from_date, todate: carsList.to_date, id: e.carid })}
                                         key={index}>
                                         <Carousel
+                                            autoPlay={true}
                                             ref={ref}
                                             width={wp(90)}
                                             style={{}}
@@ -580,18 +581,22 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                     fontSize: 17,
                                                     fontWeight: 'bold'
                                                 }}>{e.brand_name}  {e.model_name}</Text>
-                                                <Image
-                                                    source={require('../assets/fastag.png')}
-                                                    style={{
-                                                        height: hp(2),
-                                                        width: wp(15)
-                                                    }}
-                                                />
+
                                             </View>
+                                            <Text style={{
+                                                marginHorizontal: 1,
+                                                fontWeight: '500'
+                                            }}>FuelType : {e.fuel_type}</Text>
+                                            <Text style={{
+                                                marginHorizontal: 1,
+                                                fontWeight: '500',
+                                                marginTop: hp(0.5)
+                                            }}>Transmission : {e.car_transmission}</Text>
                                             <View>
                                                 <View style={{
                                                     flexDirection: 'row',
-                                                    alignItems: 'center'
+                                                    alignItems: 'center',
+                                                    marginTop: hp(0.5)
                                                 }}>
                                                     <Image
                                                         source={
@@ -604,8 +609,8 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                         }} />
                                                     <Text style={{
                                                         marginHorizontal: 1,
-                                                        fontWeight: '500'
-                                                    }}>{e.distance} {e.carArea} {e.fuel_type} {e.car_transmission}</Text>
+                                                        fontWeight: 'bold'
+                                                    }}>{e.distance},  {e.carArea}</Text>
                                                 </View>
                                                 <View style={{
                                                     flexDirection: 'row',
