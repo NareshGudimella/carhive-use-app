@@ -188,7 +188,9 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                         backgroundColor: '#EEEEEE',
                                         marginVertical: hp(1.5)
                                     }} />
-                                    <ScrollView>
+                                    <ScrollView
+                                        showsVerticalScrollIndicator={false}
+                                    >
                                         <Text style={{
                                             color: '#64748B',
                                             fontSize: 17,
@@ -305,7 +307,10 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                 }
                                             </View>
                                         </View>
-                                        <View style={{ marginTop: hp(2) }}>
+                                        <View style={{
+                                            marginTop: hp(2),
+                                            marginBottom: hp(7)
+                                        }}>
                                             <PrimaryButton title='Apply filter'
                                                 onclick={() => {
                                                     handelCarList(),
