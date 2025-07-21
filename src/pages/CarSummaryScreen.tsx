@@ -313,12 +313,13 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                     alignItems: 'center',
                                     top: -30
                                 }}>
-                                    <Pressable onPress={() => setTermsAndCondition(false)} style={{
-                                        position: 'absolute',
-                                        backgroundColor: '#ffffff',
-                                        padding: hp(1),
-                                        borderRadius: 20
-                                    }}>
+                                    <Pressable onPress={() => setTermsAndCondition(false)}
+                                        style={{
+                                            position: 'absolute',
+                                            backgroundColor: '#ffffff',
+                                            padding: hp(1),
+                                            borderRadius: 20
+                                        }}>
                                         <Image source={require('../assets/close.png')}
                                             style={{
                                                 height: 20,

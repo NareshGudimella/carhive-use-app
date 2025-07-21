@@ -562,7 +562,8 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                                                     SetCaremaModal(true);
                                                                 }}
                                                                 style={{
-                                                                    justifyContent: 'center', alignItems: 'center',
+                                                                    justifyContent: 'center',
+                                                                    alignItems: 'center',
                                                                     paddingVertical: hp(2)
                                                                 }}>
                                                                 <Image
@@ -615,7 +616,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                                             :
                                                             <CameraView
                                                                 image={require('../assets/Huge.png')}
-                                                                title="Upload Front"
+                                                                title="Upload Back"
                                                                 onclick={() => {
                                                                     setTargetType('aadharback');
                                                                     SetCaremaModal(true);

@@ -154,7 +154,6 @@ const CameraModalScreen: React.FC<Componentprops> = (props) => {
                                 title='Cancel'
                                 onclick={() => props.close()} />
                         </View>}
-
                 </View>
             </View>
         </Modal>
