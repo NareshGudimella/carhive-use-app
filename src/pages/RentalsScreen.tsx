@@ -756,6 +756,23 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                                     }} />
                                                             </Pressable>
                                                         </View>
+                                                        <View style={{
+                                                            flexDirection: 'row',
+                                                            alignItems: 'center',
+                                                            marginVertical: hp(1)
+                                                        }}>
+                                                            <Text style={{
+                                                                fontSize: 20,
+                                                                fontWeight: 'bold',
+                                                                color: '#000000'
+                                                            }}>OTP : </Text>
+                                                            <Text
+                                                                style={{
+                                                                    fontSize: 20,
+                                                                    fontWeight: 'bold',
+                                                                    color: 'gray'
+                                                                }}>{e.booking_otp}</Text>
+                                                        </View>
                                                         <Text
                                                             style={{
                                                                 fontSize: 13,
@@ -765,8 +782,8 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                         <Pressable
                                                             onPress={() => {
                                                                 openLocationInGoogleMaps(e.latitude, e.longitude),
-                                                                setAddressChecked('address')
-                                                            } }
+                                                                    setAddressChecked('address')
+                                                            }}
                                                             style={{
                                                                 flexDirection: 'row',
                                                                 alignItems: 'center',

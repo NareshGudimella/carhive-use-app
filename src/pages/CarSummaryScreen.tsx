@@ -76,6 +76,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
         }
     }
     const handelModelData = async () => {
+        setTermsAndCondition(true)
         const response = await excuteGetResponse(`secure/cars/policies/${carDetails.carid}`)
         console.log('t&c', response, carDetails.carid)
         if (response.code == 0) {
@@ -154,276 +155,276 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
         }
     }
 
+    const handleTermsAndConditions = async () => {
+        if (terms_condition_flag == '') {
+            Alert.alert('Alert!', 'Please accept the Terms & Conditions.');
+            return
+        }
+        setTermsAndCondition(false)
+        setTimeout(() => {
+            setEligiabilityModal(true)
+        }, 1000);
+    }
+
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            {
-                couponModalScreen &&
-                <View>
-                    <Modal
-                        animationType="slide"
-                        transparent={true}
-                        visible={couponModalScreen}
-                        onRequestClose={() => {
-                            setCoupanModalScreen(!couponModalScreen);
-                        }}
-                    >
-                        <BottomModelView onclick={() => setCoupanModalScreen(false)}>
-                            <View style={{ margin: wp(5) }}>
-                                <View style={{
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                }}>
-                                    <Pressable onPress={() => setCoupanModalScreen(false)}>
-                                        <Image source={require('../assets/Back.png')}
+            <View>
+                {couponModalScreen &&
+                    <View>
+                        <Modal
+                            animationType="slide"
+                            transparent={true}
+                            visible={couponModalScreen}
+                            onRequestClose={() => {
+                                setCoupanModalScreen(!couponModalScreen);
+                            }}
+                        >
+                            <BottomModelView onclick={() => setCoupanModalScreen(false)}>
+                                <View style={{ margin: wp(5) }}>
+                                    <View style={{
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                    }}>
+                                        <Pressable onPress={() => setCoupanModalScreen(false)}>
+                                            <Image source={require('../assets/Back.png')}
+                                                style={{
+                                                    height: 30,
+                                                    width: 30
+                                                }} />
+                                        </Pressable>
+                                        <Text style={{
+                                            fontSize: 16,
+                                            fontWeight: 'bold',
+                                            marginHorizontal: wp(2.5)
+                                        }}>Coupon Code</Text>
+                                    </View>
+                                    <View style={{
+                                        flexDirection: 'row',
+                                        justifyContent: 'space-between',
+                                        backgroundColor: '#ffffff',
+                                        elevation: 2,
+                                        borderRadius: 10,
+                                        paddingVertical: wp(1.5),
+                                        paddingHorizontal: wp(1.5),
+                                        marginVertical: hp(2)
+                                    }}>
+                                        <TextInput
                                             style={{
-                                                height: 30,
-                                                width: 30
-                                            }} />
-                                    </Pressable>
-                                    <Text style={{
-                                        fontSize: 16,
-                                        fontWeight: 'bold',
-                                        marginHorizontal: wp(2.5)
-                                    }}>Coupon Code</Text>
-                                </View>
-                                <View style={{
-                                    flexDirection: 'row',
-                                    justifyContent: 'space-between',
-                                    backgroundColor: '#ffffff',
-                                    elevation: 2,
-                                    borderRadius: 10,
-                                    paddingVertical: wp(1.5),
-                                    paddingHorizontal: wp(1.5),
-                                    marginVertical: hp(2)
-                                }}>
-                                    <TextInput
-                                        style={{
-                                            width: wp(62),
-                                            marginHorizontal: wp(2),
-                                            fontWeight: 'bold'
-                                        }}
-                                        onChangeText={setCouponcode}
-                                        value={couponcode}
-                                        placeholder="Enter Coupon code"
-                                        placeholderTextColor='#757575' />
-                                    <Pressable
-                                        onPress={() => {
-                                            setCoupanModalScreen(false)
-                                        }}
-                                        style={{
-                                            backgroundColor: '#00354a',
-                                            paddingVertical: 2,
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                            paddingHorizontal: wp(6),
-                                            borderRadius: 10
-
-                                        }}>
-                                        <Text
-                                            style={{
-                                                color: '#ffffff',
-                                                fontSize: 14,
+                                                width: wp(62),
+                                                marginHorizontal: wp(2),
                                                 fontWeight: 'bold'
-                                            }}>Apply</Text>
-                                    </Pressable>
-                                </View>
-                                <Text style={{
-                                    fontSize: 14,
-                                    fontWeight: 'bold'
-                                }}>Available</Text>
-                                <View>
-                                    {cuopon && cuopon.map((e: any, index: any) => (
-                                        <View key={index} style={{ marginVertical: hp(1) }}>
-                                            <Cardview>
-                                                <View style={{
-                                                    marginVertical: hp(1.5),
-                                                    marginHorizontal: wp(3)
-                                                }}>
+                                            }}
+                                            onChangeText={setCouponcode}
+                                            value={couponcode}
+                                            placeholder="Enter Coupon code"
+                                            placeholderTextColor='#757575' />
+                                        <Pressable
+                                            onPress={() => {
+                                                setCoupanModalScreen(false)
+                                            }}
+                                            style={{
+                                                backgroundColor: '#00354a',
+                                                paddingVertical: 2,
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                paddingHorizontal: wp(6),
+                                                borderRadius: 10
+
+                                            }}>
+                                            <Text
+                                                style={{
+                                                    color: '#ffffff',
+                                                    fontSize: 14,
+                                                    fontWeight: 'bold'
+                                                }}>Apply</Text>
+                                        </Pressable>
+                                    </View>
+                                    <Text style={{
+                                        fontSize: 14,
+                                        fontWeight: 'bold'
+                                    }}>Available</Text>
+                                    <View>
+                                        {cuopon && cuopon.map((e: any, index: any) => (
+                                            <View key={index} style={{ marginVertical: hp(1) }}>
+                                                <Cardview>
                                                     <View style={{
-                                                        flexDirection: 'row',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'space-between'
+                                                        marginVertical: hp(1.5),
+                                                        marginHorizontal: wp(3)
                                                     }}>
-                                                        <Text
-                                                            style={{
-                                                                fontSize: 16,
-                                                                fontWeight: 'bold'
-                                                            }}>{e.offercode}</Text>
-                                                        <Pressable
-                                                            onPress={() => {
-                                                                setCouponcode(e.offercode)
-                                                            }}
-                                                            style={[couponcode == e.offercode ? { backgroundColor: '#009940' } : { backgroundColor: '#00354a' }, {
-                                                                paddingVertical: 2,
-                                                                justifyContent: 'center',
-                                                                alignItems: 'center',
-                                                                paddingHorizontal: wp(6),
-                                                                borderRadius: 10,
-                                                                height: hp(3.5)
-                                                            }]}>
+                                                        <View style={{
+                                                            flexDirection: 'row',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'space-between'
+                                                        }}>
                                                             <Text
                                                                 style={{
-                                                                    color: '#ffffff',
-                                                                    fontSize: 14,
+                                                                    fontSize: 16,
                                                                     fontWeight: 'bold'
-                                                                }}>{couponcode == e.offercode ? 'Applied' : 'Apply'}</Text>
-                                                        </Pressable>
+                                                                }}>{e.offercode}</Text>
+                                                            <Pressable
+                                                                onPress={() => {
+                                                                    setCouponcode(e.offercode)
+                                                                }}
+                                                                style={[couponcode == e.offercode ? { backgroundColor: '#009940' } : { backgroundColor: '#00354a' }, {
+                                                                    paddingVertical: 2,
+                                                                    justifyContent: 'center',
+                                                                    alignItems: 'center',
+                                                                    paddingHorizontal: wp(6),
+                                                                    borderRadius: 10,
+                                                                    height: hp(3.5)
+                                                                }]}>
+                                                                <Text
+                                                                    style={{
+                                                                        color: '#ffffff',
+                                                                        fontSize: 14,
+                                                                        fontWeight: 'bold'
+                                                                    }}>{couponcode == e.offercode ? 'Applied' : 'Apply'}</Text>
+                                                            </Pressable>
+                                                        </View>
+                                                        <View style={{
+                                                            borderWidth: 0.5,
+                                                            borderColor: '#75757533',
+                                                            marginVertical: hp(1),
+                                                            borderStyle: 'dashed'
+                                                        }} />
+                                                        <Text
+                                                            style={{
+                                                                fontSize: 13,
+                                                                fontWeight: '500',
+                                                                color: '#64748B',
+                                                                width: wp(70),
+                                                                marginHorizontal: wp(2)
+                                                            }}
+                                                        >Use code firstride & get 60% off
+                                                            on ride maximum discount you get ₹100</Text>
                                                     </View>
-                                                    <View style={{
-                                                        borderWidth: 0.5,
-                                                        borderColor: '#75757533',
-                                                        marginVertical: hp(1),
-                                                        borderStyle: 'dashed'
-                                                    }} />
-                                                    <Text
-                                                        style={{
-                                                            fontSize: 13,
-                                                            fontWeight: '500',
-                                                            color: '#64748B',
-                                                            width: wp(70),
-                                                            marginHorizontal: wp(2)
-                                                        }}
-                                                    >Use code firstride & get 60% off
-                                                        on ride maximum discount you get ₹100</Text>
-                                                </View>
-                                            </Cardview>
-                                        </View>
-                                    ))}
+                                                </Cardview>
+                                            </View>
+                                        ))}
+                                    </View>
                                 </View>
-                            </View>
-                        </BottomModelView>
-                    </Modal>
-                </View>
-            }
-            {
-                termsAndConditions &&
-                <View>
-                    <Modal
-                        animationType="slide"
-                        transparent={true}
-                        visible={termsAndConditions}
-                        onRequestClose={() => {
-                            setTermsAndCondition(!termsAndConditions);
-                        }}
-                    >
-                        <BottomModelView onclick={() => setTermsAndCondition(false)}>
-                            <View style={{}}>
-                                <View style={{
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    top: -30
-                                }}>
-                                    <Pressable onPress={() => setTermsAndCondition(false)}
-                                        style={{
+                            </BottomModelView>
+                        </Modal>
+                    </View>
+                }
+            </View>
+
+            <View>
+                {termsAndConditions &&
+                    <View>
+                        <Modal
+                            animationType="slide"
+                            transparent={true}
+                            visible={termsAndConditions}
+                            onRequestClose={() => {
+                                setTermsAndCondition(!termsAndConditions);
+                            }}
+                        >
+                            <BottomModelView onclick={() => setTermsAndCondition(false)}>
+                                <View style={{}}>
+                                    <View style={{
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        top: -30
+                                    }}>
+                                        <Pressable onPress={() => setTermsAndCondition(false)} style={{
                                             position: 'absolute',
                                             backgroundColor: '#ffffff',
                                             padding: hp(1),
                                             borderRadius: 20
                                         }}>
-                                        <Image source={require('../assets/close.png')}
-                                            style={{
-                                                height: 20,
-                                                width: 20
-                                            }} />
-                                    </Pressable>
-                                </View>
-                                <View style={{
-                                    flexDirection: 'row',
-                                    justifyContent: 'space-between',
-                                    marginHorizontal: wp(5),
-                                    paddingVertical: hp(2)
-                                }}>
-                                    <Pressable
-                                        style={typeofTandC == 't&c' ? {
-                                            backgroundColor: '#00354a',
-                                            borderRadius: 10,
-                                            width: wp(28),
-                                            paddingVertical: hp(1),
-                                            justifyContent: 'center',
-                                            alignItems: 'center'
-                                        } : {
-                                            width: wp(28),
-                                            paddingVertical: hp(1),
-                                            justifyContent: 'center',
-                                            alignItems: 'center'
-                                        }}
-                                        onPress={() => setTypeTandC('t&c')}>
-                                        <Text
+                                            <Image source={require('../assets/close.png')}
+                                                style={{
+                                                    height: 20,
+                                                    width: 20
+                                                }} />
+                                        </Pressable>
+                                    </View>
+                                    <View style={{
+                                        flexDirection: 'row',
+                                        justifyContent: 'space-between',
+                                        marginHorizontal: wp(5),
+                                        paddingVertical: hp(2)
+                                    }}>
+                                        <Pressable
                                             style={typeofTandC == 't&c' ? {
-                                                fontSize: 16,
-                                                fontWeight: '500',
-                                                color: '#ffffff'
+                                                backgroundColor: '#00354a',
+                                                borderRadius: 10,
+                                                width: wp(28),
+                                                paddingVertical: hp(1),
+                                                justifyContent: 'center',
+                                                alignItems: 'center'
                                             } : {
-                                                fontSize: 15,
-                                                fontWeight: '500'
-                                            }}>T & C</Text>
-                                    </Pressable>
-                                    <Pressable
-                                        style={typeofTandC == 'Cancellation' ? {
-                                            backgroundColor: '#00354a',
-                                            borderRadius: 10,
-                                            width: wp(28),
-                                            paddingVertical: hp(1),
-                                            justifyContent: 'center',
-                                            alignItems: 'center'
-                                        } : {
-                                            width: wp(28),
-                                            paddingVertical: hp(1),
-                                            justifyContent: 'center',
-                                            alignItems: 'center'
-                                        }}
-                                        onPress={() => setTypeTandC('Cancellation')}>
-                                        <Text
-                                            style={typeofTandC == 'Cancellation' ? {
-                                                fontSize: 16,
-                                                fontWeight: '500',
-                                                color: '#ffffff'
-                                            } : {
-                                                fontSize: 15,
-                                                fontWeight: '500'
-                                            }}>Cancellation</Text>
-                                    </Pressable>
-                                    <Pressable
-                                        style={typeofTandC == 'Modification' ? {
-                                            backgroundColor: '#00354a',
-                                            borderRadius: 10,
-                                            width: wp(28),
-                                            paddingVertical: hp(1),
-                                            justifyContent: 'center',
-                                            alignItems: 'center'
-                                        } : {
-                                            width: wp(28),
-                                            paddingVertical: hp(1),
-                                            justifyContent: 'center',
-                                            alignItems: 'center'
-                                        }}
-                                        onPress={() => setTypeTandC('Modification')}>
-                                        <Text
-                                            style={typeofTandC == 'Modification' ? {
-                                                fontSize: 16,
-                                                fontWeight: '500',
-                                                color: '#ffffff'
-                                            } : {
-                                                fontSize: 15,
-                                                fontWeight: '500'
-                                            }}>Modification</Text>
-                                    </Pressable>
-                                </View>
-                                <View>
-                                    {
-                                        typeofTandC == 't&c' ?
-                                            <ScrollView style={{ marginHorizontal: wp(5), maxHeight: hp(60) }}>
-                                                <Text style={{
-                                                    color: '#64748B',
+                                                width: wp(28),
+                                                paddingVertical: hp(1),
+                                                justifyContent: 'center',
+                                                alignItems: 'center'
+                                            }}
+                                            onPress={() => setTypeTandC('t&c')}>
+                                            <Text
+                                                style={typeofTandC == 't&c' ? {
+                                                    fontSize: 16,
                                                     fontWeight: '500',
-                                                    lineHeight: hp(2.5),
-                                                    marginHorizontal: wp(3),
-                                                    marginVertical: hp(1)
-                                                }}>
-                                                    {ModelcancelData && ModelcancelData.terms_conditions}
-                                                </Text>
-                                            </ScrollView> :
-                                            typeofTandC == 'Cancellation' ?
+                                                    color: '#ffffff'
+                                                } : {
+                                                    fontSize: 15,
+                                                    fontWeight: '500'
+                                                }}>T & C</Text>
+                                        </Pressable>
+                                        <Pressable
+                                            style={typeofTandC == 'Cancellation' ? {
+                                                backgroundColor: '#00354a',
+                                                borderRadius: 10,
+                                                width: wp(28),
+                                                paddingVertical: hp(1),
+                                                justifyContent: 'center',
+                                                alignItems: 'center'
+                                            } : {
+                                                width: wp(28),
+                                                paddingVertical: hp(1),
+                                                justifyContent: 'center',
+                                                alignItems: 'center'
+                                            }}
+                                            onPress={() => setTypeTandC('Cancellation')}>
+                                            <Text
+                                                style={typeofTandC == 'Cancellation' ? {
+                                                    fontSize: 16,
+                                                    fontWeight: '500',
+                                                    color: '#ffffff'
+                                                } : {
+                                                    fontSize: 15,
+                                                    fontWeight: '500'
+                                                }}>Cancellation</Text>
+                                        </Pressable>
+                                        <Pressable
+                                            style={typeofTandC == 'Modification' ? {
+                                                backgroundColor: '#00354a',
+                                                borderRadius: 10,
+                                                width: wp(28),
+                                                paddingVertical: hp(1),
+                                                justifyContent: 'center',
+                                                alignItems: 'center'
+                                            } : {
+                                                width: wp(28),
+                                                paddingVertical: hp(1),
+                                                justifyContent: 'center',
+                                                alignItems: 'center'
+                                            }}
+                                            onPress={() => setTypeTandC('Modification')}>
+                                            <Text
+                                                style={typeofTandC == 'Modification' ? {
+                                                    fontSize: 16,
+                                                    fontWeight: '500',
+                                                    color: '#ffffff'
+                                                } : {
+                                                    fontSize: 15,
+                                                    fontWeight: '500'
+                                                }}>Modification</Text>
+                                        </Pressable>
+                                    </View>
+                                    <View>
+                                        {
+                                            typeofTandC == 't&c' ?
                                                 <ScrollView style={{ marginHorizontal: wp(5), maxHeight: hp(60) }}>
                                                     <Text style={{
                                                         color: '#64748B',
@@ -432,10 +433,10 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                                         marginHorizontal: wp(3),
                                                         marginVertical: hp(1)
                                                     }}>
-                                                        {ModelcancelData && ModelcancelData.cancellation}
+                                                        {ModelcancelData && ModelcancelData.terms_conditions}
                                                     </Text>
                                                 </ScrollView> :
-                                                typeofTandC == 'Modification' ?
+                                                typeofTandC == 'Cancellation' ?
                                                     <ScrollView style={{ marginHorizontal: wp(5), maxHeight: hp(60) }}>
                                                         <Text style={{
                                                             color: '#64748B',
@@ -444,236 +445,250 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                                             marginHorizontal: wp(3),
                                                             marginVertical: hp(1)
                                                         }}>
-                                                            {ModelcancelData && ModelcancelData.modification}
+                                                            {ModelcancelData && ModelcancelData.cancellation}
                                                         </Text>
-                                                    </ScrollView> : <></>
-                                    }
+                                                    </ScrollView> :
+                                                    typeofTandC == 'Modification' ?
+                                                        <ScrollView style={{ marginHorizontal: wp(5), maxHeight: hp(60) }}>
+                                                            <Text style={{
+                                                                color: '#64748B',
+                                                                fontWeight: '500',
+                                                                lineHeight: hp(2.5),
+                                                                marginHorizontal: wp(3),
+                                                                marginVertical: hp(1)
+                                                            }}>
+                                                                {ModelcancelData && ModelcancelData.modification}
+                                                            </Text>
+                                                        </ScrollView> : <></>
+                                        }
+                                    </View>
+                                    <View style={{ marginHorizontal: wp(5) }}>
+                                        <View style={{
+                                            flexDirection: 'row',
+                                            alignItems: 'center',
+                                            marginHorizontal: wp(1)
+                                        }}>
+                                            <Checkbox
+                                                status={terms_condition_flag ? 'checked' : 'unchecked'}
+                                                color="#00354a"
+                                                onPress={() => {
+                                                    setTerms_condition_flag('1');
+                                                }}
+                                            />
+                                            <Text style={{
+                                                fontSize: 15,
+                                                fontWeight: 'bold'
+                                            }}>
+                                                I agree to the Terms & Conditions.
+                                            </Text>
+                                        </View>
+                                        <View
+                                            style={{
+                                                marginVertical: hp(3),
+                                                marginTop: hp(2)
+                                            }}>
+                                            <PrimaryButton
+                                                title='Proceed'
+                                                onclick={() => {
+                                                    handleTermsAndConditions()
+                                                }} />
+                                        </View>
+                                    </View>
                                 </View>
-                                <View style={{ marginHorizontal: wp(5) }}>
+                            </BottomModelView>
+                        </Modal>
+                    </View>
+                }
+            </View>
+
+            <View>
+
+
+                {
+                    eligiabilityModal &&
+                    <View>
+                        <Modal
+                            animationType="slide"
+                            transparent={true}
+                            visible={eligiabilityModal}
+                        >
+                            <BottomModelView onclick={() => setEligiabilityModal(false)}>
+                                <View style={{
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    top: -30
+                                }}>
+                                    <Pressable onPress={() => setEligiabilityModal(false)} style={{
+                                        position: 'absolute',
+                                        backgroundColor: '#ffffff',
+                                        padding: hp(1),
+                                        borderRadius: 20
+                                    }}>
+                                        <Image source={require('../assets/close.png')}
+                                            style={{
+                                                height: 20,
+                                                width: 20
+                                            }} />
+                                    </Pressable>
+                                </View>
+                                <View style={{
+                                    marginHorizontal: wp(5),
+                                    marginVertical: hp(2)
+                                }}>
+
+                                    <Text
+                                        style={{
+                                            fontSize: 16,
+                                            fontWeight: 'bold',
+                                            marginVertical: hp(1)
+                                        }}
+                                    >Important points for your booking
+                                    </Text>
+                                    <Text
+                                        style={{
+                                            color: '#64748B',
+                                            fontWeight: '400',
+                                            marginVertical: hp(1)
+                                        }}
+                                    >To Take Delivery of the car ,
+                                        you will need to present in
+                                        person and show these documents
+                                        to our delivery executive :</Text>
                                     <View style={{
                                         flexDirection: 'row',
-                                        alignItems: 'center',
+                                        marginVertical: hp(1)
+                                    }}>
+                                        <Image
+                                            source={require('../assets/personalcard.png')}
+                                            style={{
+                                                height: 32,
+                                                width: 40
+                                            }} />
+                                        <View style={{ marginHorizontal: wp(3) }}>
+                                            <Text style={{
+                                                fontSize: 16,
+                                                fontWeight: 'bold'
+                                            }}>
+                                                Driving License
+                                            </Text>
+                                            <Text style={{
+                                                color: '#64748B',
+                                                fontWeight: '400',
+                                                width: wp(60)
+                                            }}>Digilocker or original -issued
+                                                at least 6 months ago</Text>
+                                        </View>
+                                    </View>
+                                    <View style={{
+                                        flexDirection: 'row',
+                                        marginVertical: hp(1)
+                                    }}>
+                                        <Image
+                                            source={require('../assets/personalcard1.png')}
+                                            style={{
+                                                height: 32,
+                                                width: 40
+                                            }} />
+                                        <View style={{ marginHorizontal: wp(3) }}>
+                                            <Text style={{
+                                                fontSize: 16,
+                                                fontWeight: 'bold'
+                                            }}>
+                                                Aadhar/Passport
+                                            </Text>
+                                            <Text style={{
+                                                color: '#64748B',
+                                                fontWeight: '400',
+                                                width: wp(60)
+                                            }}>Digilocker or original or copy</Text>
+                                        </View>
+                                    </View>
+                                    <View style={{
+                                        flexDirection: 'row',
+                                        marginVertical: hp(1)
+                                    }}>
+                                        <Image
+                                            source={require('../assets/personalcard2.png')}
+                                            style={{
+                                                height: 32,
+                                                width: 40
+                                            }} />
+                                        <View style={{ marginHorizontal: wp(3) }}>
+                                            <Text style={{
+                                                fontSize: 16,
+                                                fontWeight: 'bold'
+                                            }}>
+                                                21+ Years of age
+                                            </Text>
+                                            <Text style={{
+                                                color: '#64748B',
+                                                fontWeight: '400',
+                                                width: wp(60)
+                                            }}>As per driving license</Text>
+                                        </View>
+                                    </View>
+                                    <View style={{
+                                        flexDirection: 'row',
                                         marginHorizontal: wp(1)
                                     }}>
                                         <Checkbox
-                                            status={terms_condition_flag ? 'checked' : 'unchecked'}
+                                            status={eligiabilityflag ? 'checked' : 'unchecked'}
                                             color="#00354a"
                                             onPress={() => {
-                                                setTerms_condition_flag('1');
+                                                setEligiabilityflag('1')
                                             }}
                                         />
                                         <Text style={{
-                                            fontSize: 15,
-                                            fontWeight: 'bold'
+                                            fontSize: 13,
+                                            fontWeight: '500',
+                                            width: wp(70),
+                                            top: 5,
+                                            marginHorizontal: wp(2)
                                         }}>
-                                            I agree to the Terms & Conditions.
+                                            I acknowledge that in the absence of
+                                            the documents at the time of delivery,
+                                            the car will not be handed over and
+                                            cancellation charge (up to Rs 5,000)
+                                            will apply
                                         </Text>
                                     </View>
                                     <View
                                         style={{
-                                            marginVertical: hp(3),
-                                            marginTop: hp(2)
+                                            marginVertical: hp(2),
+                                            marginTop: hp(4)
                                         }}>
                                         <PrimaryButton
                                             title='Proceed'
                                             onclick={() => {
-                                                if (terms_condition_flag == '') {
-                                                    Alert.alert('Alert!', 'Please accept the Terms & Conditions.');
-                                                    return
-                                                }
-                                                setTermsAndCondition(false)
-                                                setEligiabilityModal(true)
+                                                handelPaymentDetails()
                                             }} />
                                     </View>
+                                    <View style={{
+                                        justifyContent: "center",
+                                        alignItems: "center"
+                                    }}>
+                                        <Text
+                                            style={{
+                                                color: "#9CA3AF",
+                                                width: wp(70),
+                                                textAlign: "center",
+                                                lineHeight: hp(2.5)
+                                            }}
+                                        >
+                                            By signing up you agree to
+                                            <Text style={{ color: "#00354a" }}>
+                                                {" "}
+                                                Terms of Services & Privacy Policy.
+                                            </Text>
+                                        </Text>
+                                    </View>
                                 </View>
-                            </View>
-                        </BottomModelView>
-                    </Modal>
-                </View>
-            }
-            {
-                eligiabilityModal &&
-                <View>
-                    <Modal
-                        animationType="slide"
-                        transparent={true}
-                        visible={eligiabilityModal}
-                    >
-                        <BottomModelView onclick={() => setEligiabilityModal(false)}>
-                            <View style={{
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                top: -30
-                            }}>
-                                <Pressable onPress={() => setEligiabilityModal(false)} style={{
-                                    position: 'absolute',
-                                    backgroundColor: '#ffffff',
-                                    padding: hp(1),
-                                    borderRadius: 20
-                                }}>
-                                    <Image source={require('../assets/close.png')}
-                                        style={{
-                                            height: 20,
-                                            width: 20
-                                        }} />
-                                </Pressable>
-                            </View>
-                            <View style={{
-                                marginHorizontal: wp(5),
-                                marginVertical: hp(2)
-                            }}>
+                            </BottomModelView>
+                        </Modal>
+                    </View>
+                }
+            </View>
 
-                                <Text
-                                    style={{
-                                        fontSize: 16,
-                                        fontWeight: 'bold',
-                                        marginVertical: hp(1)
-                                    }}
-                                >Important points for your booking
-                                </Text>
-                                <Text
-                                    style={{
-                                        color: '#64748B',
-                                        fontWeight: '400',
-                                        marginVertical: hp(1)
-                                    }}
-                                >To Take Delivery of the car ,
-                                    you will need to present in
-                                    person and show these documents
-                                    to our delivery executive :</Text>
-                                <View style={{
-                                    flexDirection: 'row',
-                                    marginVertical: hp(1)
-                                }}>
-                                    <Image
-                                        source={require('../assets/personalcard.png')}
-                                        style={{
-                                            height: 32,
-                                            width: 40
-                                        }} />
-                                    <View style={{ marginHorizontal: wp(3) }}>
-                                        <Text style={{
-                                            fontSize: 16,
-                                            fontWeight: 'bold'
-                                        }}>
-                                            Driving License
-                                        </Text>
-                                        <Text style={{
-                                            color: '#64748B',
-                                            fontWeight: '400',
-                                            width: wp(60)
-                                        }}>Digilocker or original -issued
-                                            at least 6 months ago</Text>
-                                    </View>
-                                </View>
-                                <View style={{
-                                    flexDirection: 'row',
-                                    marginVertical: hp(1)
-                                }}>
-                                    <Image
-                                        source={require('../assets/personalcard1.png')}
-                                        style={{
-                                            height: 32,
-                                            width: 40
-                                        }} />
-                                    <View style={{ marginHorizontal: wp(3) }}>
-                                        <Text style={{
-                                            fontSize: 16,
-                                            fontWeight: 'bold'
-                                        }}>
-                                            Aadhar/Passport
-                                        </Text>
-                                        <Text style={{
-                                            color: '#64748B',
-                                            fontWeight: '400',
-                                            width: wp(60)
-                                        }}>Digilocker or original or copy</Text>
-                                    </View>
-                                </View>
-                                <View style={{
-                                    flexDirection: 'row',
-                                    marginVertical: hp(1)
-                                }}>
-                                    <Image
-                                        source={require('../assets/personalcard2.png')}
-                                        style={{
-                                            height: 32,
-                                            width: 40
-                                        }} />
-                                    <View style={{ marginHorizontal: wp(3) }}>
-                                        <Text style={{
-                                            fontSize: 16,
-                                            fontWeight: 'bold'
-                                        }}>
-                                            21+ Years of age
-                                        </Text>
-                                        <Text style={{
-                                            color: '#64748B',
-                                            fontWeight: '400',
-                                            width: wp(60)
-                                        }}>As per driving license</Text>
-                                    </View>
-                                </View>
-                                <View style={{
-                                    flexDirection: 'row',
-                                    marginHorizontal: wp(1)
-                                }}>
-                                    <Checkbox
-                                        status={eligiabilityflag ? 'checked' : 'unchecked'}
-                                        color="#00354a"
-                                        onPress={() => {
-                                            setEligiabilityflag('1')
-                                        }}
-                                    />
-                                    <Text style={{
-                                        fontSize: 13,
-                                        fontWeight: '500',
-                                        width: wp(70),
-                                        top: 5,
-                                        marginHorizontal: wp(2)
-                                    }}>
-                                        I acknowledge that in the absence of
-                                        the documents at the time of delivery,
-                                        the car will not be handed over and
-                                        cancellation charge (up to Rs 5,000)
-                                        will apply
-                                    </Text>
-                                </View>
-                                <View
-                                    style={{
-                                        marginVertical: hp(2),
-                                        marginTop: hp(4)
-                                    }}>
-                                    <PrimaryButton
-                                        title='Proceed'
-                                        onclick={() => {
-                                            handelPaymentDetails()
-                                        }} />
-                                </View>
-                                <View style={{
-                                    justifyContent: "center",
-                                    alignItems: "center"
-                                }}>
-                                    <Text
-                                        style={{
-                                            color: "#9CA3AF",
-                                            width: wp(70),
-                                            textAlign: "center",
-                                            lineHeight: hp(2.5)
-                                        }}
-                                    >
-                                        By signing up you agree to
-                                        <Text style={{ color: "#00354a" }}>
-                                            {" "}
-                                            Terms of Services & Privacy Policy.
-                                        </Text>
-                                    </Text>
-                                </View>
-                            </View>
-                        </BottomModelView>
-                    </Modal>
-                </View>
-            }
             <View style={{ flex: 1 }}>
                 <View style={{
                     backgroundColor: '#ffffff',
@@ -1042,7 +1057,6 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                     title={`Pay  ₹${carDetails && carDetails.total_price}`}
                     onclick={() => {
                         handelModelData()
-                        setTermsAndCondition(true)
                     }} />
             </View>
         </SafeAreaView>
