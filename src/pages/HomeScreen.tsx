@@ -116,63 +116,99 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
     };
 
     const VerifyLocationPermission = async () => {
-        if (Platform.OS == 'android') {
-            const granted = await
-                PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
-            const granted1 = await
-                PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION)
+        if (Platform.OS === 'android') {
+            const granted = await PermissionsAndroid.check(
+                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+            );
+            const granted1 = await PermissionsAndroid.check(
+                PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION
+            );
+
             if (granted && granted1) {
-                Geolocation.getCurrentPosition(position => {
-                    const { latitude, longitude } = position.coords
-                    handelCheckDate(latitude, longitude)
-                }, error => {
-                    console.log(error)
-                })
+                Geolocation.getCurrentPosition(
+                    (position) => {
+                        const { latitude, longitude } = position.coords;
+                        handelCheckDate(latitude, longitude);
+                    },
+                    (error) => {
+                        console.log("Location error:", error);
+                        Alert.alert(
+                            "Location Required",
+                            "Please turn on the location services (GPS) in your phone.",
+                            [{ text: "OK" }]
+                        );
+                    }
+                );
             } else {
-                const granted = await
-                    PermissionsAndroid.requestMultiple([
-                        PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
-                        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-                    ])
-                if (granted[PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION] ==
+                const granted = await PermissionsAndroid.requestMultiple([
+                    PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+                    PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                ]);
+
+                if (
+                    granted[PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION] ===
                     PermissionsAndroid.RESULTS.GRANTED &&
-                    granted[PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION] ==
+                    granted[PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION] ===
                     PermissionsAndroid.RESULTS.GRANTED
                 ) {
-                    Geolocation.getCurrentPosition(position => {
-                        const { latitude, longitude } = position.coords
-                        handelCheckDate(latitude, longitude)
-                    }, error => {
-                        console.log(error)
-                    })
+                    Geolocation.getCurrentPosition(
+                        (position) => {
+                            const { latitude, longitude } = position.coords;
+                            handelCheckDate(latitude, longitude);
+                        },
+                        (error) => {
+                            console.log("Location error:", error);
+                            Alert.alert(
+                                "Location Required",
+                                "Please turn on the location services (GPS) in your phone.",
+                                [{ text: "OK" }]
+                            );
+                        }
+                    );
                 } else {
-                    setLocationDeniedFlag(true)
+                    setLocationDeniedFlag(true);
                 }
             }
-        } else if (Platform.OS == 'ios') {
-            const granted = await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE)
-            if (granted == 'granted') {
-                Geolocation.getCurrentPosition(position => {
-                    const { latitude, longitude } = position.coords
-                    handelCheckDate(latitude, longitude)
-                }, error => {
-                    console.log(error)
-                })
+        } else if (Platform.OS === 'ios') {
+            const granted = await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+            if (granted === 'granted') {
+                Geolocation.getCurrentPosition(
+                    (position) => {
+                        const { latitude, longitude } = position.coords;
+                        handelCheckDate(latitude, longitude);
+                    },
+                    (error) => {
+                        console.log("Location error:", error);
+                        Alert.alert(
+                            "Location Required",
+                            "Please turn on the location services (GPS) in your phone.",
+                            [{ text: "OK" }]
+                        );
+                    }
+                );
             } else {
-                const granted = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE)
-                if (granted == 'granted') {
-                    Geolocation.getCurrentPosition(position => {
-                        const { latitude, longitude } = position.coords
-                        handelCheckDate(latitude, longitude)
-                    }, error => {
-                        console.log(error)
-                    })
+                const requestResult = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+                if (requestResult === 'granted') {
+                    Geolocation.getCurrentPosition(
+                        (position) => {
+                            const { latitude, longitude } = position.coords;
+                            handelCheckDate(latitude, longitude);
+                        },
+                        (error) => {
+                            console.log("Location error:", error);
+                            Alert.alert(
+                                "Location Required",
+                                "Please turn on the location services (GPS) in your phone.",
+                                [{ text: "OK" }]
+                            );
+                        }
+                    );
                 } else {
-                    setLocationDeniedFlag(true)
+                    setLocationDeniedFlag(true);
                 }
             }
         }
-    }
+    };
 
     const handleOpenSettings = async () => {
         setLocationDeniedFlag(false)
@@ -258,13 +294,13 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                 source={require('../assets/Location.png')}
                                 style={{ height: 26, width: 26, tintColor: '#00354a' }}
                             />
-                            {(cityname && cityname != '') ? 
-                            <Text style={{
-                                marginHorizontal: wp(2),
-                                fontWeight: 'bold'
-                            }}>
-                                {cityname.cityname}
-                            </Text>
+                            {(cityname && cityname != '') ?
+                                <Text style={{
+                                    marginHorizontal: wp(2),
+                                    fontWeight: 'bold'
+                                }}>
+                                    {cityname.cityname}
+                                </Text>
                                 :
                                 <Text style={{
                                     marginHorizontal: wp(2),

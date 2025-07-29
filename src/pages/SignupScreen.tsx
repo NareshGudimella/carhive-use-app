@@ -1,19 +1,20 @@
-import { Alert, Image, Modal, Pressable, ScrollView, Text, View } from "react-native";
+import { Alert, Image, Linking, Modal, PermissionsAndroid, Platform, Pressable, ScrollView, Text, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { wp, hp } from "../utils/ResponsiveScreen";
 import Textinput from "../components/TextInput";
 import PrimaryButton from "../components/PrimaryButton";
 import { Dropdown } from "react-native-element-dropdown";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { input } from "../styles/TextInputStyle";
 import DatePicker from "react-native-date-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { SignUp } from "../apis/api";
+import { excuteGetResponse, SignUp } from "../apis/api";
 import moment from "moment";
 import CameraModalScreen from "../components/CameraModel";
-import { Asset } from "react-native-image-picker";
 import { CenterModalView } from "../components/CenterModelView";
-
+import { useFocusEffect } from "@react-navigation/native";
+import { Asset, launchCamera, launchImageLibrary } from "react-native-image-picker";
+import { check, PERMISSIONS, request } from "react-native-permissions";
 class Componentprops extends Baseprops { }
 
 const SignupScreen: React.FC<Componentprops> = (props) => {
@@ -28,24 +29,22 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
     const [profileImage, setProfileImage] = useState<Asset | null>(null)
     const [userDetailsObj, setUserDetailsObj] = useState<any>({})
     const [successKycModal, setSuccessKycModal] = useState(false)
+    const [profilDetails, setProfileDetails] = useState<any>(null)
 
     const genderData = [
         { label: "MALE", value: "MALE" },
         { label: "FEMALE", value: "FEMALE" },
         { label: "OTHERS", value: "OTHERS" },
     ];
+    useFocusEffect(
+        useCallback(() => {
+            loadUserDetails()
+        }, []))
 
     const handelSignup = async () => {
-        if (userName.trim().length == 0) {
-            Alert.alert('Alert', 'Enter your Name')
-            return
-        }
+
         if (userEmail.trim().length == 0) {
             Alert.alert('Alert', 'Enter your Email')
-            return
-        }
-        if (gender == null) {
-            Alert.alert('Alert', 'Enter your Gender')
             return
         }
         if (profileImage == null) {
@@ -54,9 +53,9 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
         }
 
         const object = JSON.parse(JSON.stringify(userDetailsObj))
-        object.name = userName,
+        object.name = profilDetails.name,
             object.email = userEmail,
-            object.gender = gender,
+            object.gender = profilDetails.gender,
             object.dob = moment(date).format('YYYY-MM-DD'),
             object.profile_pic = profileImage
         const response = await SignUp(object);
@@ -77,20 +76,64 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
             return
         }
     };
+    const loadUserDetails = async () => {
+        const response = await excuteGetResponse('secure/profile')
+        console.log('res', response, date)
+        if (response.code == 0) {
+            setProfileDetails(response.data)
+            handleInputChangeValue('name', response.data && response.data.name)
+            handleInputChangeValue('gender', response.data && response.data.gender)
+            setDate(response.data.dob)
+        } else {
+            Alert.alert('Alert', 'Login your account')
+        }
+    }
     const handleInputChangeValue = (key: string, value: any) => {
         setUserDetailsObj((e: any) => ({ ...e, [key]: value }))
+    }
+
+    const cameraPermissions = async () => {
+        if (Platform.OS == 'android') {
+            const check =
+                await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CAMERA)
+            if (check) {
+                cameraClick()
+            } else {
+                const granted =
+                    await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA)
+                if (granted == PermissionsAndroid.RESULTS.GRANTED) {
+                    cameraClick()
+                } else {
+                    Linking.openSettings()
+                }
+            }
+        } else if (Platform.OS == 'ios') {
+            const grant = await check(PERMISSIONS.IOS.CAMERA)
+            if (grant) {
+                cameraClick()
+            } else {
+                const granted = await request(PERMISSIONS.IOS.CAMERA)
+                if (granted == 'granted') {
+                    Linking.openSettings()
+                }
+            }
+        }
+    }
+
+    const cameraClick = async () => {
+
+        const result: any = await launchCamera({
+            mediaType: 'photo',
+            quality: 1,
+            maxHeight: 600,
+            maxWidth: 600
+        })
+        setProfileImage(result.assets[0])
     }
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <ScrollView style={{ flex: 1 }}>
-                {
-                    cameraModal && <CameraModalScreen
-                        close={() => SetCaremaModal(false)}
-                        cameraModal={cameraModal}
-                        setImages={(image: Asset) => {
-                            setProfileImage(image)
-                        }} />
-                }
+
                 {
                     successKycModal &&
                     <View>
@@ -147,7 +190,7 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
                         </Modal>
                     </View>
                 }
-                
+
                 <View style={{ marginHorizontal: wp(7) }}>
                     <Text style={{
                         fontSize: 28,
@@ -180,7 +223,7 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
                             borderColor: '#D9D9D9',
                             borderRadius: wp(12)
                         }}
-                        onPress={() => SetCaremaModal(true)}>
+                        onPress={() => cameraPermissions()}>
                         <Image
                             source={profileImage != null ?
                                 { uri: profileImage?.uri }
@@ -205,17 +248,19 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
                         image={require("../assets/users.png")}
                         placeholder="Your name in aadhar card"
                         keyboardtype="default"
-                        onChangeText={setUserName}
-                        value={userName}
-                        max={40}
+                        edit={false}
+                        value={userDetailsObj.name}
+                        onChangeText={(text: any) => handleInputChangeValue('name', text)}
+                        max={(40)}
                     />
                     <Textinput
                         image={require("../assets/sms.png")}
-                        placeholder="Email"
+                        placeholder="Enter your email"
                         keyboardtype="default"
                         onChangeText={setUserEmail}
                         value={userEmail}
                         max={(50)}
+                        edit={true}
                     />
                     <Dropdown
                         style={{
@@ -239,8 +284,9 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
                             color: "#9CA3AF",
                         }}
                         selectedTextStyle={{
-                            fontSize: 16,
+                            fontSize: 15,
                             color: "#000",
+                            fontWeight: '500'
                         }}
                         iconStyle={{
                             width: 24,
@@ -251,7 +297,8 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
                         labelField="label"
                         valueField="value"
                         placeholder="Gender"
-                        value={gender}
+                        value={userDetailsObj.gender}
+                        disable={true}
                         onFocus={() => setIsFocus(true)}
                         onBlur={() => setIsFocus(false)}
                         onChange={(item) => {
@@ -280,12 +327,12 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
                         style={input.continer}>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Image source={require('../assets/sms.png')} style={input.style} />
-                            <Text style={[input.textinput, { color: isDateSelected ? '#000' : '#9CA3AF' }]}>
-                                {isDateSelected ? moment(date).format('YYYY-MM-DD') : 'Date of birth'}
+                            <Text style={[input.textinput, { color: '#000' }]}>
+                                {date ? moment(date).format('YYYY-MM-DD') : 'Date of birth'}
                             </Text>
                         </View>
                     </Pressable>
-                    <DatePicker
+                    {/* <DatePicker
                         modal
                         open={open}
                         date={date}
@@ -300,7 +347,7 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
                             setOpen(false);
                         }}
                         theme="light"
-                    />
+                    /> */}
                 </View>
                 <View
                     style={{

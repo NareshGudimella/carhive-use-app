@@ -658,7 +658,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                         style={{
                                                             color: '#64748B',
                                                         }}>Note </Text>
-                                                    :{e.user_documents}</Text>
+                                                    : Documents required</Text>
                                             </View>
                                         </View>
                                     </Pressable>
