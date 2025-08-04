@@ -26,3 +26,4 @@ export const getCity = async () => {
         return AsyncStorage.getItem('city')
     } catch (e) { }
 }
+

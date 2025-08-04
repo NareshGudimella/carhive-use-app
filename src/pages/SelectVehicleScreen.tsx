@@ -37,8 +37,9 @@ const Brand = [
     { id: 5, model: 'Mahindra' }]
 const FuelType = [
     { id: 1, type: 'Diesel' },
-    { id: 1, type: 'Petrol' },
-    { id: 1, type: 'Electric' },
+    { id: 2, type: 'Petrol' },
+    { id: 3, type: 'Electric' },
+    { id: 4, type: 'CNG' },
 
 ]
 const TransmissionType = [
@@ -64,6 +65,11 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
     const [fuel, setFuel] = useState<any[]>([])
     const [transmission, setTransmission] = useState<any>([])
     const [seaters, setSeaters] = useState<any[]>([])
+    const [pricelist, setPricelist] = useState(false)
+    const [brandlist, setBrandlist] = useState(false)
+    const [fuellist, setFuellist] = useState(false)
+    const [transmissionlist, setTransmissionlist] = useState(false)
+    const [seatinglist, setSeatinglist] = useState(false)
     useFocusEffect(
         useCallback(() => {
             handelCarList()
@@ -191,14 +197,36 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                     <ScrollView
                                         showsVerticalScrollIndicator={false}
                                     >
-                                        <Text style={{
+                                        <Pressable
+                                            onPress={() => {
+                                                setPricelist(!pricelist)
+                                            }}
+                                            style={{
+                                                flexDirection: 'row',
+                                                alignItems: 'center',
+                                               marginTop:hp(1)
+                                            }}
+                                        ><Text style={{
                                             color: '#64748B',
                                             fontSize: 17,
-                                            fontWeight: 'bold'
-                                        }}>Sort by</Text>
-                                        <View style={{
+                                            fontWeight: 'bold',
+
+                                        }}>Prices sort by</Text>
+                                            <Image
+                                                style={{
+                                                    height: 10,
+                                                    width: 20,
+                                                    top: 2,
+                                                    marginHorizontal: wp(1),
+                                                    tintColor: '#64748B'
+                                                }}
+                                                source={pricelist == false ?
+                                                    require('../assets/down.png') :
+                                                    require('../assets/top.png')} />
+                                        </Pressable>
+                                        {pricelist == true ? <View style={{
                                             flexDirection: 'row',
-                                            marginVertical: hp(1)
+                                           
                                         }}>
                                             {
                                                 short.map((e: any, index: any) => (
@@ -209,16 +237,34 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                         selected={shortBy === e.type} />
                                                 ))
                                             }
-                                        </View>
+                                        </View> : <></>}
                                         <View>
-                                            <Text
+                                            <Pressable
                                                 style={{
-                                                    color: '#64748B',
-                                                    fontSize: 17,
-                                                    fontWeight: 'bold', marginTop: hp(1)
+                                                    marginTop: hp(2),
+                                                    flexDirection: 'row',
+                                                    alignItems: 'center'
                                                 }}
-                                            >Brand</Text>
-                                            <View
+                                                onPress={() => { setBrandlist(!brandlist) }}>
+                                                <Text
+                                                    style={{
+                                                        color: '#64748B',
+                                                        fontSize: 17,
+                                                        fontWeight: 'bold',
+                                                    }}
+                                                >Brand</Text>
+                                                <Image
+                                                    style={{
+                                                        height: 10,
+                                                        width: 20,
+                                                        marginHorizontal: wp(1),
+                                                        tintColor: '#64748B'
+                                                    }}
+                                                    source={brandlist == false ?
+                                                        require('../assets/down.png') :
+                                                        require('../assets/top.png')} />
+                                            </Pressable>
+                                            {brandlist == true ? <View
                                                 style={{
                                                     flexWrap: 'wrap',
                                                     flexDirection: 'row',
@@ -233,17 +279,35 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                         />
                                                     ))
                                                 }
-                                            </View>
+                                            </View> : <></>}
                                         </View>
                                         <View>
-                                            <Text
+                                            <Pressable
                                                 style={{
-                                                    color: '#64748B',
-                                                    fontSize: 17,
-                                                    fontWeight: 'bold', marginTop: hp(1)
+                                                    marginTop: hp(2),
+                                                    flexDirection: 'row',
+                                                    alignItems: 'center'
                                                 }}
-                                            >Fuel Type</Text>
-                                            <View
+                                                onPress={() => { setFuellist(!fuellist) }}>
+                                                <Text
+                                                    style={{
+                                                        color: '#64748B',
+                                                        fontSize: 17,
+                                                        fontWeight: 'bold',
+                                                    }}
+                                                >Fuel Type</Text>
+                                                <Image
+                                                    style={{
+                                                        height: 10,
+                                                        width: 20,
+                                                        marginHorizontal: wp(1),
+                                                        tintColor: '#64748B'
+                                                    }}
+                                                    source={fuellist == false ?
+                                                        require('../assets/down.png') :
+                                                        require('../assets/top.png')} />
+                                            </Pressable>
+                                            {fuellist == true ? <View
                                                 style={{
                                                     flexWrap: 'wrap',
                                                     flexDirection: 'row',
@@ -257,17 +321,35 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                             selected={fuel.includes(e.type)} />
                                                     ))
                                                 }
-                                            </View>
+                                            </View> : <></>}
                                         </View>
                                         <View>
-                                            <Text
+                                            <Pressable
                                                 style={{
-                                                    color: '#64748B',
-                                                    fontSize: 17,
-                                                    fontWeight: 'bold', marginTop: hp(1)
+                                                    marginTop: hp(2),
+                                                    flexDirection: 'row',
+                                                    alignItems: 'center'
                                                 }}
-                                            >Transmission Type</Text>
-                                            <View
+                                                onPress={() => { setTransmissionlist(!transmissionlist) }}>
+                                                <Text
+                                                    style={{
+                                                        color: '#64748B',
+                                                        fontSize: 17,
+                                                        fontWeight: 'bold',
+                                                    }}
+                                                >Transmission Type</Text>
+                                                <Image
+                                                    style={{
+                                                        height: 10,
+                                                        width: 20,
+                                                        marginHorizontal: wp(1),
+                                                        tintColor: '#64748B'
+                                                    }}
+                                                    source={transmissionlist == false ?
+                                                        require('../assets/down.png') :
+                                                        require('../assets/top.png')} />
+                                            </Pressable>
+                                            {transmissionlist == true ? <View
                                                 style={{
                                                     flexWrap: 'wrap',
                                                     flexDirection: 'row',
@@ -281,17 +363,37 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                             selected={transmission.includes(e.type)} />
                                                     ))
                                                 }
-                                            </View>
+                                            </View> : <></>}
                                         </View>
-                                        <View>
-                                            <Text
+                                        <View style={{
+                                            marginBottom:hp(1)
+                                        }}>
+                                            <Pressable
                                                 style={{
-                                                    color: '#64748B',
-                                                    fontSize: 17,
-                                                    fontWeight: 'bold', marginTop: hp(1)
+                                                    marginTop: hp(2),
+                                                    flexDirection: 'row',
+                                                    alignItems: 'center'
                                                 }}
-                                            >Seating Capacity</Text>
-                                            <View
+                                                onPress={() => { setSeatinglist(!seatinglist) }}>
+                                                <Text
+                                                    style={{
+                                                        color: '#64748B',
+                                                        fontSize: 17,
+                                                        fontWeight: 'bold'
+                                                    }}
+                                                >Seating Capacity</Text>
+                                                <Image
+                                                    style={{
+                                                        height: 10,
+                                                        width: 20,
+                                                        marginHorizontal: wp(1),
+                                                        tintColor: '#64748B'
+                                                    }}
+                                                    source={seatinglist == false ?
+                                                        require('../assets/down.png') :
+                                                        require('../assets/top.png')} />
+                                            </Pressable>
+                                          { seatinglist == true? <View
                                                 style={{
                                                     flexWrap: 'wrap',
                                                     flexDirection: 'row',
@@ -305,7 +407,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                             selected={seaters.includes(e.value)} />
                                                     ))
                                                 }
-                                            </View>
+                                            </View>:<></>}
                                         </View>
                                         <View style={{
                                             marginTop: hp(2),
@@ -448,221 +550,230 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                 marginBottom: hp(2)
                             }}>
 
-
                             {carsList && carsList.cars.filter((e1: any) =>
-                                search.trim() === '' || e1.brand_name?.toLowerCase().
-                                    includes(search.toLowerCase())).
-                                map((e: any, index: any) => (
-                                    <Pressable
-                                        style={{ marginTop: hp(2) }}
-                                        onPress={() =>
-                                            props.navigation.navigate('VehicleDetailsScreen',
-                                                { fromdate: carsList.from_date, todate: carsList.to_date, id: e.carid })}
-                                        key={index}>
-                                        <Carousel
-                                            autoPlay={true}
-                                            ref={ref}
-                                            width={wp(90)}
-                                            style={{}}
-                                            height={hp(28)}
-                                            data={e.images}
-                                            renderItem={({ item }: { item: any }) => (
+                                search.trim() === '' ||
+                                e1.brand_name?.toLowerCase().includes(search.toLowerCase()) ||
+                                e1.model_name?.toLowerCase().includes(search.toLowerCase())
+                            ).map((e: any, index: any) => (
+                                <Pressable
+                                    style={{ marginTop: hp(2) }}
+                                    onPress={() =>
+                                        props.navigation.navigate('VehicleDetailsScreen',
+                                            { fromdate: carsList.from_date, todate: carsList.to_date, id: e.carid })}
+                                    key={index}>
+                                    <Carousel
+                                        autoPlay={true}
+                                        ref={ref}
+                                        width={wp(90)}
+                                        style={{}}
+                                        height={hp(28)}
+                                        data={e.images}
+                                        renderItem={({ item }: { item: any }) => (
+                                            <View>
+                                                <Image
+                                                    source={{ uri: item.image }}
+                                                    style={{
+                                                        justifyContent: "center",
+                                                        height: hp(28),
+                                                        width: wp(89),
+                                                        alignSelf: 'center',
+                                                        borderRadius: 20,
+
+                                                    }} />
+                                            </View>
+                                        )}
+                                    />
+                                    <View style={{
+                                        position: 'absolute',
+                                        marginLeft: 0.5,
+                                        height: hp(28),
+                                        justifyContent: 'flex-end'
+                                    }}>
+                                        <LinearGradient
+                                            colors={['transparent', '#000000', '#000000']}
+                                            start={{ x: 0, y: 0 }}
+                                            end={{ x: 0, y: 1 }}
+                                            style={{
+                                                width: wp(89.6),
+                                                flexDirection: 'row',
+                                                borderBottomLeftRadius: 20,
+                                                borderBottomRightRadius: 20,
+
+                                            }}
+                                        >
+                                            <View style={{
+                                                paddingHorizontal: wp(5),
+                                                flexDirection: 'row',
+                                                paddingVertical: wp(2)
+                                            }}>
                                                 <View>
-                                                    <Image
-                                                        source={{ uri: item.image }}
+                                                    <Text
                                                         style={{
-                                                            justifyContent: "center",
-                                                            height: hp(28),
-                                                            width: wp(89),
-                                                            alignSelf: 'center',
-                                                            borderRadius: 20,
+                                                            color: '#FBC41D',
+                                                            fontSize: 22,
+                                                            fontWeight: 'bold',
 
-                                                        }} />
-                                                </View>
-                                            )}
-                                        />
-                                        <View style={{
-                                            position: 'absolute',
-                                            marginLeft: 0.5,
-                                            height: hp(28),
-                                            justifyContent: 'flex-end'
-                                        }}>
-                                            <LinearGradient
-                                                colors={['transparent', '#000000', '#000000']}
-                                                start={{ x: 0, y: 0 }}
-                                                end={{ x: 0, y: 1 }}
-                                                style={{
-                                                    width: wp(89.6),
-                                                    flexDirection: 'row',
-                                                    borderBottomLeftRadius: 20,
-                                                    borderBottomRightRadius: 20,
-
-                                                }}
-                                            >
-                                                <View style={{
-                                                    paddingHorizontal: wp(5),
-                                                    flexDirection: 'row',
-                                                    paddingVertical: wp(2)
-                                                }}>
-                                                    <View>
-                                                        <Text
-                                                            style={{
-                                                                color: '#FBC41D',
-                                                                fontSize: 22,
-                                                                fontWeight: 'bold',
-
-                                                            }}
-
-                                                        >
-                                                            ₹{e.total_price}
-                                                        </Text>
-                                                        <Text
-                                                            style={{
-                                                                color: '#FFFFFF',
-                                                                fontSize: 16,
-                                                            }}
-                                                        >
-                                                            {e.total_kms} kms
-                                                        </Text>
-                                                    </View>
-
-                                                    <View
-                                                        style={{
-                                                            borderWidth: 0.2,
-                                                            borderColor: '#666666',
-                                                            backgroundColor: '#666666',
-                                                            marginHorizontal: wp(5),
                                                         }}
-                                                    />
 
-                                                    <ScrollView
-                                                        horizontal
+                                                    >
+                                                        ₹{e.total_price}
+                                                    </Text>
+                                                    <Text
                                                         style={{
-                                                            flexDirection: 'row',
+                                                            color: '#FFFFFF',
+                                                            fontSize: 16,
                                                         }}
                                                     >
-                                                        {e.features.slice(0, 2).map((item: any, index: any) => (
-                                                            <View
-                                                                key={index}
+                                                        {e.total_kms} kms
+                                                    </Text>
+                                                </View>
+
+                                                <View
+                                                    style={{
+                                                        borderWidth: 0.2,
+                                                        borderColor: '#666666',
+                                                        backgroundColor: '#666666',
+                                                        marginHorizontal: wp(5),
+                                                    }}
+                                                />
+
+                                                <ScrollView
+                                                    horizontal
+                                                    style={{
+                                                        flexDirection: 'row',
+                                                    }}
+                                                >
+                                                    {e.features.slice(0, 2).map((item: any, index: any) => (
+                                                        <View
+                                                            key={index}
+                                                            style={{
+                                                                marginHorizontal: wp(2),
+                                                                alignItems: 'center',
+                                                            }}
+                                                        >
+                                                            <Image
+                                                                source={{ uri: item.icon }}
                                                                 style={{
-                                                                    marginHorizontal: wp(2),
-                                                                    alignItems: 'center',
+                                                                    height: 20,
+                                                                    width: 20,
+                                                                    tintColor: '#ffffff',
+                                                                }}
+                                                            />
+                                                            <Text
+                                                                style={{
+                                                                    fontSize: 11,
+                                                                    fontWeight: '500',
+                                                                    color: '#ffffff',
+                                                                    top: hp(1.5),
                                                                 }}
                                                             >
-                                                                <Image
-                                                                    source={{ uri: item.icon }}
-                                                                    style={{
-                                                                        height: 20,
-                                                                        width: 20,
-                                                                        tintColor: '#ffffff',
-                                                                    }}
-                                                                />
-                                                                <Text
-                                                                    style={{
-                                                                        fontSize: 11,
-                                                                        fontWeight: '500',
-                                                                        color: '#ffffff',
-                                                                        top: hp(1.5),
-                                                                    }}
-                                                                >
-                                                                    {item.name}
-                                                                </Text>
-                                                            </View>
-                                                        ))}
+                                                                {item.name}
+                                                            </Text>
+                                                        </View>
+                                                    ))}
 
-                                                    </ScrollView>
-                                                </View>
-                                            </LinearGradient>
+                                                </ScrollView>
+                                            </View>
+                                        </LinearGradient>
+
+                                    </View>
+                                    <View style={{ marginHorizontal: wp(2), marginTop: hp(1) }}>
+                                        <View style={{
+                                            flexDirection: 'row',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center',
+                                            marginVertical: hp(1)
+                                        }}>
+                                            <Text style={{
+                                                fontSize: 17,
+                                                fontWeight: 'bold'
+                                            }}>{e.brand_name}  {e.model_name}</Text>
 
                                         </View>
-                                        <View style={{ marginHorizontal: wp(2), marginTop: hp(1) }}>
+                                        <Text style={{
+                                            marginHorizontal: 1,
+                                            fontWeight: '500'
+                                        }}>FuelType : {e.fuel_type}</Text>
+                                        <Text style={{
+                                            marginHorizontal: 1,
+                                            fontWeight: '500',
+                                            marginTop: hp(0.5)
+                                        }}>Transmission : {e.car_transmission}</Text>
+                                        <View>
                                             <View style={{
                                                 flexDirection: 'row',
-                                                justifyContent: 'space-between',
                                                 alignItems: 'center',
-                                                marginVertical: hp(1)
-                                            }}>
-                                                <Text style={{
-                                                    fontSize: 17,
-                                                    fontWeight: 'bold'
-                                                }}>{e.brand_name}  {e.model_name}</Text>
-
-                                            </View>
-                                            <Text style={{
-                                                marginHorizontal: 1,
-                                                fontWeight: '500'
-                                            }}>FuelType : {e.fuel_type}</Text>
-                                            <Text style={{
-                                                marginHorizontal: 1,
-                                                fontWeight: '500',
                                                 marginTop: hp(0.5)
-                                            }}>Transmission : {e.car_transmission}</Text>
-                                            <View>
-                                                <View style={{
-                                                    flexDirection: 'row',
-                                                    alignItems: 'center',
-                                                    marginTop: hp(0.5)
-                                                }}>
-                                                    <Image
-                                                        source={
-                                                            require('../assets/Location.png')
-                                                        }
-                                                        style={{
-                                                            height: 20,
-                                                            width: 20,
-                                                            tintColor: '#000000'
-                                                        }} />
-                                                    <Text style={{
-                                                        marginHorizontal: 1,
-                                                        fontWeight: 'bold'
-                                                    }}>{e.distance},  {e.carArea}</Text>
-                                                </View>
-                                                <View style={{
-                                                    flexDirection: 'row',
-                                                    alignItems: 'center',
-                                                    marginVertical: wp(1)
-                                                }}>
-                                                    <Text
-                                                        style={{
-                                                            fontSize: 16,
-                                                            fontWeight: '400',
-                                                            color: '#666666'
-                                                        }}>
-                                                        {e.rating}
-                                                    </Text>
-                                                    <Rating
-                                                        readonly
-                                                        startingValue={e.rating}
-                                                        imageSize={13}
-                                                        ratingCount={5}
-                                                        fractions={1}
-                                                        style={{ marginLeft: 8 }}
-                                                    />
-                                                    <Text>
-                                                        - <Text style={{
-                                                            fontSize: 16,
-                                                            fontWeight: '400',
-                                                            color: '#666666'
-                                                        }}>{e.year_of_registeration}
-                                                        </Text> - <Text
-                                                            style={{
-                                                                fontSize: 16,
-                                                                fontWeight: '400',
-                                                                color: '#666666'
-                                                            }}>{e.seating} seats
-                                                        </Text>
-                                                    </Text>
-                                                </View>
-                                                <Text style={{ fontWeight: 'bold' }}>
-                                                    <Text
-                                                        style={{
-                                                            color: '#64748B',
-                                                        }}>Note </Text>
-                                                    : Documents required</Text>
+                                            }}>
+                                                <Image
+                                                    source={
+                                                        require('../assets/Location.png')
+                                                    }
+                                                    style={{
+                                                        height: 20,
+                                                        width: 20,
+                                                        tintColor: '#000000'
+                                                    }} />
+                                                <Text style={{
+                                                    marginHorizontal: 1,
+                                                    fontWeight: 'bold'
+                                                }}>{e.distance},  {e.carArea}</Text>
                                             </View>
+                                            <View style={{
+                                                flexDirection: 'row',
+                                                alignItems: 'center',
+                                                marginVertical: wp(1)
+                                            }}>
+                                                <Text
+                                                    style={{
+                                                        fontSize: 16,
+                                                        fontWeight: '400',
+                                                        color: '#666666'
+                                                    }}>
+                                                    {e.rating}
+                                                </Text>
+                                                <Rating
+                                                    readonly
+                                                    startingValue={e.rating}
+                                                    imageSize={13}
+                                                    ratingCount={5}
+                                                    fractions={1}
+                                                    style={{ marginLeft: 8 }}
+                                                />
+                                                <Text>
+                                                    - <Text style={{
+                                                        fontSize: 16,
+                                                        fontWeight: '400',
+                                                        color: '#666666'
+                                                    }}>{e.year_of_registeration}
+                                                    </Text> - <Text
+                                                        style={{
+                                                            fontSize: 16,
+                                                            fontWeight: '400',
+                                                            color: '#666666'
+                                                        }}>{e.seating} seats
+                                                    </Text>
+                                                </Text>
+                                            </View>
+                                            <Text style={{
+                                                fontWeight: 'bold',
+                                                color: 'gray',
+                                                lineHeight: hp(2.5)
+                                            }}>
+                                                Documents required : <Text style={{
+                                                    fontSize: 13,
+                                                    fontWeight: 500,
+                                                    color: '#000000'
+                                                }}>
+                                                    {
+                                                        e.user_documents
+
+                                                    }
+                                                </Text> </Text>
                                         </View>
-                                    </Pressable>
-                                ))}
+                                    </View>
+                                </Pressable>
+                            ))}
                         </ScrollView>
                     </View>
                 </View>

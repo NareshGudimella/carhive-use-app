@@ -1,5 +1,5 @@
 import {
-    Alert, Image, Modal, Pressable, ScrollView, Text,
+    Alert, Image, Modal, Platform, Pressable, ScrollView, Text,
     TextInput, View
 } from "react-native";
 import { Baseprops } from "../utils/navigation";
@@ -9,7 +9,7 @@ import { Rating } from "react-native-ratings";
 import PrimaryButton from "../components/PrimaryButton";
 import { useCallback, useEffect, useState } from "react";
 import { BottomModelView } from "../components/BottomModelView";
-import { Checkbox } from "react-native-paper";
+import CheckBox from '@react-native-community/checkbox';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { carBookings, excuteGetResponse, summery } from "../apis/api";
 import { useFocusEffect } from "@react-navigation/native";
@@ -422,10 +422,18 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                                 }}>Modification</Text>
                                         </Pressable>
                                     </View>
-                                    <View>
-                                        {
-                                            typeofTandC == 't&c' ?
-                                                <ScrollView style={{ marginHorizontal: wp(5), maxHeight: hp(60) }}>
+                                    <View style={{
+                                        height: hp(60),
+                                        overflow: 'hidden'
+                                    }}>
+                                        <ScrollView
+                                            contentContainerStyle={{
+                                                paddingHorizontal: wp(5),
+                                            }}
+                                            showsVerticalScrollIndicator={true}
+                                        >
+                                            {
+                                                typeofTandC === 't&c' && ModelcancelData?.terms_conditions ? (
                                                     <Text style={{
                                                         color: '#64748B',
                                                         fontWeight: '500',
@@ -433,51 +441,55 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                                         marginHorizontal: wp(3),
                                                         marginVertical: hp(1)
                                                     }}>
-                                                        {ModelcancelData && ModelcancelData.terms_conditions}
+                                                        {ModelcancelData.terms_conditions}
                                                     </Text>
-                                                </ScrollView> :
-                                                typeofTandC == 'Cancellation' ?
-                                                    <ScrollView style={{ marginHorizontal: wp(5), maxHeight: hp(60) }}>
-                                                        <Text style={{
-                                                            color: '#64748B',
-                                                            fontWeight: '500',
-                                                            lineHeight: hp(2.5),
-                                                            marginHorizontal: wp(3),
-                                                            marginVertical: hp(1)
-                                                        }}>
-                                                            {ModelcancelData && ModelcancelData.cancellation}
-                                                        </Text>
-                                                    </ScrollView> :
-                                                    typeofTandC == 'Modification' ?
-                                                        <ScrollView style={{ marginHorizontal: wp(5), maxHeight: hp(60) }}>
-                                                            <Text style={{
-                                                                color: '#64748B',
-                                                                fontWeight: '500',
-                                                                lineHeight: hp(2.5),
-                                                                marginHorizontal: wp(3),
-                                                                marginVertical: hp(1)
-                                                            }}>
-                                                                {ModelcancelData && ModelcancelData.modification}
-                                                            </Text>
-                                                        </ScrollView> : <></>
-                                        }
+                                                ) : typeofTandC === 'Cancellation' && ModelcancelData?.cancellation ? (
+                                                    <Text style={{
+                                                        color: '#64748B',
+                                                        fontWeight: '500',
+                                                        lineHeight: hp(2.5),
+                                                        marginHorizontal: wp(3),
+                                                        marginVertical: hp(1)
+                                                    }}>
+                                                        {ModelcancelData.cancellation}
+                                                    </Text>
+                                                ) : typeofTandC === 'Modification' && ModelcancelData?.modification ? (
+                                                    <Text style={{
+                                                        color: '#64748B',
+                                                        fontWeight: '500',
+                                                        lineHeight: hp(2.5),
+                                                        marginHorizontal: wp(3),
+                                                        marginVertical: hp(1)
+                                                    }}>
+                                                        {ModelcancelData.modification}
+                                                    </Text>
+                                                ) : null
+                                            }
+                                        </ScrollView>
                                     </View>
+
                                     <View style={{ marginHorizontal: wp(5) }}>
                                         <View style={{
                                             flexDirection: 'row',
                                             alignItems: 'center',
-                                            marginHorizontal: wp(1)
+                                            marginHorizontal: wp(1),
+                                            marginVertical: hp(1)
                                         }}>
-                                            <Checkbox
-                                                status={terms_condition_flag ? 'checked' : 'unchecked'}
-                                                color="#00354a"
-                                                onPress={() => {
-                                                    setTerms_condition_flag('1');
+                                            <CheckBox
+                                                value={terms_condition_flag === '1'}
+                                                onValueChange={() => {
+                                                    setTerms_condition_flag(terms_condition_flag === '1' ? '' : '1');
                                                 }}
+                                                tintColors={{ true: '#00354a', false: '#ccc' }}
+                                                style={Platform.OS === 'ios' ? {
+                                                    height: hp(2.3),
+                                                    width: hp(2.3)
+                                                } : {}}
                                             />
                                             <Text style={{
                                                 fontSize: 15,
-                                                fontWeight: 'bold'
+                                                fontWeight: 'bold',
+                                                marginHorizontal: wp(2)
                                             }}>
                                                 I agree to the Terms & Conditions.
                                             </Text>
@@ -631,12 +643,12 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                         flexDirection: 'row',
                                         marginHorizontal: wp(1)
                                     }}>
-                                        <Checkbox
-                                            status={eligiabilityflag ? 'checked' : 'unchecked'}
-                                            color="#00354a"
-                                            onPress={() => {
-                                                setEligiabilityflag('1')
+                                        <CheckBox
+                                            value={eligiabilityflag === '1'}
+                                            onValueChange={() => {
+                                                setEligiabilityflag(eligiabilityflag === '1' ? '0' : '1');
                                             }}
+                                            tintColors={{ true: '#00354a', false: '#ccc' }}
                                         />
                                         <Text style={{
                                             fontSize: 13,

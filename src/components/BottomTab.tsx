@@ -42,7 +42,7 @@ const BottomTabNavigation: React.FC<Componentprops> = (props) => {
                         <View style={{}}>
                             <Image source={require('../assets/Union.png')}
                                 style={BottomTabstyles.baseStyle}
-                                tintColor='#00354a'  />
+                                tintColor='#00354a' />
                         </View>
                         : <></>
                 }
@@ -59,15 +59,15 @@ const BottomTabNavigation: React.FC<Componentprops> = (props) => {
                             BottomTabstyles.nonselectedstyle} />
                     <Text style={props.step == 2 ?
                         BottomTabstyles.selectedtextStyle :
-                        BottomTabstyles.nonselectedtextstyle}>Rentals</Text>
+                        BottomTabstyles.nonselectedtextstyle}>Bookings</Text>
                 </View>
                 {
                     props.step == 2 ?
                         <View style={{ justifyContent: 'flex-end' }}>
                             <Image source={require('../assets/Union.png')}
                                 style={[BottomTabstyles.baseStyle,
-                                    
-                                ]} 
+
+                                ]}
                                 tintColor='#00354a' />
                         </View>
                         : <></>
@@ -85,13 +85,13 @@ const BottomTabNavigation: React.FC<Componentprops> = (props) => {
                             BottomTabstyles.nonselectedstyle} />
                     <Text style={props.step == 3 ?
                         BottomTabstyles.selectedtextStyle :
-                        BottomTabstyles.nonselectedtextstyle}>profile</Text>
+                        BottomTabstyles.nonselectedtextstyle}>Profile</Text>
                 </View>
                 {
                     props.step == 3 ?
                         <View style={{ justifyContent: 'flex-end' }}>
                             <Image source={require('../assets/Union.png')}
-                                style={BottomTabstyles.baseStyle} 
+                                style={BottomTabstyles.baseStyle}
                                 tintColor='#00354a' />
                         </View>
                         : <></>

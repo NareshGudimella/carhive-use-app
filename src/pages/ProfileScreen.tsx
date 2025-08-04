@@ -14,8 +14,6 @@ import PrimaryButton from "../components/PrimaryButton";
 import { style } from "../styles/OtpStyle";
 import { OtpInput } from "react-native-otp-entry";
 import { excuteGetResponse, firebasemessage, Login, Otp } from "../apis/api";
-import messaging from '@react-native-firebase/messaging';
-import DeviceInfo from "react-native-device-info";
 import Textinput from "../components/TextInput";
 import { Foregroundmessage, requestfirebasePermissions } from "../firebase/firebase";
 
@@ -31,8 +29,7 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
     const [otpModal, setOtpModal] = useState(false)
     const [phoneNumber, setPhoneNumber] = useState<any>('')
     const [otp, setOtp] = useState<any>('')
-    const [cityCustomerCare, setCityCustomerCare] = useState<any>(null)
-
+    const [cityCustomerCare, setCityCustomerCare] = useState<null>(null);
     useFocusEffect(
         useCallback(() => {
             loadToken()
@@ -41,9 +38,12 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
     )
 
     const loadCityName = async () => {
-        const city: any = await getCity();
-        const number = JSON.parse(city)
-        setCityCustomerCare(number)
+        const cityStr: any = await getCity();
+        const city = JSON.parse(cityStr);
+        console.log('mycity', city)
+        if (city && city.number) {
+            setCityCustomerCare(city.number);
+        }
     }
 
     const handelLogout = async () => {
@@ -79,6 +79,7 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
             setToken(response.data.token)
             if (response.data.token && response.data.token != '') {
                 const profileresponse = await excuteGetResponse('secure/profile')
+                console.log('userprofile', profileresponse)
                 if (profileresponse.code == 0) {
                     requestfirebasePermissions()
                     Foregroundmessage()
@@ -416,7 +417,7 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                     fontSize: 14,
                                     fontWeight: 500,
                                     marginTop: hp(0.5)
-                                }}>Welcome to our App.....</Text>
+                                }}>Welcome to carhive</Text>
                         </View>
                     </Cardview>
                     <View style={{
@@ -511,7 +512,7 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                         marginVertical: hp(1.5)
                                     }} />
                                 <Pressable
-                                    onPress={() => Linking.openURL(`tel: ${cityCustomerCare && cityCustomerCare.customer_care_number}`)} style={{
+                                    onPress={() => Linking.openURL(`tel: ${cityCustomerCare}`)} style={{
                                         flexDirection: 'row',
                                         alignItems: 'center',
 

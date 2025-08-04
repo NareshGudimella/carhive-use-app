@@ -79,7 +79,7 @@ const HostScreen: React.FC<Componentprops> = (props) => {
                                         }}
                                     >Join thousands of car owners who
                                         are earning extra income by sharing
-                                        their vehicles on [App Name]. Whether
+                                        their vehicles on CarHive user. Whether
                                         it’s parked during the week or just
                                         used occasionally, your car could be
                                         helping you earn.</Text>
@@ -231,7 +231,7 @@ const HostScreen: React.FC<Componentprops> = (props) => {
                     }}>
                         <PrimaryButton title='Become a Host'
                             onclick={() => props.navigation.navigate('BecomeHostScreen')} />
-                       
+
                     </View>
                 </ScrollView>
             </View>

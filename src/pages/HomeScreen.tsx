@@ -1,7 +1,7 @@
 import {
-    Alert, AppState, BackHandler, Image, Linking, Modal,
+    Alert, BackHandler, Image, Linking, Modal,
     PermissionsAndroid, Platform, Pressable, ScrollView,
-    StyleSheet, Text, View
+    StyleSheet, Text, View,
 } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { Background } from "../styles/BackgroundColor";
@@ -63,6 +63,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
             Alert.alert('ALert', 'unable to get banner')
         }
     }
+
     {/*pickup date and drop date picker*/ }
     const handelCheckDate = (latitude: any, longitude: any) => {
         if (!pickupDate) {
@@ -214,6 +215,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
         setLocationDeniedFlag(false)
         Linking.openSettings()
     }
+
 
     return (
         <GestureHandlerRootView style={[Background.bgcolor, { flex: 1 }]}>

@@ -33,6 +33,8 @@ import { CameraView } from "../components/CameraView";
 import { updateProfile } from "../storage/redux";
 import { useDispatch } from "react-redux";
 import { Foregroundmessage, requestfirebasePermissions } from "../firebase/firebase";
+import CarViewScreen from "./CarViewScreen";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 
 class Componentprops extends Baseprops { }
@@ -64,6 +66,8 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
     const [userDetailsObj, setUserDetailsObj] = useState<any>({})
     const [indicator, setIndiCator] = useState(false)
     const dispatch = useDispatch()
+    const [carImageVisible, setCarImageVisible] = useState(false)
+    const [selectedImage, setSelectedImage] = useState<any>(null)
 
     useFocusEffect(
         useCallback(() => {
@@ -268,1087 +272,1093 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
         }
     }
     return (
-        <SafeAreaView style={{ flex: 1 }}>
-            <View>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+            <SafeAreaView style={{ flex: 1 }}>
                 <View>
-                    {cameraModal && (
-                        <CameraModalScreen
-                            close={() => SetCaremaModal(false)}
-                            cameraModal={cameraModal}
-                            setImages={(image: Asset) => {
-                                switch (targetType) {
-                                    case 'aadharfront':
-                                        setAadharfront(image);
-                                        SetCaremaModal(false);
-                                        setTimeout(() => {
-                                            setAadharmodal(true)
-                                        }, 500);
-                                        break;
-                                    case 'aadharback':
-                                        setAadharBack(image);
-                                        SetCaremaModal(false);
-                                        setTimeout(() => {
-                                            setAadharmodal(true)
-                                        }, 500);
-                                        break;
-                                    case 'licensefront':
-                                        setlicensefront(image);
-                                        SetCaremaModal(false);
-                                        setTimeout(() => {
-                                            setLicencemodal(true)
-                                        }, 500);
-                                        break;
-                                    case 'licenseback':
-                                        setlicenseBack(image);
-                                        SetCaremaModal(false);
-                                        setTimeout(() => {
-                                            setLicencemodal(true)
-                                        }, 500);
-                                        break;
-                                }
-
-
-                            }}
-                        />
-                    )}
-                </View>
-
-                <View>
-                    {mobileNumberModal &&
-                        <View>
-                            <Modal
-                                animationType="slide"
-                                transparent={true}
-                                visible={mobileNumberModal}
-                                onRequestClose={() => {
-                                    setMobileNumberModal(!mobileNumberModal);
-                                }}>
-                                <BottomModelView onclick={() => setMobileNumberModal(false)}>
-                                    <View style={{
-                                        marginHorizontal: wp(5),
-                                        marginVertical: hp(2)
-                                    }}>
-                                        <Pressable
-                                            onPress={() => setMobileNumberModal(false)}
-                                            style={{
-                                                backgroundColor: '#EEEEEE80',
-                                                borderRadius: 20,
-                                                width: 35,
-                                                height: 35,
-                                                justifyContent: 'center',
-                                                alignItems: 'center'
-                                            }}>
-                                            <Image
-                                                source={require('../assets/close.png')}
-                                                style={{
-                                                    height: 15,
-                                                    width: 15
-                                                }} />
-                                        </Pressable>
-                                        <Text style={{
-                                            fontSize: 24,
-                                            fontWeight: 'bold',
-                                            marginTop: hp(2),
-
-                                        }}>User Login</Text>
-                                        <Text
-                                            style={{
-                                                fontSize: 17,
-                                                fontWeight: '400',
-                                                color: '#64748B',
-                                                marginTop: hp(1),
-                                                marginBottom: hp(1.5)
-                                            }}
-                                        >Please enter a your mobile number
-                                            to login into your account</Text>
-                                        <Textinput
-                                            image={require('../assets/call.png')}
-                                            placeholder='Enter your mobile number'
-                                            keyboardtype='numeric'
-                                            value={phoneNumber}
-                                            onChangeText={setPhoneNumber}
-                                            max={10}
-                                        />
-                                        <Text
-                                            style={{
-                                                fontSize: 15,
-                                                lineHeight: hp(2.5),
-                                                color: '#64748B',
-                                                marginVertical: hp(1),
-                                                marginHorizontal: wp(2)
-                                            }}
-                                        >By continuing you agree
-                                            to our <Text
-                                                style={{
-                                                    color: '#00354a'
-                                                }}> Terms of service
-                                            </Text> ,   &
-                                            <Text
-                                                style={{
-                                                    color: '#00354a'
-                                                }}>  Privacy policy</Text>
-                                        </Text>
-                                        <View style={{ marginVertical: hp(2) }}>
-                                            <PrimaryButton title='Request OTP'
-                                                onclick={() => {
-                                                    setMobileNumberModal(false),
-                                                        handelLogin()
-                                                }}
-                                            />
-                                        </View>
-                                    </View>
-                                </BottomModelView>
-                            </Modal>
-                        </View>
-                    }
-                </View>
-
-                <View>
-                    {otpModal &&
-                        <View>
-                            <Modal
-                                animationType="slide"
-                                transparent={true}
-                                visible={otpModal}
-                                onRequestClose={() => {
-                                    setOtpModal(!otpModal);
-                                }}>
-                                <BottomModelView onclick={() => setOtpModal(false)}>
-                                    <View style={{
-                                        marginHorizontal: wp(5),
-                                        marginVertical: hp(2)
-                                    }}>
-                                        <Pressable
-                                            onPress={() => setOtpModal(false)}
-                                            style={{
-                                                backgroundColor: '#EEEEEE80',
-                                                borderRadius: 20,
-                                                width: 35,
-                                                height: 35,
-                                                justifyContent: 'center',
-                                                alignItems: 'center'
-                                            }}>
-                                            <Image
-                                                source={require('../assets/close.png')}
-                                                style={{
-                                                    height: 15,
-                                                    width: 15
-                                                }} />
-                                        </Pressable>
-                                        <Text style={{
-                                            fontSize: 24,
-                                            fontWeight: 'bold',
-                                            marginTop: hp(2),
-
-                                        }}>Enter OTP</Text>
-                                        <Text
-                                            style={{
-                                                fontSize: 17,
-                                                fontWeight: '400',
-                                                color: '#64748B',
-                                                marginTop: hp(1),
-                                                marginBottom: hp(1.5),
-                                                width: wp(80)
-                                            }}
-                                        >We’ve sent an SMS with an activation
-                                            code to your phone
-                                            <Text
-                                                style={{
-                                                    color: '#00354a',
-                                                    fontSize: 16
-                                                }}>  +91 {phoneNumber}</Text>
-                                        </Text>
-                                        <OtpInput
-                                            numberOfDigits={4}
-                                            focusColor="#E8ECF4"
-                                            focusStickBlinkingDuration={500}
-                                            onTextChange={(text) => setOtp(text)}
-                                            onFilled={(text) => console.log(`OTP is ${text}`)}
-                                            textInputProps={{
-                                                accessibilityLabel: "One-Time Password",
-                                            }}
-                                            theme={{
-                                                containerStyle: style.otpContainer,
-                                                pinCodeContainerStyle: style.otp,
-                                                pinCodeTextStyle: style.otpText,
-                                            }}
-                                        />
-                                        <View style={{
-                                            flexDirection: 'row',
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                            marginVertical: hp(3)
-                                        }}>
-                                            <Text style={{
-                                                fontSize: 16,
-                                                color: '#64748B'
-                                            }}>I didn’t receive a code</Text>
-                                            <TouchableOpacity onPress={async () => {
-                                                const response = await Login(phoneNumber)
-                                            }}>
-                                                <Text style={{
-                                                    color: '#00354a',
-                                                    marginHorizontal: wp(2),
-                                                    fontSize: 16,
-                                                    fontWeight: 'bold'
-                                                }}>Resend</Text>
-                                            </TouchableOpacity>
-
-                                        </View>
-                                        {indicator && <ActivityIndicator color='#00354a' size="large" />}
-                                        <View style={{ marginBottom: hp(2), marginTop: hp(2) }}>
-                                            <PrimaryButton
-                                                title='Verify'
-                                                onclick={() => {
-                                                    handelOtp()
-                                                }}
-                                            />
-                                        </View>
-                                    </View>
-                                </BottomModelView>
-                            </Modal>
-                        </View>
-                    }
-                </View>
-                <View>
-                    {aadharmodal &&
-                        <View>
-                            <Modal
-                                animationType="slide"
-                                transparent={true}
-                                visible={aadharmodal}
-                                onRequestClose={() => {
-                                    setAadharmodal(!aadharmodal);
-                                }}
-                            >
-                                <BottomModelView>
-                                    <View style={{
-                                        marginHorizontal: wp(5),
-                                        marginVertical: hp(2)
-                                    }}>
-                                        <Pressable
-                                            onPress={() => setAadharmodal(false)}
-                                            style={{
-                                                backgroundColor: '#EEEEEE80',
-                                                borderRadius: 20,
-                                                width: 35,
-                                                height: 35,
-                                                justifyContent: 'center',
-                                                alignItems: 'center'
-                                            }}>
-                                            <Image
-                                                source={require('../assets/close.png')}
-                                                style={{
-                                                    height: 15,
-                                                    width: 15
-                                                }} />
-                                        </Pressable>
-                                        <Text style={{
-                                            fontSize: 24,
-                                            fontWeight: 'bold',
-                                            marginTop: hp(2),
-
-                                        }}>User Aadhar number</Text>
-                                        <Text
-                                            style={{
-                                                fontSize: 17,
-                                                fontWeight: '400',
-                                                color: '#64748B',
-                                                marginTop: hp(1),
-                                                marginBottom: hp(1.5)
-                                            }}
-                                        >Please enter a your aadhar card number
-                                            for verification</Text>
-                                        <Textinput
-                                            image={require('../assets/users.png')}
-                                            placeholder='Enter your aadhar Card number'
-                                            keyboardtype='numeric'
-                                            value={aadharnumber}
-                                            onChangeText={setAadharnumber}
-                                            max={12}
-                                        />
-                                        <View>
-                                            <View style={{
-                                                marginHorizontal: wp(4),
-                                                marginVertical: hp(1)
-                                            }}>
-                                                <Text style={{
-                                                    fontSize: 18,
-                                                    fontWeight: 'bold',
-                                                    marginVertical: hp(1)
-                                                }}>Aadhar card</Text>
-                                                <View style={{
-                                                    flexDirection: 'row',
-                                                    justifyContent: 'space-between',
-                                                    marginVertical: hp(1)
-                                                }}>
-                                                    <View style={{
-                                                        width: wp(38)
-                                                    }}>
-                                                        <Cardview>
-                                                            {aadharfront ?
-                                                                <Pressable
-                                                                    onPress={() => {
-                                                                        setAadharmodal(false)
-                                                                        setTargetType('aadharfront');
-                                                                        setTimeout(() => {
-                                                                            SetCaremaModal(true);
-                                                                        }, 500);
-                                                                    }}
-                                                                    style={{
-                                                                        justifyContent: 'center', alignItems: 'center',
-                                                                        paddingVertical: hp(2)
-                                                                    }}>
-                                                                    <Image
-                                                                        source={{ uri: aadharfront?.uri }}
-                                                                        style={{
-                                                                            width: 110,
-                                                                            height: 75,
-                                                                            resizeMode: 'cover',
-                                                                            borderRadius: 10
-                                                                        }}
-                                                                    />
-                                                                </Pressable>
-                                                                :
-                                                                <CameraView
-                                                                    image={require('../assets/Huge.png')}
-                                                                    title="Upload Front"
-                                                                    onclick={() => {
-                                                                        setAadharmodal(false)
-                                                                        setTimeout(() => {
-                                                                            SetCaremaModal(true);
-                                                                        }, 500);
-                                                                        setTargetType('aadharfront');
-                                                                    }}
-                                                                />}
-                                                        </Cardview>
-                                                    </View>
-                                                    <View style={{
-                                                        width: wp(38)
-                                                    }}>
-                                                        <Cardview>
-                                                            {aadharback ?
-                                                                <Pressable
-                                                                    onPress={() => {
-                                                                        setAadharmodal(false)
-                                                                        setTargetType('aadharback');
-                                                                        setTimeout(() => {
-                                                                            SetCaremaModal(true);
-                                                                        }, 500);
-                                                                    }}
-                                                                    style={{
-                                                                        justifyContent: 'center', alignItems: 'center',
-                                                                        paddingVertical: hp(2)
-                                                                    }}>
-                                                                    <Image
-                                                                        source={{ uri: aadharback?.uri }}
-                                                                        style={{
-                                                                            width: 110,
-                                                                            height: 75,
-                                                                            resizeMode: 'cover',
-                                                                            borderRadius: 10
-                                                                        }}
-                                                                    />
-                                                                </Pressable>
-                                                                :
-                                                                <CameraView
-                                                                    image={require('../assets/Huge.png')}
-                                                                    title="Upload Back"
-                                                                    onclick={() => {
-                                                                        setAadharmodal(false)
-                                                                        setTargetType('aadharback');
-                                                                        setTimeout(() => {
-                                                                            SetCaremaModal(true);
-                                                                        }, 500);
-                                                                    }}
-
-                                                                />}
-                                                        </Cardview>
-                                                    </View>
-                                                </View>
-                                            </View>
-                                        </View>
-                                        <Text
-                                            style={{
-                                                fontSize: 15,
-                                                lineHeight: hp(2.5),
-                                                color: '#64748B',
-                                                marginVertical: hp(1),
-                                                marginHorizontal: wp(2)
-                                            }}
-                                        >By continuing you agree
-                                            to our <Text
-                                                style={{
-                                                    color: '#00354a'
-                                                }}> Terms of service
-                                            </Text> ,   &
-                                            <Text
-                                                style={{
-                                                    color: '#00354a'
-                                                }}>  Privacy policy</Text>
-                                        </Text>
-                                        {indicator && <ActivityIndicator color='#00354a' size="large" />}
-                                        <View style={{ marginVertical: hp(2) }}>
-                                            <PrimaryButton title='Request OTP'
-                                                onclick={() => {
-                                                    handelAadhardetails()
-                                                }}
-                                            />
-                                        </View>
-                                    </View>
-                                </BottomModelView>
-                            </Modal>
-                        </View>
-                    }
-                </View>
-
-                <View>
-                    {licencemodal &&
-                        <View>
-                            <Modal
-                                animationType="slide"
-                                transparent={true}
-                                visible={licencemodal}
-                                onRequestClose={() => {
-                                    setLicencemodal(!licencemodal);
-                                }}
-                            >
-                                <BottomModelView>
-                                    <View style={{
-                                        marginHorizontal: wp(5),
-                                        marginVertical: hp(2)
-                                    }}>
-                                        <Pressable
-                                            onPress={() => setLicencemodal(false)}
-                                            style={{
-                                                backgroundColor: '#EEEEEE80',
-                                                borderRadius: 20,
-                                                width: 35,
-                                                height: 35,
-                                                justifyContent: 'center',
-                                                alignItems: 'center'
-                                            }}>
-                                            <Image
-                                                source={require('../assets/close.png')}
-                                                style={{
-                                                    height: 15,
-                                                    width: 15
-                                                }} />
-                                        </Pressable>
-                                        <Text style={{
-                                            fontSize: 24,
-                                            fontWeight: 'bold',
-                                            marginTop: hp(2),
-
-                                        }}>User driving licence number</Text>
-                                        <Text
-                                            style={{
-                                                fontSize: 17,
-                                                fontWeight: '400',
-                                                color: '#64748B',
-                                                marginTop: hp(1),
-                                                marginBottom: hp(1.5)
-                                            }}
-                                        >Please enter a your Driving licence number
-                                            for verification</Text>
-                                        <Textinput
-                                            image={require('../assets/users.png')}
-                                            placeholder='Enter your driving licence number'
-                                            keyboardtype='default'
-                                            value={licencenumber}
-                                            onChangeText={setlicencenumber}
-                                            max={16}
-                                        />
-                                        <Pressable
-                                            onPress={() => setOpen(true)}
-                                            style={input.continer}>
-                                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                                <Image source={require('../assets/sms.png')} style={input.style} />
-                                                <Text style={[input.textinput, { color: isDateSelected ? '#000' : '#9CA3AF' }]}>
-                                                    {isDateSelected ? moment(date).format('YYYY-MM-DD') : 'Date of birth'}
-                                                </Text>
-                                            </View>
-                                        </Pressable>
-                                        <DatePicker
-                                            modal
-                                            open={open}
-                                            date={date}
-                                            mode="date"
-                                            dividerColor="#00354a"
-                                            onConfirm={(selectedDate) => {
-                                                setOpen(false);
-                                                setDate(selectedDate);
-                                                setIsDateSelected(true);
-                                            }}
-                                            onCancel={() => {
-                                                setOpen(false);
-                                            }}
-                                            theme="light"
-                                        />
-                                        <Text style={{
-                                            fontSize: 18,
-                                            fontWeight: 'bold',
-                                            marginVertical: hp(1)
-                                        }}>Driving License</Text>
-                                        <View style={{
-                                            flexDirection: 'row',
-                                            justifyContent: 'space-between',
-                                            marginVertical: hp(1),
-                                            marginBottom: hp(2)
-                                        }}>
-                                            <View style={{ width: wp(38) }}>
-                                                <Cardview>
-                                                    {licensefront ?
-                                                        <Pressable
-                                                            onPress={() => {
-                                                                setLicencemodal(false)
-                                                                setTimeout(() => {
-                                                                    SetCaremaModal(true);
-                                                                }, 500);
-                                                                setTargetType('licensefront')
-                                                            }}
-                                                            style={{
-                                                                justifyContent: 'center', alignItems: 'center',
-                                                                paddingVertical: hp(2)
-                                                            }}>
-                                                            <Image
-                                                                source={{ uri: licensefront?.uri }}
-                                                                style={{
-                                                                    width: 110,
-                                                                    height: 75,
-                                                                    resizeMode: 'cover',
-                                                                    borderRadius: 10
-                                                                }}
-                                                            />
-                                                        </Pressable>
-                                                        :
-                                                        <CameraView
-                                                            image={require('../assets/Huge.png')}
-                                                            title="Upload Front"
-                                                            onclick={() => {
-                                                                setLicencemodal(false)
-                                                                setTimeout(() => {
-                                                                    SetCaremaModal(true);
-                                                                }, 500);
-                                                                setTargetType('licensefront')
-                                                            }}
-                                                        />}
-                                                </Cardview>
-                                            </View>
-                                            <View style={{ width: wp(38) }}>
-                                                <Cardview>
-                                                    {licenseback ?
-                                                        <Pressable onPress={() => {
-                                                            setLicencemodal(false)
-                                                            setTimeout(() => {
-                                                                SetCaremaModal(true);
-                                                            }, 500);
-                                                            setTargetType('licenseback')
-                                                        }} style={{
-                                                            justifyContent: 'center', alignItems: 'center',
-                                                            paddingVertical: hp(2)
-                                                        }}>
-                                                            <Image
-                                                                source={{ uri: licenseback?.uri }}
-                                                                style={{
-                                                                    width: 110,
-                                                                    height: 75,
-                                                                    resizeMode: 'cover',
-                                                                    borderRadius: 10
-                                                                }}
-                                                            />
-                                                        </Pressable>
-                                                        :
-                                                        <CameraView
-                                                            image={require('../assets/Huge.png')}
-                                                            title="Upload Back"
-                                                            onclick={() => {
-                                                                setLicencemodal(false)
-                                                                setTimeout(() => {
-                                                                    SetCaremaModal(true);
-                                                                }, 500);
-                                                                setTargetType('licenseback')
-                                                            }}
-                                                        />}
-                                                </Cardview>
-                                            </View>
-                                        </View>
-                                        <Text
-                                            style={{
-                                                fontSize: 15,
-                                                lineHeight: hp(2.5),
-                                                color: '#64748B',
-                                                marginVertical: hp(1),
-                                                marginHorizontal: wp(2)
-                                            }}
-                                        >By continuing you agree
-                                            to our <Text
-                                                style={{
-                                                    color: '#00354a'
-                                                }}> Terms of service
-                                            </Text> ,   &
-                                            <Text
-                                                style={{
-                                                    color: '#00354a'
-                                                }}>  Privacy policy</Text>
-                                        </Text>
-                                        {indicator && <ActivityIndicator color='#00354a' size="large" />}
-                                        <View style={{ marginVertical: hp(2) }}>
-                                            <PrimaryButton title='Submit'
-                                                onclick={() => {
-                                                    handelLicencedata()
-                                                }}
-                                            />
-                                        </View>
-                                    </View>
-                                </BottomModelView>
-                            </Modal>
-                        </View>
-                    }
-                </View>
-
-                <View>
-
-                    {aadharotpmodal &&
-                        <View>
-                            <Modal
-                                animationType="slide"
-                                transparent={true}
-                                visible={aadharotpmodal}
-                                onRequestClose={() => {
-                                    setAadharotpmodal(!aadharotpmodal);
-                                }}>
-                                <BottomModelView onclick={() => setOtpModal(false)}>
-                                    <View style={{
-                                        marginHorizontal: wp(5),
-                                        marginVertical: hp(2)
-                                    }}>
-                                        <Pressable
-                                            onPress={() => {
-                                                setOtpModal(false)
+                    <View>
+                        {cameraModal && (
+                            <CameraModalScreen
+                                close={() => SetCaremaModal(false)}
+                                cameraModal={cameraModal}
+                                setImages={(image: Asset) => {
+                                    switch (targetType) {
+                                        case 'aadharfront':
+                                            setAadharfront(image);
+                                            SetCaremaModal(false);
+                                            setTimeout(() => {
                                                 setAadharmodal(true)
-                                                setAadharotp('')
-                                            }}
-                                            style={{
-                                                backgroundColor: '#EEEEEE80',
-                                                borderRadius: 20,
-                                                width: 35,
-                                                height: 35,
-                                                justifyContent: 'center',
-                                                alignItems: 'center'
-                                            }}>
-                                            <Image
-                                                source={require('../assets/close.png')}
-                                                style={{
-                                                    height: 15,
-                                                    width: 15
-                                                }} />
-                                        </Pressable>
-                                        <Text style={{
-                                            fontSize: 24,
-                                            fontWeight: 'bold',
-                                            marginTop: hp(2),
+                                            }, 500);
+                                            break;
+                                        case 'aadharback':
+                                            setAadharBack(image);
+                                            SetCaremaModal(false);
+                                            setTimeout(() => {
+                                                setAadharmodal(true)
+                                            }, 500);
+                                            break;
+                                        case 'licensefront':
+                                            setlicensefront(image);
+                                            SetCaremaModal(false);
+                                            setTimeout(() => {
+                                                setLicencemodal(true)
+                                            }, 500);
+                                            break;
+                                        case 'licenseback':
+                                            setlicenseBack(image);
+                                            SetCaremaModal(false);
+                                            setTimeout(() => {
+                                                setLicencemodal(true)
+                                            }, 500);
+                                            break;
+                                    }
 
-                                        }}>Enter OTP</Text>
-                                        <Text
-                                            style={{
-                                                fontSize: 17,
-                                                fontWeight: '400',
-                                                color: '#64748B',
-                                                marginTop: hp(1),
-                                                marginBottom: hp(1.5),
-                                                width: wp(80)
-                                            }}
-                                        >We’ve sent an SMS with an activation
-                                            code to your phone
 
-                                        </Text>
+                                }}
+                            />
+                        )}
+                    </View>
+
+                    <View>
+                        {mobileNumberModal &&
+                            <View>
+                                <Modal
+                                    animationType="slide"
+                                    transparent={true}
+                                    visible={mobileNumberModal}
+                                    onRequestClose={() => {
+                                        setMobileNumberModal(!mobileNumberModal);
+                                    }}>
+                                    <BottomModelView onclick={() => setMobileNumberModal(false)}>
                                         <View style={{
-                                            marginVertical: hp(2),
-                                            marginBottom: hp(3)
+                                            marginHorizontal: wp(5),
+                                            marginVertical: hp(2)
                                         }}>
+                                            <Pressable
+                                                onPress={() => setMobileNumberModal(false)}
+                                                style={{
+                                                    backgroundColor: '#EEEEEE80',
+                                                    borderRadius: 20,
+                                                    width: 35,
+                                                    height: 35,
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center'
+                                                }}>
+                                                <Image
+                                                    source={require('../assets/close.png')}
+                                                    style={{
+                                                        height: 15,
+                                                        width: 15
+                                                    }} />
+                                            </Pressable>
+                                            <Text style={{
+                                                fontSize: 24,
+                                                fontWeight: 'bold',
+                                                marginTop: hp(2),
+
+                                            }}>User Login</Text>
+                                            <Text
+                                                style={{
+                                                    fontSize: 17,
+                                                    fontWeight: '400',
+                                                    color: '#64748B',
+                                                    marginTop: hp(1),
+                                                    marginBottom: hp(1.5)
+                                                }}
+                                            >Please enter  your mobile number
+                                                to login into your account</Text>
+                                            <Textinput
+                                                image={require('../assets/call.png')}
+                                                placeholder='Enter your mobile number'
+                                                keyboardtype='numeric'
+                                                value={phoneNumber}
+                                                onChangeText={setPhoneNumber}
+                                                max={10}
+                                            />
+                                            <Text
+                                                style={{
+                                                    fontSize: 15,
+                                                    lineHeight: hp(2.5),
+                                                    color: '#64748B',
+                                                    marginVertical: hp(1),
+                                                    marginHorizontal: wp(2)
+                                                }}
+                                            >By continuing, you agree to our <Text
+                                                style={{
+                                                    color: '#00354a',
+                                                    fontWeight: '500'
+                                                }}> Terms of service
+                                                </Text> ,   &
+                                                <Text
+                                                    style={{
+                                                        color: '#00354a',
+                                                        fontWeight: '500'
+                                                    }}>  Privacy policy</Text>
+                                            </Text>
+                                            <View style={{ marginVertical: hp(2) }}>
+                                                <PrimaryButton title='Request OTP'
+                                                    onclick={() => {
+                                                        setMobileNumberModal(false),
+                                                            handelLogin()
+                                                    }}
+                                                />
+                                            </View>
+                                        </View>
+                                    </BottomModelView>
+                                </Modal>
+                            </View>
+                        }
+                    </View>
+
+                    <View>
+                        {otpModal &&
+                            <View>
+                                <Modal
+                                    animationType="slide"
+                                    transparent={true}
+                                    visible={otpModal}
+                                    onRequestClose={() => {
+                                        setOtpModal(!otpModal);
+                                    }}>
+                                    <BottomModelView onclick={() => setOtpModal(false)}>
+                                        <View style={{
+                                            marginHorizontal: wp(5),
+                                            marginVertical: hp(2)
+                                        }}>
+                                            <Pressable
+                                                onPress={() => setOtpModal(false)}
+                                                style={{
+                                                    backgroundColor: '#EEEEEE80',
+                                                    borderRadius: 20,
+                                                    width: 35,
+                                                    height: 35,
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center'
+                                                }}>
+                                                <Image
+                                                    source={require('../assets/close.png')}
+                                                    style={{
+                                                        height: 15,
+                                                        width: 15
+                                                    }} />
+                                            </Pressable>
+                                            <Text style={{
+                                                fontSize: 24,
+                                                fontWeight: 'bold',
+                                                marginTop: hp(2),
+
+                                            }}>Enter OTP</Text>
+                                            <Text
+                                                style={{
+                                                    fontSize: 17,
+                                                    fontWeight: '400',
+                                                    color: '#64748B',
+                                                    marginTop: hp(1),
+                                                    marginBottom: hp(1.5),
+                                                    width: wp(80)
+                                                }}
+                                            >We’ve sent an SMS with an activation
+                                                code to your phone
+                                                <Text
+                                                    style={{
+                                                        color: '#00354a',
+                                                        fontSize: 16
+                                                    }}>  +91 {phoneNumber}</Text>
+                                            </Text>
                                             <OtpInput
-                                                numberOfDigits={6}
+                                                numberOfDigits={4}
                                                 focusColor="#E8ECF4"
                                                 focusStickBlinkingDuration={500}
-                                                onTextChange={(text) => setAadharotp(text)}
+                                                onTextChange={(text) => setOtp(text)}
                                                 onFilled={(text) => console.log(`OTP is ${text}`)}
                                                 textInputProps={{
                                                     accessibilityLabel: "One-Time Password",
                                                 }}
                                                 theme={{
-                                                    pinCodeContainerStyle: style.otpBox,
-                                                    pinCodeTextStyle: style.otpText,
                                                     containerStyle: style.otpContainer,
+                                                    pinCodeContainerStyle: style.otp,
+                                                    pinCodeTextStyle: style.otpText,
                                                 }}
                                             />
-
-                                        </View>
-                                        <Text
-                                            style={{
-                                                fontSize: 15,
-                                                lineHeight: hp(2.5),
-                                                color: '#64748B',
-                                                marginVertical: hp(2),
-                                                marginHorizontal: wp(2)
-                                            }}
-                                        >By continuing you agree
-                                            to our <Text
-                                                style={{
-                                                    color: '#00354a'
-                                                }}> Terms of service
-                                            </Text> ,   &
-                                            <Text
-                                                style={{
-                                                    color: '#00354a'
-                                                }}>  Privacy policy</Text>
-                                        </Text>
-                                        {indicator && <ActivityIndicator color='#00354a' size="large" />}
-                                        <View style={{ marginBottom: hp(2) }}>
-                                            <PrimaryButton
-                                                title='Verify'
-                                                onclick={() => {
-                                                    handelAadharotp()
-                                                }}
-                                            />
-                                        </View>
-                                    </View>
-                                </BottomModelView>
-                            </Modal>
-                        </View>
-                    }
-                </View>
-
-            </View>
-            <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
-                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                    {carData && <Carousel
-                        autoPlay={false}
-                        ref={ref}
-                        width={wp(94)}
-                        style={{}}
-                        height={hp(23)}
-                        data={carData.gallery}
-                        renderItem={({ item }: { item: any }) => (
-                            <View style={{
-                                justifyContent: 'center',
-                                alignItems: 'center'
-                            }}>
-                                <Image source={{ uri: item.image }}
-                                    style={{
-                                        height: hp(22),
-                                        width: wp(92),
-                                        borderRadius: 20,
-                                        marginTop: hp(1)
-                                    }} />
-                            </View>
-                        )}
-                    />}
-                </View>
-                <View style={{
-                    position: 'absolute',
-                    top: hp(3),
-                    marginHorizontal: wp(7),
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    width: wp(86)
-                }}>
-                    <View style={{
-                        flexDirection: 'row',
-                        alignItems: 'center'
-                    }}>
-                        <Pressable onPress={() => props.navigation.goBack()}>
-                            <Image
-                                source={require('../assets/Back.png')}
-                                style={BackButtonStyle.style}
-                                tintColor='#000000'
-                            />
-                        </Pressable>
-                        <Text
-                            style={{
-                                color: '#000000',
-                                marginHorizontal: wp(2),
-                                fontWeight: 'bold'
-                            }}
-                        >Vehicle details</Text>
-                    </View>
-                </View>
-                <View
-
-                    style={{
-                        flex: 1,
-                        marginHorizontal: wp(5),
-                        paddingVertical: hp(2)
-                    }}>
-                    <Cardview>
-                        <View style={{
-                            paddingVertical: hp(1),
-                            paddingHorizontal: hp(2)
-                        }}>
-                            <Text
-                                style={{
-                                    fontSize: 17,
-                                    fontWeight: 'bold'
-                                }}
-                            >{carData && carData.brand_name} {carData && carData.model_name}</Text>
-                            <Text
-                                style={{
-                                    fontSize: 13,
-                                    marginVertical: wp(1.5),
-                                    color: '#64748B'
-                                }}>
-                                {textExpanded ? (
-                                    <>
-                                        {carData && carData.car_description}{' '}
-                                        <Text
-                                            onPress={() => setTextExpanded(false)}
-                                            style={{ color: '#00354a' }}
-                                        >
-                                            Show less &lt;&lt;
-                                        </Text>
-                                    </>
-                                ) : (
-                                    <>
-                                        {carData && carData.car_description}
-                                        {' '}
-                                        <Text
-                                            onPress={() => setTextExpanded(true)}
-                                            style={{ color: '#00354a' }}
-                                        >
-                                            See all &gt;&gt;
-                                        </Text>
-                                    </>
-                                )}
-                            </Text>
-                        </View>
-                    </Cardview>
-                    <View style={{ marginVertical: hp(2) }}>
-                        <Cardview>
-                            <View style={{
-                                paddingVertical: hp(1),
-                                paddingHorizontal: hp(2)
-                            }}>
-                                <Text
-                                    style={{
-                                        fontSize: 17,
-                                        fontWeight: 'bold'
-                                    }}>Equipment</Text>
-                                <View style={{
-                                    flexDirection: 'row',
-                                    marginVertical: wp(2)
-                                }}>
-                                    <View style={{
-                                        flexDirection: 'row',
-                                        flexWrap: 'wrap'
-                                    }}>
-                                        {carData && carData.features.map((e: any, index: any) => (
-                                            <View key={index} style={{
+                                            <View style={{
                                                 flexDirection: 'row',
+                                                justifyContent: 'center',
                                                 alignItems: 'center',
-                                                width: wp(40),
-                                                marginVertical: hp(0.5)
+                                                marginVertical: hp(3)
                                             }}>
-                                                <Image
-                                                    source={{ uri: e.featureIcon }}
-                                                    style={ImageStyle.style}
-                                                    tintColor='#8A8A8F'
-                                                />
-                                                <Text style={
-                                                    ImageStyle.text
-                                                }>{e.feature}</Text>
+                                                <Text style={{
+                                                    fontSize: 16,
+                                                    color: '#64748B'
+                                                }}>I didn’t receive a code</Text>
+                                                <TouchableOpacity onPress={async () => {
+                                                    const response = await Login(phoneNumber)
+                                                }}>
+                                                    <Text style={{
+                                                        color: '#00354a',
+                                                        marginHorizontal: wp(2),
+                                                        fontSize: 16,
+                                                        fontWeight: 'bold'
+                                                    }}>Resend</Text>
+                                                </TouchableOpacity>
+
                                             </View>
-                                        ))}
-
-                                    </View>
-                                </View>
-                            </View>
-                        </Cardview>
-                    </View>
-                    <View>
-                        <Text style={{
-                            fontSize: 17,
-                            fontWeight: 'bold',
-                            marginBottom: hp(1)
-                        }}>Host Details</Text>
-                        <Cardview>
-                            <View style={{
-                                paddingVertical: hp(1),
-                                paddingHorizontal: hp(2),
-                                flexDirection: 'row',
-                                alignItems: 'center'
-                            }}>
-                                <Image
-                                    source={require('../assets/user.png')}
-                                    style={{
-                                        height: 60,
-                                        width: 60,
-                                        borderRadius: 30
-                                    }} />
-                                <View style={{ width: wp(60), marginStart: wp(3) }}>
-                                    <Text style={{
-                                        fontSize: 18,
-                                        fontWeight: 'bold'
-                                    }}>{carData && carData.hosted_by}</Text>
-                                    <View style={{
-                                        flexDirection: 'row',
-                                        alignItems: 'center'
-                                    }}>
-                                    </View>
-                                </View>
-                            </View>
-                        </Cardview>
-                    </View>
-                    <View>
-                        <Text
-                            style={{
-                                fontSize: 17,
-                                fontWeight: 'bold',
-                                marginVertical: hp(1.5)
-                            }}>Documents required</Text>
-                        <Cardview>
-                            <View style={{
-                                paddingVertical: hp(2),
-                                paddingHorizontal: hp(2)
-                            }}>
-                                <View style={{ marginHorizontal: wp(3) }}>
-                                    <Text style={{
-                                        fontSize: 16,
-                                        fontWeight: 'bold'
-                                    }}>{carData && carData.user_documents}</Text>
-                                </View>
-                            </View>
-                        </Cardview>
-                    </View>
-                    <View style={{ marginVertical: hp(2) }}>
-                        <Cardview>
-                            <View style={{
-                                paddingVertical: hp(2),
-                                paddingHorizontal: hp(2)
-                            }}>
-                                <Text
-                                    style={{
-                                        fontSize: 17,
-                                        fontWeight: 'bold'
-                                    }}>Images</Text>
-                                <ScrollView
-                                    horizontal
-                                    showsHorizontalScrollIndicator={false}
-                                    style={{ marginTop: hp(1) }}>
-                                    {carData && carData.gallery.map((e: any, index: any) => (
-                                        <Image key={index}
-                                            source={{ uri: e.image }}
-                                            style={{
-                                                height: 75,
-                                                width: 120,
-                                                marginRight: wp(2),
-                                                borderRadius: 15
-                                            }} />
-                                    ))}
-                                </ScrollView>
-                            </View>
-                        </Cardview>
-                    </View>
-
-                    {carData && carData.reviews && carData.reviews.length > 0 && (
-                        <View>
-                            <Cardview>
-                                <Carousel
-                                    autoPlay={false}
-                                    ref={ref}
-                                    width={wp(87)}
-                                    height={hp(18)}
-                                    data={carData.reviews}
-                                    renderItem={({ item }: { item: any }) => (
-                                        <View style={{ paddingVertical: hp(1), marginHorizontal: hp(2), width: wp(87) }}>
-                                            <Text style={{
-                                                fontSize: 17,
-                                                fontWeight: 'bold',
-                                                marginBottom: hp(1)
-                                            }}>Reviews</Text>
-
-                                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                                <Image
-                                                    source={require('../assets/user.png')}
-                                                    style={{
-                                                        height: 45,
-                                                        width: 45,
-                                                        borderRadius: 22
+                                            {indicator && <ActivityIndicator color='#00354a' size="large" />}
+                                            <View style={{ marginBottom: hp(2), marginTop: hp(2) }}>
+                                                <PrimaryButton
+                                                    title='Verify'
+                                                    onclick={() => {
+                                                        handelOtp()
                                                     }}
                                                 />
-                                                <View style={{ marginHorizontal: wp(3) }}>
+                                            </View>
+                                        </View>
+                                    </BottomModelView>
+                                </Modal>
+                            </View>
+                        }
+                    </View>
+                    <View>
+                        {aadharmodal &&
+                            <View>
+                                <Modal
+                                    animationType="slide"
+                                    transparent={true}
+                                    visible={aadharmodal}
+                                    onRequestClose={() => {
+                                        setAadharmodal(!aadharmodal);
+                                    }}
+                                >
+                                    <BottomModelView>
+                                        <View style={{
+                                            marginHorizontal: wp(5),
+                                            marginVertical: hp(2)
+                                        }}>
+                                            <Pressable
+                                                onPress={() => setAadharmodal(false)}
+                                                style={{
+                                                    backgroundColor: '#EEEEEE80',
+                                                    borderRadius: 20,
+                                                    width: 35,
+                                                    height: 35,
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center'
+                                                }}>
+                                                <Image
+                                                    source={require('../assets/close.png')}
+                                                    style={{
+                                                        height: 15,
+                                                        width: 15
+                                                    }} />
+                                            </Pressable>
+                                            <Text style={{
+                                                fontSize: 24,
+                                                fontWeight: 'bold',
+                                                marginTop: hp(2),
+
+                                            }}>User Aadhar number</Text>
+                                            <Text
+                                                style={{
+                                                    fontSize: 17,
+                                                    fontWeight: '400',
+                                                    color: '#64748B',
+                                                    marginTop: hp(1),
+                                                    marginBottom: hp(1.5)
+                                                }}
+                                            >Please enter a your aadhar card number
+                                                for verification</Text>
+                                            <Textinput
+                                                image={require('../assets/users.png')}
+                                                placeholder='Enter your aadhar Card number'
+                                                keyboardtype='numeric'
+                                                value={aadharnumber}
+                                                onChangeText={setAadharnumber}
+                                                max={12}
+                                            />
+                                            <View>
+                                                <View style={{
+                                                    marginHorizontal: wp(4),
+                                                    marginVertical: hp(1)
+                                                }}>
                                                     <Text style={{
                                                         fontSize: 18,
                                                         fontWeight: 'bold',
-                                                        width: wp(60),
-                                                    }}>{item.name}</Text>
-                                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                                        <Rating
-                                                            readonly
-                                                            startingValue={item.rating}
-                                                            imageSize={11}
-                                                            ratingCount={5}
-                                                            fractions={1}
-                                                            style={{ marginLeft: 8 }}
-                                                        />
-                                                        <Text style={{
-                                                            fontSize: 12,
-                                                            fontWeight: '500',
-                                                            color: '#8A8A8F',
-                                                            marginHorizontal: wp(2)
+                                                        marginVertical: hp(1)
+                                                    }}>Aadhar card</Text>
+                                                    <View style={{
+                                                        flexDirection: 'row',
+                                                        justifyContent: 'space-between',
+                                                        marginVertical: hp(1)
+                                                    }}>
+                                                        <View style={{
+                                                            width: wp(38)
                                                         }}>
-                                                            {item.time || '15 minutes ago'}
-                                                        </Text>
+                                                            <Cardview>
+                                                                {aadharfront ?
+                                                                    <Pressable
+                                                                        onPress={() => {
+                                                                            setAadharmodal(false)
+                                                                            setTargetType('aadharfront');
+                                                                            setTimeout(() => {
+                                                                                SetCaremaModal(true);
+                                                                            }, 500);
+                                                                        }}
+                                                                        style={{
+                                                                            justifyContent: 'center', alignItems: 'center',
+                                                                            paddingVertical: hp(2)
+                                                                        }}>
+                                                                        <Image
+                                                                            source={{ uri: aadharfront?.uri }}
+                                                                            style={{
+                                                                                width: 110,
+                                                                                height: 75,
+                                                                                resizeMode: 'cover',
+                                                                                borderRadius: 10
+                                                                            }}
+                                                                        />
+                                                                    </Pressable>
+                                                                    :
+                                                                    <CameraView
+                                                                        image={require('../assets/Huge.png')}
+                                                                        title="Upload Front"
+                                                                        onclick={() => {
+                                                                            setAadharmodal(false)
+                                                                            setTimeout(() => {
+                                                                                SetCaremaModal(true);
+                                                                            }, 500);
+                                                                            setTargetType('aadharfront');
+                                                                        }}
+                                                                    />}
+                                                            </Cardview>
+                                                        </View>
+                                                        <View style={{
+                                                            width: wp(38)
+                                                        }}>
+                                                            <Cardview>
+                                                                {aadharback ?
+                                                                    <Pressable
+                                                                        onPress={() => {
+                                                                            setAadharmodal(false)
+                                                                            setTargetType('aadharback');
+                                                                            setTimeout(() => {
+                                                                                SetCaremaModal(true);
+                                                                            }, 500);
+                                                                        }}
+                                                                        style={{
+                                                                            justifyContent: 'center', alignItems: 'center',
+                                                                            paddingVertical: hp(2)
+                                                                        }}>
+                                                                        <Image
+                                                                            source={{ uri: aadharback?.uri }}
+                                                                            style={{
+                                                                                width: 110,
+                                                                                height: 75,
+                                                                                resizeMode: 'cover',
+                                                                                borderRadius: 10
+                                                                            }}
+                                                                        />
+                                                                    </Pressable>
+                                                                    :
+                                                                    <CameraView
+                                                                        image={require('../assets/Huge.png')}
+                                                                        title="Upload Back"
+                                                                        onclick={() => {
+                                                                            setAadharmodal(false)
+                                                                            setTargetType('aadharback');
+                                                                            setTimeout(() => {
+                                                                                SetCaremaModal(true);
+                                                                            }, 500);
+                                                                        }}
+
+                                                                    />}
+                                                            </Cardview>
+                                                        </View>
                                                     </View>
                                                 </View>
                                             </View>
                                             <Text
-                                                numberOfLines={1}
                                                 style={{
-                                                    fontWeight: '500',
-                                                    marginVertical: hp(2),
-
-                                                }}>{item.review}</Text>
+                                                    fontSize: 15,
+                                                    lineHeight: hp(2.5),
+                                                    color: '#64748B',
+                                                    marginVertical: hp(1),
+                                                    marginHorizontal: wp(2)
+                                                }}
+                                            >By continuing you agree
+                                                to our <Text
+                                                    style={{
+                                                        color: '#00354a'
+                                                    }}> Terms of service
+                                                </Text> ,   &
+                                                <Text
+                                                    style={{
+                                                        color: '#00354a'
+                                                    }}>  Privacy policy</Text>
+                                            </Text>
+                                            {indicator && <ActivityIndicator color='#00354a' size="large" />}
+                                            <View style={{ marginVertical: hp(2) }}>
+                                                <PrimaryButton title='Request OTP'
+                                                    onclick={() => {
+                                                        handelAadhardetails()
+                                                    }}
+                                                />
+                                            </View>
                                         </View>
-                                    )}
-                                />
-                            </Cardview>
+                                    </BottomModelView>
+                                </Modal>
+                            </View>
+                        }
+                    </View>
+
+                    <View>
+                        {licencemodal &&
+                            <View>
+                                <Modal
+                                    animationType="slide"
+                                    transparent={true}
+                                    visible={licencemodal}
+                                    onRequestClose={() => {
+                                        setLicencemodal(!licencemodal);
+                                    }}
+                                >
+                                    <BottomModelView>
+                                        <View style={{
+                                            marginHorizontal: wp(5),
+                                            marginVertical: hp(2)
+                                        }}>
+                                            <Pressable
+                                                onPress={() => setLicencemodal(false)}
+                                                style={{
+                                                    backgroundColor: '#EEEEEE80',
+                                                    borderRadius: 20,
+                                                    width: 35,
+                                                    height: 35,
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center'
+                                                }}>
+                                                <Image
+                                                    source={require('../assets/close.png')}
+                                                    style={{
+                                                        height: 15,
+                                                        width: 15
+                                                    }} />
+                                            </Pressable>
+                                            <Text style={{
+                                                fontSize: 24,
+                                                fontWeight: 'bold',
+                                                marginTop: hp(2),
+
+                                            }}>User driving licence number</Text>
+                                            <Text
+                                                style={{
+                                                    fontSize: 17,
+                                                    fontWeight: '400',
+                                                    color: '#64748B',
+                                                    marginTop: hp(1),
+                                                    marginBottom: hp(1.5)
+                                                }}
+                                            >Please enter a your Driving licence number
+                                                for verification</Text>
+                                            <Textinput
+                                                image={require('../assets/users.png')}
+                                                placeholder='Enter your driving licence number'
+                                                keyboardtype='default'
+                                                value={licencenumber}
+                                                onChangeText={setlicencenumber}
+                                                max={16}
+                                            />
+                                            <Pressable
+                                                onPress={() => setOpen(true)}
+                                                style={input.continer}>
+                                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                    <Image source={require('../assets/sms.png')} style={input.style} />
+                                                    <Text style={[input.textinput, { color: isDateSelected ? '#000' : '#9CA3AF' }]}>
+                                                        {isDateSelected ? moment(date).format('YYYY-MM-DD') : 'Date of birth'}
+                                                    </Text>
+                                                </View>
+                                            </Pressable>
+                                            <DatePicker
+                                                modal
+                                                open={open}
+                                                date={date}
+                                                mode="date"
+                                                dividerColor="#00354a"
+                                                onConfirm={(selectedDate) => {
+                                                    setOpen(false);
+                                                    setDate(selectedDate);
+                                                    setIsDateSelected(true);
+                                                }}
+                                                onCancel={() => {
+                                                    setOpen(false);
+                                                }}
+                                                theme="light"
+                                            />
+                                            <Text style={{
+                                                fontSize: 18,
+                                                fontWeight: 'bold',
+                                                marginVertical: hp(1)
+                                            }}>Driving License</Text>
+                                            <View style={{
+                                                flexDirection: 'row',
+                                                justifyContent: 'space-between',
+                                                marginVertical: hp(1),
+                                                marginBottom: hp(2)
+                                            }}>
+                                                <View style={{ width: wp(38) }}>
+                                                    <Cardview>
+                                                        {licensefront ?
+                                                            <Pressable
+                                                                onPress={() => {
+                                                                    setLicencemodal(false)
+                                                                    setTimeout(() => {
+                                                                        SetCaremaModal(true);
+                                                                    }, 500);
+                                                                    setTargetType('licensefront')
+                                                                }}
+                                                                style={{
+                                                                    justifyContent: 'center', alignItems: 'center',
+                                                                    paddingVertical: hp(2)
+                                                                }}>
+                                                                <Image
+                                                                    source={{ uri: licensefront?.uri }}
+                                                                    style={{
+                                                                        width: 110,
+                                                                        height: 75,
+                                                                        resizeMode: 'cover',
+                                                                        borderRadius: 10
+                                                                    }}
+                                                                />
+                                                            </Pressable>
+                                                            :
+                                                            <CameraView
+                                                                image={require('../assets/Huge.png')}
+                                                                title="Upload Front"
+                                                                onclick={() => {
+                                                                    setLicencemodal(false)
+                                                                    setTimeout(() => {
+                                                                        SetCaremaModal(true);
+                                                                    }, 500);
+                                                                    setTargetType('licenseback')
+                                                                }}
+                                                            />}
+                                                    </Cardview>
+                                                </View>
+                                                <View style={{ width: wp(38) }}>
+                                                    <Cardview>
+                                                        {licenseback ?
+                                                            <Pressable onPress={() => {
+                                                                setLicencemodal(false)
+                                                                setTimeout(() => {
+                                                                    SetCaremaModal(true);
+                                                                }, 500);
+                                                                setTargetType('licenseback')
+                                                            }} style={{
+                                                                justifyContent: 'center', alignItems: 'center',
+                                                                paddingVertical: hp(2)
+                                                            }}>
+                                                                <Image
+                                                                    source={{ uri: licenseback?.uri }}
+                                                                    style={{
+                                                                        width: 110,
+                                                                        height: 75,
+                                                                        resizeMode: 'cover',
+                                                                        borderRadius: 10
+                                                                    }}
+                                                                />
+                                                            </Pressable>
+                                                            :
+                                                            <CameraView
+                                                                image={require('../assets/Huge.png')}
+                                                                title="Upload Back"
+                                                                onclick={() => {
+                                                                    setLicencemodal(false)
+                                                                    setTimeout(() => {
+                                                                        SetCaremaModal(true);
+                                                                    }, 500);
+                                                                    setTargetType('licenseback')
+                                                                }}
+                                                            />}
+                                                    </Cardview>
+                                                </View>
+                                            </View>
+                                            <Text
+                                                style={{
+                                                    fontSize: 15,
+                                                    lineHeight: hp(2.5),
+                                                    color: '#64748B',
+                                                    marginVertical: hp(1),
+                                                    marginHorizontal: wp(2)
+                                                }}
+                                            >By continuing you agree
+                                                to our <Text
+                                                    style={{
+                                                        color: '#00354a'
+                                                    }}> Terms of service
+                                                </Text> ,   &
+                                                <Text
+                                                    style={{
+                                                        color: '#00354a'
+                                                    }}>  Privacy policy</Text>
+                                            </Text>
+                                            {indicator && <ActivityIndicator color='#00354a' size="large" />}
+                                            <View style={{ marginVertical: hp(2) }}>
+                                                <PrimaryButton title='Submit'
+                                                    onclick={() => {
+                                                        handelLicencedata()
+                                                    }}
+                                                />
+                                            </View>
+                                        </View>
+                                    </BottomModelView>
+                                </Modal>
+                            </View>
+                        }
+                    </View>
+
+                    <View>
+
+                        {aadharotpmodal &&
+                            <View>
+                                <Modal
+                                    animationType="slide"
+                                    transparent={true}
+                                    visible={aadharotpmodal}
+                                    onRequestClose={() => {
+                                        setAadharotpmodal(!aadharotpmodal);
+                                    }}>
+                                    <BottomModelView onclick={() => setOtpModal(false)}>
+                                        <View style={{
+                                            marginHorizontal: wp(5),
+                                            marginVertical: hp(2)
+                                        }}>
+                                            <Pressable
+                                                onPress={() => {
+                                                    setOtpModal(false)
+                                                    setAadharmodal(true)
+                                                    setAadharotp('')
+                                                }}
+                                                style={{
+                                                    backgroundColor: '#EEEEEE80',
+                                                    borderRadius: 20,
+                                                    width: 35,
+                                                    height: 35,
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center'
+                                                }}>
+                                                <Image
+                                                    source={require('../assets/close.png')}
+                                                    style={{
+                                                        height: 15,
+                                                        width: 15
+                                                    }} />
+                                            </Pressable>
+                                            <Text style={{
+                                                fontSize: 24,
+                                                fontWeight: 'bold',
+                                                marginTop: hp(2),
+
+                                            }}>Enter OTP</Text>
+                                            <Text
+                                                style={{
+                                                    fontSize: 17,
+                                                    fontWeight: '400',
+                                                    color: '#64748B',
+                                                    marginTop: hp(1),
+                                                    marginBottom: hp(1.5),
+                                                    width: wp(80)
+                                                }}
+                                            >We’ve sent an SMS with an activation
+                                                code to your phone
+
+                                            </Text>
+                                            <View style={{
+                                                marginVertical: hp(2),
+                                                marginBottom: hp(3)
+                                            }}>
+                                                <OtpInput
+                                                    numberOfDigits={6}
+                                                    focusColor="#E8ECF4"
+                                                    focusStickBlinkingDuration={500}
+                                                    onTextChange={(text) => setAadharotp(text)}
+                                                    onFilled={(text) => console.log(`OTP is ${text}`)}
+                                                    textInputProps={{
+                                                        accessibilityLabel: "One-Time Password",
+                                                    }}
+                                                    theme={{
+                                                        pinCodeContainerStyle: style.otpBox,
+                                                        pinCodeTextStyle: style.otpText,
+                                                        containerStyle: style.otpContainer,
+                                                    }}
+                                                />
+
+                                            </View>
+                                            <Text
+                                                style={{
+                                                    fontSize: 15,
+                                                    lineHeight: hp(2.5),
+                                                    color: '#64748B',
+                                                    marginVertical: hp(2),
+                                                    marginHorizontal: wp(2)
+                                                }}
+                                            >By continuing you agree
+                                                to our <Text
+                                                    style={{
+                                                        color: '#00354a'
+                                                    }}> Terms of service
+                                                </Text> ,   &
+                                                <Text
+                                                    style={{
+                                                        color: '#00354a'
+                                                    }}>  Privacy policy</Text>
+                                            </Text>
+                                            {indicator && <ActivityIndicator color='#00354a' size="large" />}
+                                            <View style={{ marginBottom: hp(2) }}>
+                                                <PrimaryButton
+                                                    title='Verify'
+                                                    onclick={() => {
+                                                        handelAadharotp()
+                                                    }}
+                                                />
+                                            </View>
+                                        </View>
+                                    </BottomModelView>
+                                </Modal>
+                            </View>
+                        }
+                    </View>
+                </View>
+
+                <View style={{ flex: 1 }}>
+                    {carImageVisible ?
+                        <View style={{ height: hp(100), justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.3)' }}>
+                            <CarViewScreen uri={selectedImage} onClose={() => setCarImageVisible(false)} />
                         </View>
-                    )}
-                    <View style={{
-                        marginTop: hp(2),
-                    }}>
-                        <Cardview>
+                        :
+                        <>
+                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                {carData && <Carousel
+                                    autoPlay={false}
+                                    ref={ref}
+                                    width={wp(94)}
+                                    style={{}}
+                                    height={hp(23)}
+                                    data={carData.gallery}
+                                    renderItem={({ item }: { item: any; }) => (
+                                        <View style={{
+                                            justifyContent: 'center',
+                                            alignItems: 'center'
+                                        }}>
+                                            <Image source={{ uri: item.image }}
+                                                style={{
+                                                    height: hp(22),
+                                                    width: wp(92),
+                                                    borderRadius: 20,
+                                                    marginTop: hp(1)
+                                                }} />
+                                        </View>
+                                    )} />}
+                            </View>
                             <View style={{
-                                paddingVertical: hp(1),
-                                paddingHorizontal: hp(2),
+                                position: 'absolute',
+                                top: hp(3),
+                                marginHorizontal: wp(7),
                                 flexDirection: 'row',
+                                alignItems: 'center',
                                 justifyContent: 'space-between',
-                                alignItems: 'center'
+                                width: wp(86)
                             }}>
                                 <View style={{
                                     flexDirection: 'row',
-                                    alignItems: 'flex-end'
+                                    alignItems: 'center'
                                 }}>
-                                    <Text style={{
-                                        fontSize: 24,
-                                        fontWeight: 'bold'
-                                    }}>₹{carData && carData.total_price}</Text>
-                                    <Text style={{
-                                        color: '#64748B',
-                                        top: (-3),
-                                        marginHorizontal: wp(2)
-                                    }}>/ {carData && carData.total_kms} kms</Text>
+                                    <Pressable onPress={() => props.navigation.goBack()}>
+                                        <Image
+                                            source={require('../assets/Back.png')}
+                                            style={BackButtonStyle.style}
+                                            tintColor='#ffffff' />
+                                    </Pressable>
+                                    <Text
+                                        style={{
+                                            color: '#ffffff',
+                                            marginHorizontal: wp(2),
+                                            fontWeight: 'bold'
+                                        }}
+                                    >Vehicle details</Text>
                                 </View>
-                                <PrimaryButton
-                                    title='Book Now'
-                                    onclick={() => handelButtonSubmit()} />
                             </View>
-                        </Cardview>
-                    </View>
+                            <ScrollView
+
+                                style={{
+                                    flex: 1,
+                                    marginHorizontal: wp(5),
+                                    paddingVertical: hp(2)
+                                }}>
+                                <Cardview>
+                                    <View style={{
+                                        paddingVertical: hp(1),
+                                        paddingHorizontal: hp(2)
+                                    }}>
+                                        <Text
+                                            style={{
+                                                fontSize: 17,
+                                                fontWeight: 'bold'
+                                            }}
+                                        >{carData && carData.brand_name} {carData && carData.model_name}</Text>
+                                        <Text
+                                            style={{
+                                                fontSize: 13,
+                                                marginVertical: wp(1.5),
+                                                color: '#64748B'
+                                            }}>
+                                            {textExpanded ? (
+                                                <>
+                                                    {carData && carData.car_description}{' '}
+                                                    <Text
+                                                        onPress={() => setTextExpanded(false)}
+                                                        style={{ color: '#00354a' }}
+                                                    >
+                                                        Show less &lt;&lt;
+                                                    </Text>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    {carData && carData.car_description}
+                                                    {' '}
+                                                    <Text
+                                                        onPress={() => setTextExpanded(true)}
+                                                        style={{ color: '#00354a' }}
+                                                    >
+                                                        See all &gt;&gt;
+                                                    </Text>
+                                                </>
+                                            )}
+                                        </Text>
+                                    </View>
+                                </Cardview>
+                                <View style={{ marginVertical: hp(2) }}>
+                                    <Cardview>
+                                        <View style={{
+                                            paddingVertical: hp(1),
+                                            paddingHorizontal: hp(2)
+                                        }}>
+                                            <Text
+                                                style={{
+                                                    fontSize: 17,
+                                                    fontWeight: 'bold'
+                                                }}>Equipment</Text>
+                                            <View style={{
+                                                flexDirection: 'row',
+                                                marginVertical: wp(2)
+                                            }}>
+                                                <View style={{
+                                                    flexDirection: 'row',
+                                                    flexWrap: 'wrap'
+                                                }}>
+                                                    {carData && carData.features.map((e: any, index: any) => (
+                                                        <View key={index} style={{
+                                                            flexDirection: 'row',
+                                                            alignItems: 'center',
+                                                            width: wp(40),
+                                                            marginVertical: hp(0.5)
+                                                        }}>
+                                                            <Image
+                                                                source={{ uri: e.featureIcon }}
+                                                                style={ImageStyle.style}
+                                                                tintColor='#8A8A8F' />
+                                                            <Text style={ImageStyle.text}>{e.feature}</Text>
+                                                        </View>
+                                                    ))}
+
+                                                </View>
+                                            </View>
+                                        </View>
+                                    </Cardview>
+                                </View>
+                                <View>
+                                    <Text style={{
+                                        fontSize: 17,
+                                        fontWeight: 'bold',
+                                        marginBottom: hp(1)
+                                    }}>Host Details</Text>
+                                    <Cardview>
+                                        <View style={{
+                                            paddingVertical: hp(1),
+                                            paddingHorizontal: hp(2),
+                                            flexDirection: 'row',
+                                            alignItems: 'center'
+                                        }}>
+                                            <Image
+                                                source={require('../assets/user.png')}
+                                                style={{
+                                                    height: 60,
+                                                    width: 60,
+                                                    borderRadius: 30
+                                                }} />
+                                            <View style={{ width: wp(60), marginStart: wp(3) }}>
+                                                <Text style={{
+                                                    fontSize: 18,
+                                                    fontWeight: 'bold'
+                                                }}>{carData && carData.hosted_by}</Text>
+                                                <View style={{
+                                                    flexDirection: 'row',
+                                                    alignItems: 'center'
+                                                }}>
+                                                </View>
+                                            </View>
+                                        </View>
+                                    </Cardview>
+                                </View>
+                                <View>
+                                    <Text
+                                        style={{
+                                            fontSize: 17,
+                                            fontWeight: 'bold',
+                                            marginVertical: hp(1.5)
+                                        }}>Documents required</Text>
+                                    <Cardview>
+                                        <View style={{
+                                            paddingVertical: hp(2),
+                                            paddingHorizontal: hp(2)
+                                        }}>
+                                            <View style={{ marginHorizontal: wp(3) }}>
+                                                <Text style={{
+                                                    fontSize: 14,
+                                                    fontWeight: '500'
+                                                }}>{carData && carData.user_documents}</Text>
+                                            </View>
+                                        </View>
+                                    </Cardview>
+                                </View>
+                                <View style={{ marginVertical: hp(2) }}>
+                                    <Cardview>
+                                        <View style={{
+                                            paddingVertical: hp(2),
+                                            paddingHorizontal: hp(2)
+                                        }}>
+                                            <Text
+                                                style={{
+                                                    fontSize: 17,
+                                                    fontWeight: 'bold'
+                                                }}>Images</Text>
+                                            <ScrollView
+                                                horizontal
+                                                showsHorizontalScrollIndicator={false}
+                                                style={{ marginTop: hp(1) }}>
+                                                {carData && carData.gallery.map((e: any, index: any) => (
+                                                    <TouchableOpacity onPress={() => { setCarImageVisible(true), setSelectedImage(e.image) }} key={index}>
+                                                        <Image
+                                                            source={{ uri: e.image }}
+                                                            style={{
+                                                                height: 75,
+                                                                width: 120,
+                                                                marginRight: wp(2),
+                                                                borderRadius: 15
+                                                            }} />
+                                                    </TouchableOpacity>
+
+                                                ))}
+                                            </ScrollView>
+                                        </View>
+                                    </Cardview>
+                                </View>
+
+                                {carData && carData.reviews && carData.reviews.length > 0 && (
+                                    <View>
+                                        <Cardview>
+                                            <Carousel
+                                                autoPlay={false}
+                                                ref={ref}
+                                                width={wp(87)}
+                                                height={hp(18)}
+                                                data={carData.reviews}
+                                                renderItem={({ item }: { item: any; }) => (
+                                                    <View style={{ paddingVertical: hp(1), marginHorizontal: hp(2), width: wp(87) }}>
+                                                        <Text style={{
+                                                            fontSize: 17,
+                                                            fontWeight: 'bold',
+                                                            marginBottom: hp(1)
+                                                        }}>Reviews</Text>
+
+                                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                            <Image
+                                                                source={require('../assets/user.png')}
+                                                                style={{
+                                                                    height: 45,
+                                                                    width: 45,
+                                                                    borderRadius: 22
+                                                                }} />
+                                                            <View style={{ marginHorizontal: wp(3) }}>
+                                                                <Text style={{
+                                                                    fontSize: 16,
+                                                                    fontWeight: 'bold',
+                                                                    width: wp(60),
+                                                                }}>{item.name}</Text>
+                                                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                                    <Rating
+                                                                        readonly
+                                                                        startingValue={item.rating}
+                                                                        imageSize={11}
+                                                                        ratingCount={5}
+                                                                        fractions={1}
+                                                                        style={{ marginLeft: 8 }} />
+                                                                    <Text style={{
+                                                                        fontSize: 12,
+                                                                        fontWeight: '500',
+                                                                        color: '#8A8A8F',
+                                                                        marginHorizontal: wp(2)
+                                                                    }}>
+                                                                        {item.time || '15 minutes ago'}
+                                                                    </Text>
+                                                                </View>
+                                                            </View>
+                                                        </View>
+                                                        <Text
+                                                            numberOfLines={1}
+                                                            style={{
+                                                                fontWeight: '500',
+                                                                marginVertical: hp(2),
+                                                            }}>{item.review}</Text>
+                                                    </View>
+                                                )} />
+                                        </Cardview>
+                                    </View>
+                                )}
+                                <View style={{
+                                    marginTop: hp(1),
+                                    marginBottom:hp(5)
+                                }}>
+                                    <Cardview>
+                                        <View style={{
+                                            paddingVertical: hp(1),
+                                            paddingHorizontal: hp(2),
+                                            flexDirection: 'row',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center'
+                                        }}>
+                                            <View style={{
+                                                flexDirection: 'row',
+                                                alignItems: 'flex-end'
+                                            }}>
+                                                <Text style={{
+                                                    fontSize: 24,
+                                                    fontWeight: 'bold'
+                                                }}>₹{carData && carData.total_price}</Text>
+                                                <Text style={{
+                                                    color: '#64748B',
+                                                    top: (-3),
+                                                    marginHorizontal: wp(2)
+                                                }}>/ {carData && carData.total_kms} kms</Text>
+                                            </View>
+                                            <PrimaryButton
+                                                title='Book Now'
+                                                onclick={() => handelButtonSubmit()} />
+                                        </View>
+                                    </Cardview>
+                                </View>
+                            </ScrollView>
+                        </>
+                    }
                 </View>
-            </ScrollView>
-        </SafeAreaView>
+            </SafeAreaView>
+        </GestureHandlerRootView>
     )
 }
 export default VehicleDetailsScreen

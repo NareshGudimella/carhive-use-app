@@ -1,13 +1,14 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Baseprops } from "../utils/navigation";
-import { Alert, Image } from "react-native";
+import { Alert, Image, Platform } from "react-native";
 import { hp, wp } from "../utils/ResponsiveScreen";
 import { useFocusEffect } from "@react-navigation/native";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { updateProfile } from "../storage/redux";
 import { useDispatch } from "react-redux";
 import { getToken } from "../storage/AsyncStorage";
 import { excuteGetResponse } from "../apis/api";
+import DeviceInfo from 'react-native-device-info';
 import {
     Foregroundmessage,
     requestfirebasePermissions
@@ -16,12 +17,14 @@ import {
 class Componentprops extends Baseprops { }
 
 const SplaceScreen: React.FC<Componentprops> = (props) => {
+    const [versions, setVersions] = useState(null)
 
     const dispatch = useDispatch()
 
     useFocusEffect(
         useCallback(() => {
             loadUserDetails()
+            CheckVersion()
         }, []))
 
     const loadUserDetails = async () => {
@@ -41,6 +44,32 @@ const SplaceScreen: React.FC<Componentprops> = (props) => {
             props.navigation.navigate('HomeScreen')
         }
     }
+
+    const CheckVersion = async () => {
+        const response = await excuteGetResponse(`auth/versions`)
+        setVersions(response.data)
+        console.log('versionsdata', response)
+        if (response.code == 0) {
+            if (Platform.OS === 'android') {
+                const buildNumber = DeviceInfo.getBuildNumber();
+                console.log('builddata',buildNumber)
+                if (buildNumber === response.data.User_Android_Version) {
+                    console.log('Android version matched');
+                } else {
+                    Alert.alert('Update Required', 'Please update the app to the latest version.');
+                }
+            } else if (Platform.OS === 'ios') {
+                const buildNumber = DeviceInfo.getBuildNumber();
+                console.log('builddata',buildNumber)
+                if (buildNumber === response.data.User_IOS_Version) {
+                    console.log('iOS version matched');
+                } else {
+                    Alert.alert('Update Required', 'Please update the app to the latest version.');
+                }
+            }
+        }
+    }
+
     return (
         <SafeAreaView style={{
             flex: 1,
