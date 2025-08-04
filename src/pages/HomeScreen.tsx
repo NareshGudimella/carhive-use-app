@@ -12,7 +12,7 @@ import {
 } from 'react-native-responsive-screen';
 import { SelectorBoxStyle } from "../styles/Selectorbox";
 import { BottomTabstyles } from "../styles/BottomTabstyles";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import PrimaryButton from "../components/PrimaryButton";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
