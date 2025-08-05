@@ -1,6 +1,6 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Baseprops } from "../utils/navigation";
-import { Alert, Image, Platform } from "react-native";
+import { Alert, Image, Linking, Platform } from "react-native";
 import { hp, wp } from "../utils/ResponsiveScreen";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useState } from "react";
@@ -23,7 +23,7 @@ const SplaceScreen: React.FC<Componentprops> = (props) => {
 
     useFocusEffect(
         useCallback(() => {
-            loadUserDetails()
+
             CheckVersion()
         }, []))
 
@@ -52,19 +52,40 @@ const SplaceScreen: React.FC<Componentprops> = (props) => {
         if (response.code == 0) {
             if (Platform.OS === 'android') {
                 const buildNumber = DeviceInfo.getBuildNumber();
-                console.log('builddata',buildNumber)
+                console.log('builddata', buildNumber)
                 if (buildNumber === response.data.User_Android_Version) {
                     console.log('Android version matched');
+                    loadUserDetails()
                 } else {
-                    Alert.alert('Update Required', 'Please update the app to the latest version.');
+                    Alert.alert(
+                        'Update Required',
+                        'Please update the app to the latest version.',
+                        [
+                            {
+                                text: 'OK',
+                                onPress: () => {
+                                    Linking.openURL('https://play.google.com/store/apps/details?id=com.carhive.user&pcampaignid=web_share')
+                                }
+                            }
+                        ]
+                    );
                 }
             } else if (Platform.OS === 'ios') {
                 const buildNumber = DeviceInfo.getBuildNumber();
-                console.log('builddata',buildNumber)
+                console.log('builddata', buildNumber)
                 if (buildNumber === response.data.User_IOS_Version) {
                     console.log('iOS version matched');
+                    loadUserDetails()
                 } else {
-                    Alert.alert('Update Required', 'Please update the app to the latest version.');
+                    Alert.alert('Update Required', 'Please update the app to the latest version.',
+                        [
+                            {
+                                text: 'OK',
+                                onPress: () => {
+                                    Linking.openURL('https://apps.apple.com/in/app/carhive-rentals/id6748205300')
+                                }
+                            }
+                        ]);
                 }
             }
         }

@@ -763,7 +763,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                                 keyboardtype='default'
                                                 value={licencenumber}
                                                 onChangeText={setlicencenumber}
-                                                max={16}
+                                                max={20}
                                             />
                                             <Pressable
                                                 onPress={() => setOpen(true)}
