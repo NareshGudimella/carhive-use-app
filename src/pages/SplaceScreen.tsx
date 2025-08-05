@@ -1,6 +1,6 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Baseprops } from "../utils/navigation";
-import { Alert, Image, Linking, Platform } from "react-native";
+import { Alert, Image, Linking, Modal, Platform, Pressable, Text, View } from "react-native";
 import { hp, wp } from "../utils/ResponsiveScreen";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useState } from "react";
@@ -13,17 +13,19 @@ import {
     Foregroundmessage,
     requestfirebasePermissions
 } from "../firebase/firebase";
+import { CenterModalView } from "../components/CenterModelView";
+import PrimaryButton from "../components/PrimaryButton";
+import FastImage from "react-native-fast-image";
 
 class Componentprops extends Baseprops { }
 
 const SplaceScreen: React.FC<Componentprops> = (props) => {
-    const [versions, setVersions] = useState(null)
 
+    const [versionmodal, setVersionmodal] = useState<any>(false)
     const dispatch = useDispatch()
 
     useFocusEffect(
         useCallback(() => {
-
             CheckVersion()
         }, []))
 
@@ -47,45 +49,25 @@ const SplaceScreen: React.FC<Componentprops> = (props) => {
 
     const CheckVersion = async () => {
         const response = await excuteGetResponse(`auth/versions`)
-        setVersions(response.data)
-        console.log('versionsdata', response)
+        console.log(response)
         if (response.code == 0) {
             if (Platform.OS === 'android') {
                 const buildNumber = DeviceInfo.getBuildNumber();
-                console.log('builddata', buildNumber)
-                if (buildNumber === response.data.User_Android_Version) {
-                    console.log('Android version matched');
-                    loadUserDetails()
+                console.log(buildNumber)
+                if (buildNumber !== response.data.User_Android_Version) {
+                    setVersionmodal(true)
                 } else {
-                    Alert.alert(
-                        'Update Required',
-                        'Please update the app to the latest version.',
-                        [
-                            {
-                                text: 'OK',
-                                onPress: () => {
-                                    Linking.openURL('https://play.google.com/store/apps/details?id=com.carhive.user&pcampaignid=web_share')
-                                }
-                            }
-                        ]
-                    );
+                    loadUserDetails()
+
                 }
             } else if (Platform.OS === 'ios') {
                 const buildNumber = DeviceInfo.getBuildNumber();
-                console.log('builddata', buildNumber)
-                if (buildNumber === response.data.User_IOS_Version) {
-                    console.log('iOS version matched');
-                    loadUserDetails()
+                console.log(buildNumber)
+                if (buildNumber !== response.data.User_IOS_Version) {
+                    setVersionmodal(true)
                 } else {
-                    Alert.alert('Update Required', 'Please update the app to the latest version.',
-                        [
-                            {
-                                text: 'OK',
-                                onPress: () => {
-                                    Linking.openURL('https://apps.apple.com/in/app/carhive-rentals/id6748205300')
-                                }
-                            }
-                        ]);
+                    loadUserDetails()
+
                 }
             }
         }
@@ -97,6 +79,50 @@ const SplaceScreen: React.FC<Componentprops> = (props) => {
             justifyContent: 'center',
             alignItems: 'center'
         }}>
+
+            {versionmodal &&
+                <View>
+                    <Modal
+                        animationType="slide"
+                        transparent={true}
+                        visible={versionmodal}
+                        onRequestClose={() => {
+                            setVersionmodal(!versionmodal);
+                        }}>
+                        <CenterModalView>
+                            <View style={{
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                height: hp(35)
+                            }}>
+                                <FastImage
+                                    resizeMode='contain'
+                                    style={{
+                                        height: 70,
+                                        width: 70
+                                    }}
+                                    source={require('../assets/update.gif')} />
+                                <Text style={{
+                                    fontSize: 18,
+                                    fontWeight: 'bold',
+                                    marginVertical: hp(2),
+                                    textAlign: 'center',
+                                    maxWidth: wp(60)
+                                }}>Please update the app to the latest version.</Text>
+                                <View style={{
+                                    width: wp(60)
+                                }}>
+                                    <PrimaryButton title='Update' onclick={() => {
+                                        Linking.openURL(Platform.OS == 'android' ?
+                                            'https://play.google.com/store/apps/details?id=com.carhive.user&pcampaignid=web_share' :
+                                            'https://apps.apple.com/in/app/carhive-rentals/id6748205300')
+                                    }} />
+                                </View>
+                            </View>
+                        </CenterModalView>
+                    </Modal>
+                </View>
+            }
             <Image source={require('../assets/appicon.png')}
                 style={{
                     height: hp(40),

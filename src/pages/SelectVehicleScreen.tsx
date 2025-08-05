@@ -562,7 +562,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                             { fromdate: carsList.from_date, todate: carsList.to_date, id: e.carid })}
                                     key={index}>
                                     <Carousel
-                                        autoPlay={true}
+                                        autoPlay={false}
                                         ref={ref}
                                         width={wp(90)}
                                         style={{}}

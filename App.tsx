@@ -34,9 +34,9 @@ import NetworkListener from './src/components/NetworkListener';
 export const navigationRef = createNavigationContainerRef();
 const Stack = createNativeStackNavigator();
 
-function RootStack({ initialRoute }: { initialRoute: string }) {
+function RootStack() {
   return (
-    <Stack.Navigator initialRouteName={initialRoute} screenOptions={{ headerShown: false }}>
+    <Stack.Navigator initialRouteName='SplaceScreen' screenOptions={{ headerShown: false }}>
       <Stack.Screen name="SplaceScreen" component={SplaceScreen} />
       <Stack.Screen name="HomeScreen" component={HomeScreen} />
       <Stack.Screen name="SelectCityScreen" component={SelectCityScreen} />
@@ -62,28 +62,29 @@ function RootStack({ initialRoute }: { initialRoute: string }) {
 }
 
 export default function App() {
-  const [initialRoute, setInitialRoute] = useState<string | null>(null);
+
+  const [isConnected, setIsConneted] = React.useState(true)
 
   useEffect(() => {
-    const checkNetwork = async () => {
-      const state = await NetInfo.fetch();
-      if (!state.isConnected || !state.isInternetReachable) {
-        setInitialRoute('NoNetworkScreen');
-      } else {
-        setInitialRoute('SplaceScreen');
-      }
-    };
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      const hasInternet = state.isConnected
+      setIsConneted(isConnected);
+      console.log('Network status:', hasInternet);
+    });
 
-    checkNetwork();
+    return () => unsubscribe();
   }, []);
 
-  if (!initialRoute) return null;
+  if (!isConnected) {
+    return <NoNetworkScreen />;
+  }
+
 
   return (
     <Provider store={store}>
       <NavigationContainer ref={navigationRef}>
         <NetworkListener />
-        <RootStack initialRoute={initialRoute} />
+        <RootStack />
       </NavigationContainer>
     </Provider>
   );

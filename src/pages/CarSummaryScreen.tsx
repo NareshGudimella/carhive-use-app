@@ -649,6 +649,11 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                                 setEligiabilityflag(eligiabilityflag === '1' ? '0' : '1');
                                             }}
                                             tintColors={{ true: '#00354a', false: '#ccc' }}
+                                            style={Platform.OS === 'ios' ? {
+                                                height: hp(2.3),
+                                                width: hp(2.3),
+                                                top:hp(0.7)
+                                            } : {}}
                                         />
                                         <Text style={{
                                             fontSize: 13,

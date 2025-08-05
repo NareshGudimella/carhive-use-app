@@ -4,19 +4,9 @@ import { wp, hp } from "../utils/ResponsiveScreen";
 import FastImage from "react-native-fast-image";
 import NetInfo from '@react-native-community/netinfo';
 
-class Componentprops extends Baseprops {}
+class Componentprops extends Baseprops { }
 
 const NoNetworkScreen: React.FC<Componentprops> = (props) => {
-
-    const handleRetry = async () => {
-        const state = await NetInfo.fetch();
-        if (state.isConnected && state.isInternetReachable) {
-            props.navigation.reset({
-                index: 0,
-                routes: [{ name: 'SplaceScreen' }],
-            });
-        }
-    };
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -58,26 +48,7 @@ const NoNetworkScreen: React.FC<Componentprops> = (props) => {
                     }}>
                         Please check your internet connection and try again
                     </Text>
-                    <Pressable
-                        onPress={handleRetry}
-                        style={{
-                            backgroundColor: '#00354a',
-                            marginHorizontal: wp(10),
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            height: hp(6),
-                            borderRadius: 20,
-                            marginTop: hp(5)
-                        }}
-                    >
-                        <Text style={{
-                            color: '#ffffff',
-                            fontSize: 16,
-                            fontWeight: '500'
-                        }}>
-                            Retry
-                        </Text>
-                    </Pressable>
+
                 </View>
             </View>
         </SafeAreaView>

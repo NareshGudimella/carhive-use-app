@@ -1323,7 +1323,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                 )}
                                 <View style={{
                                     marginTop: hp(1),
-                                    marginBottom:hp(5)
+                                    marginBottom: hp(5)
                                 }}>
                                     <Cardview>
                                         <View style={{
