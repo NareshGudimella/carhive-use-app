@@ -54,7 +54,7 @@ const SplaceScreen: React.FC<Componentprops> = (props) => {
             if (Platform.OS === 'android') {
                 const buildNumber = DeviceInfo.getBuildNumber();
                 console.log(buildNumber)
-                if (buildNumber !== response.data.User_Android_Version) {
+                if (buildNumber < response.data.User_Android_Version) {
                     setVersionmodal(true)
                 } else {
                     loadUserDetails()
@@ -62,7 +62,7 @@ const SplaceScreen: React.FC<Componentprops> = (props) => {
             } else if (Platform.OS === 'ios') {
                 const buildNumber = DeviceInfo.getBuildNumber();
                 console.log(buildNumber)
-                if (buildNumber === response.data.User_IOS_Version) {
+                if (buildNumber < response.data.User_IOS_Version) {
                     setVersionmodal(true)
                 } else {
                     loadUserDetails()
