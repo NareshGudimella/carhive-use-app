@@ -1,6 +1,6 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Baseprops } from "../utils/navigation";
-import { Alert, Image, Linking, Modal, Platform, Pressable, Text, View } from "react-native";
+import { Alert, Image, Linking, Modal, Platform, Text, View } from "react-native";
 import { hp, wp } from "../utils/ResponsiveScreen";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useState } from "react";
@@ -58,12 +58,11 @@ const SplaceScreen: React.FC<Componentprops> = (props) => {
                     setVersionmodal(true)
                 } else {
                     loadUserDetails()
-
                 }
             } else if (Platform.OS === 'ios') {
                 const buildNumber = DeviceInfo.getBuildNumber();
                 console.log(buildNumber)
-                if (buildNumber !== response.data.User_IOS_Version) {
+                if (buildNumber === response.data.User_IOS_Version) {
                     setVersionmodal(true)
                 } else {
                     loadUserDetails()

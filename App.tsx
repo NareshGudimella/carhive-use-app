@@ -65,20 +65,19 @@ export default function App() {
 
   const [isConnected, setIsConneted] = React.useState(true)
 
-  useEffect(() => {
-    const unsubscribe = NetInfo.addEventListener((state) => {
-      const hasInternet = state.isConnected
-      setIsConneted(isConnected);
-      console.log('Network status:', hasInternet);
+  React.useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener((state: any) => {
+      setIsConneted(state.isConnected)
+      console.log('network', isConnected)
     });
-
     return () => unsubscribe();
   }, []);
 
   if (!isConnected) {
-    return <NoNetworkScreen />;
+    return( <NoNetworkScreen />
+       
+    );
   }
-
 
   return (
     <Provider store={store}>

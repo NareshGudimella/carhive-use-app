@@ -8,11 +8,12 @@ import { Cardview } from "../components/Cardview";
 import { CameraView } from "../components/CameraView";
 import { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { excuteGetResponse } from "../apis/api";
+import { excuteGetResponse, userUpdateProfile } from "../apis/api";
 import { useFocusEffect } from "@react-navigation/native";
 import { Dropdown } from "react-native-element-dropdown";
 import moment from "moment";
 import { useDispatch } from "react-redux";
+import PrimaryButton from "../components/PrimaryButton";
 
 class Componentprops extends Baseprops { }
 
@@ -50,6 +51,14 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
 
     const handleInputChangeValue = (key: string, value: any) => {
         setUserDetailsObj((e: any) => ({ ...e, [key]: value }))
+    }
+    const updateEmail = async () => {
+        const response = await userUpdateProfile(userDetailsObj.email)
+        if (response.code == 0) {
+            Alert.alert('Alert', 'Your email is updated')
+        } else {
+            Alert.alert('Alert', 'Unable to get details')
+        }
     }
 
     return (
@@ -158,7 +167,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                 <TextInput
                                     placeholder='Enter Email'
                                     placeholderTextColor='#000000'
-                                    editable={false}
+                                    editable={true}
                                     value={userDetailsObj.email}
                                     onChangeText={text => handleInputChangeValue('email', text)}
                                     style={{
@@ -364,6 +373,13 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                             </View>
                         </Cardview>
                     </View>}
+                    <View style={{
+                        marginBottom:hp(3)
+                    }}>
+                        <PrimaryButton title='Update' onclick={() => {
+                            updateEmail()
+                        }} />
+                    </View>
                 </View>
             </ScrollView>
         </SafeAreaView>
