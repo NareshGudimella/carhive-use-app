@@ -287,14 +287,14 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                             width: wp(38)
                                         }}>
                                             <Cardview>
-                                                {profilDetails && profilDetails.documents.aadhar_front ?
+                                                {profilDetails && profilDetails.documents.aadhar_back ?
                                                     <Pressable
                                                         style={{
                                                             justifyContent: 'center', alignItems: 'center',
                                                             paddingVertical: hp(1)
                                                         }}>
                                                         <Image
-                                                            source={{ uri: profilDetails.documents.aadhar_front }}
+                                                            source={{ uri: profilDetails.documents.aadhar_back }}
                                                             style={{
                                                                 width: 120,
                                                                 height: 90,
@@ -374,7 +374,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                         </Cardview>
                     </View>}
                     <View style={{
-                        marginBottom:hp(3)
+                        marginBottom: hp(3)
                     }}>
                         <PrimaryButton title='Update' onclick={() => {
                             updateEmail()

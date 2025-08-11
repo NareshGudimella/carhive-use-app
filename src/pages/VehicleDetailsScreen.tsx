@@ -836,7 +836,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                                                     setTimeout(() => {
                                                                         SetCaremaModal(true);
                                                                     }, 500);
-                                                                    setTargetType('licenseback')
+                                                                    setTargetType('licensefront')
                                                                 }}
                                                             />}
                                                     </Cardview>
