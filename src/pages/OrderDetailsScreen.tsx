@@ -25,7 +25,6 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
     
     useFocusEffect(
         useCallback(() => {
-            console.log(props.route.params.Id)
             if (props.route.params && props.route.params.Id) {
                 handelOrderDetails(props.route.params.Id)
             }
@@ -34,7 +33,6 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
 
     const handelOrderDetails = async (car_booking_id: any) => {
         const response = await excuteGetResponse(`secure/cars/bookings/details/${car_booking_id}`)
-        console.log('orderDetails', response)
         if (response.code == 0) {
             setOrderDetails(response.data)
         } else {

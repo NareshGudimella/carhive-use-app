@@ -57,7 +57,6 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
         const token = await getToken()
         if (token && token != '') {
             const response = await excuteGetResponse(`secure/cars/bookings`)
-            console.log('Rental details', response)
             if (response.code == 0) {
                 setRentalData(response.data)
             } else {
@@ -77,7 +76,6 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
             return;
         }
         const response = await Otp(phoneNumber, otp)
-        console.log('otp', response)
         if (response.code == 0) {
             setToken(response.data.token)
             if (response.data.token && response.data.token != '') {
@@ -111,7 +109,6 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                 text: 'OK',
                 onPress: async () => {
                     const response = await excuteGetResponse(`secure/cars/bookings/cancel/${car_booking_id}`)
-                    console.log('cancel', response)
                     if (response.code == 0) {
                         handelRentalDetails()
                     } else {
@@ -149,7 +146,6 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                 theme: { color: '#F37254' }
             }
             RazorpayCheckout.open(options).then((data: any) => {
-                console.log('data', data)
                 props.navigation.reset({
                     index: 0,
                     routes: [
@@ -192,25 +188,26 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                 order_id: response.data.id,
                 theme: { color: '#F37254' }
             }
-            RazorpayCheckout.open(options).then((data: any) => {
-                console.log('data', data)
-                props.navigation.reset({
-                    index: 0,
-                    routes: [
-                        {
-                            name: 'PaymentSuccessScreen',
-                            params: { amount: response.data.actual_amount }
-                        }
-                    ],
+            setTimeout(() => {
+                RazorpayCheckout.open(options).then((data: any) => {
+                    props.navigation.reset({
+                        index: 0,
+                        routes: [
+                            {
+                                name: 'PaymentSuccessScreen',
+                                params: { amount: response.data.actual_amount }
+                            }
+                        ],
+                    });
+                }).catch((error: any) => {
+                    console.log('ERROR', error)
+                    Alert.alert('Payment failed', 'Please try again.',
+                        [
+                            { text: 'OK', onPress: () => console.log('OK Pressed') }
+                        ],
+                    );
                 });
-            }).catch((error: any) => {
-                console.log('ERROR', error)
-                Alert.alert('Payment failed', 'Please try again.',
-                    [
-                        { text: 'OK', onPress: () => console.log('OK Pressed') }
-                    ],
-                );
-            });
+            }, 500)
         } else {
             Alert.alert('Alert', 'unable to get Booking Payment Details')
         }

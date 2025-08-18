@@ -44,7 +44,6 @@ const NotificationScreen: React.FC<Componentprops> = (props) => {
         const token = await getToken()
         if (token && token != '') {
             const response = await excuteGetResponse(`secure/notifications`)
-            console.log('notify', response)
             if (response.code == 0) {
                 setNotification(response.data)
             } else {
@@ -63,7 +62,6 @@ const NotificationScreen: React.FC<Componentprops> = (props) => {
         }
         setMobileNumberModal(false)
         const response = await Login(phoneNumber)
-        console.log('Login', response)
         if (response.code == 0) {
             setOtpModal(true)
         } else {
@@ -77,7 +75,6 @@ const NotificationScreen: React.FC<Componentprops> = (props) => {
             return;
         }
         const response = await Otp(phoneNumber, otp)
-        console.log('otp', response)
         if (response.code == 0) {
             setToken(response.data.token)
             if (response.data.token && response.data.token != '') {

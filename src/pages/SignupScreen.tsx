@@ -59,7 +59,6 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
             object.dob = moment(date).format('YYYY-MM-DD'),
             object.profile_pic = profileImage
         const response = await SignUp(object);
-        console.log('Signupresponse', response, object);
         if (response.code == 0) {
             setSuccessKycModal(true)
         } else if (response.message == 'NAME_NOT_MATCH' && response.code == 1) {
@@ -78,7 +77,6 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
     };
     const loadUserDetails = async () => {
         const response = await excuteGetResponse('secure/profile')
-        console.log('res', response, date)
         if (response.code == 0) {
             setProfileDetails(response.data)
             handleInputChangeValue('name', response.data && response.data.name)

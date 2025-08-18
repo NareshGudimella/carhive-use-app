@@ -25,7 +25,6 @@ const SelectCityScreen: React.FC<Componentprops> = (props) => {
     )
     const handelSelectCity = async () => {
         const response = await excuteGetResponse(`auth/cities`)
-        console.log('citiesdata', response)
         if (response.code == 0) {
             setCitys(response.data)
         } else {

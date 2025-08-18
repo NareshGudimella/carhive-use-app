@@ -53,7 +53,6 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
     {/* Banner image api */ }
     const handelBannerImage = async () => {
         const response = await excuteGetResponse(`auth/banners`)
-        console.log('banner', response)
         if (response.code == 0) {
             setBanner(response.data)
             const city: any = await getCity()
@@ -102,9 +101,6 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                     dropuptime: dropTime,
                     addressid: cityname.cityId
                 });
-                console.log('date time',
-                    `${moment(pickupDateTime).format('DD-MM-YYYY HH:mm')}`,
-                    `${moment(dropDateTime).format('DD-MM-YYYY HH:mm')}`);
             } else {
                 Alert.alert('Alert', 'Please select a valid Drop Date and Time after Pickup');
                 return

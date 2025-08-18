@@ -30,7 +30,6 @@ const ExtendServiceRequestScreen: React.FC<Componentprops> = (props) => {
     )
     const ExtendsCarDetails = async (car_booking_id: any) => {
         const response = await excuteGetResponse(`secure/cars/bookings/extend/${car_booking_id}`)
-        console.log('extends', response)
         if (response.code == 0) {
             setCarData(response.data)
             setDropDate(new Date(response.data.to_date))

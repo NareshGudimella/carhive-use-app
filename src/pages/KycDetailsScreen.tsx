@@ -45,7 +45,6 @@ const KycDetailsScreen: React.FC<Componentprops> = (props) => {
             return
         }
         const response = await KycDetails(aadharfront, aadharback, licensefront, licenseback)
-        console.log('kyc', response, aadharfront, aadharback, licensefront, licenseback)
         if (response.code == 0) {
             setSuccessKycModal(true)
         } else {

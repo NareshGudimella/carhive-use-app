@@ -63,7 +63,6 @@ const BecomeHostScreen: React.FC<Componentprops> = (props) => {
             return
         }
         const response = await BecomeHost(userName, email, number, cars, selectLocation)
-        console.log('host', response, userName, email, number, cars, selectLocation)
         if (response.code == 0) {
             props.navigation.navigate('ProfileScreen')
         } else if (response.message == "EMAIL_EXIST") {
@@ -76,7 +75,6 @@ const BecomeHostScreen: React.FC<Componentprops> = (props) => {
     }
     const handelCity = async () => {
         const response = await excuteGetResponse(`auth/cities`)
-        console.log('cities', response)
         if (response.code == 0) {
             setSelectcity(response.data)
         } else {

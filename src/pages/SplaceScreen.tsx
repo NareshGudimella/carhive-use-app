@@ -33,7 +33,6 @@ const SplaceScreen: React.FC<Componentprops> = (props) => {
         const token = await getToken()
         if (token && token != '') {
             const response = await excuteGetResponse('secure/profile')
-            console.log('profile', response)
             if (response.code == 0) {
                 requestfirebasePermissions()
                 Foregroundmessage()
@@ -49,11 +48,9 @@ const SplaceScreen: React.FC<Componentprops> = (props) => {
 
     const CheckVersion = async () => {
         const response = await excuteGetResponse(`auth/versions`)
-        console.log(response)
         if (response.code == 0) {
             if (Platform.OS === 'android') {
                 const buildNumber = DeviceInfo.getBuildNumber();
-                console.log(buildNumber)
                 if (buildNumber < response.data.User_Android_Version) {
                     setVersionmodal(true)
                 } else {
@@ -61,7 +58,6 @@ const SplaceScreen: React.FC<Componentprops> = (props) => {
                 }
             } else if (Platform.OS === 'ios') {
                 const buildNumber = DeviceInfo.getBuildNumber();
-                console.log(buildNumber)
                 if (buildNumber < response.data.User_IOS_Version) {
                     setVersionmodal(true)
                 } else {

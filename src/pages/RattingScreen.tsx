@@ -23,7 +23,6 @@ const RattingScreen: React.FC<Componentprops> = (props) => {
 
     const loadRattingData = async (id: any) => {
         const response = await Ratting(id, rating, rateText)
-        console.log('ratting', response)
         if (response.code == 0) {
             props.navigation.navigate('HomeScreen')
         } else {

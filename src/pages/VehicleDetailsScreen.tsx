@@ -70,7 +70,6 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
     useFocusEffect(
         useCallback(() => {
             if (props.route.params && props.route.params?.id) {
-                console.log('CarDetails', props.route.params?.id)
                 handelVicheDetails(props.route.params?.id)
             }
         }, [])
@@ -83,8 +82,9 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
     const handelButtonSubmit = async () => {
         const token = await getToken()
         if (token && token != '') {
+            setIndiCator(true)
             const response = await excuteGetResponse('secure/profile')
-            console.log('usertoken', response)
+            setIndiCator(false)
             if (response.data.aadhar_verfy_flag == 0) {
                 setAadharmodal(true)
                 setIndiCator(false)
@@ -116,7 +116,6 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
             return
         }
         const response = await Login(phoneNumber)
-        console.log('Login', response)
         if (response.code == 0) {
             setOtpModal(true)
         } else {
@@ -136,7 +135,6 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
             const token = await getToken()
             if (token && token != '') {
                 const profileresponse = await excuteGetResponse('secure/profile')
-                console.log('hweufhefihj', profileresponse)
                 setIndiCator(false)
                 if (profileresponse.code == 0) {
                     requestfirebasePermissions()
@@ -179,7 +177,6 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
             props.route.params.fromdate,
             props.route.params.todate
         );
-        console.log('CarDetails', response1)
         if (response1.code == 0) {
             setCarData(response1.data)
         } else {
@@ -204,7 +201,6 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
         setIndiCator(true)
         const response = await aadharnumberverify(aadharnumber)
         setIndiCator(false)
-        console.log('aadhar', response)
         if (response.code == 0) {
             setAadharmodal(false)
             setTimeout(() => {
@@ -1171,7 +1167,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                                                 source={{ uri: e.featureIcon }}
                                                                 style={ImageStyle.style}
                                                                 tintColor='#8A8A8F' />
-                                                            <Text style={ImageStyle.text}>{e.feature}</Text>
+                                                            <Text style={[ImageStyle.text, {textTransform: 'uppercase', width: wp(22)}]}>{e.feature}</Text>
                                                         </View>
                                                     ))}
 
@@ -1360,15 +1356,19 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                     }}>/ {carData && carData.total_kms} kms</Text>
                                 </View>
 
-                                {indicator ? <ActivityIndicator color='#00354a' size="large" /> :
-                                    <PrimaryButton
-                                        title='Book Now'
-                                        onclick={() => {
-                                            handelButtonSubmit()
-                                            setIndiCator(true)
-                                        }} />}
+
                             </View>
                         </Cardview>
+                        <View style={{marginTop: hp(2)}}>
+                            {indicator ?
+                                <ActivityIndicator color='#00354a' size="large" /> :
+                                <PrimaryButton
+                                    title='Book Now'
+                                    onclick={() => {
+                                        handelButtonSubmit()
+                                    }} />}
+                        </View>
+
                     </View>
                 </View>
             </SafeAreaView>

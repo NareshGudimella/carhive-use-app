@@ -91,14 +91,6 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
             seaters
 
         )
-        console.log('carresponse',
-            response,
-            shortBy,
-            brand,
-            fuel,
-            transmission,
-            seaters)
-
         if (response.code == 0) {
             setCarsList(response.data)
         } else if (response.message == "The time difference between from_date and to_date must be at least 12 hours.") {
@@ -116,7 +108,6 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
     {/* Car model List */ }
     const carsModalList = async () => {
         const response = await excuteGetResponse(`auth/cars/brands`)
-        console.log('brand', response)
         if (response.code == 0) {
             setCarBrand(response.data)
         }
@@ -416,12 +407,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                             <PrimaryButton title='Apply filter'
                                                 onclick={() => {
                                                     handelCarList(),
-                                                        setFilterModal(false),
-                                                        console.log('datafilter', shortBy,
-                                                            brand,
-                                                            fuel,
-                                                            transmission,
-                                                            seaters)
+                                                        setFilterModal(false)
                                                 }} />
                                         </View>
                                     </ScrollView>
@@ -692,12 +678,14 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                         </View>
                                         <Text style={{
                                             marginHorizontal: 1,
-                                            fontWeight: '500'
+                                            fontWeight: '500',
+                                            textTransform: 'uppercase'
                                         }}>FuelType : {e.fuel_type}</Text>
                                         <Text style={{
                                             marginHorizontal: 1,
                                             fontWeight: '500',
-                                            marginTop: hp(0.5)
+                                            marginTop: hp(0.5),
+                                            textTransform: 'uppercase'
                                         }}>Transmission : {e.car_transmission}</Text>
                                         <View>
                                             <View style={{

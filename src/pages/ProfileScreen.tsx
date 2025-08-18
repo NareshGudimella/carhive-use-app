@@ -40,7 +40,6 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
     const loadCityName = async () => {
         const cityStr: any = await getCity();
         const city = JSON.parse(cityStr);
-        console.log('mycity', city)
         if (city && city.number) {
             setCityCustomerCare(city.number);
         }
@@ -79,7 +78,6 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
             setToken(response.data.token)
             if (response.data.token && response.data.token != '') {
                 const profileresponse = await excuteGetResponse('secure/profile')
-                console.log('userprofile', profileresponse)
                 if (profileresponse.code == 0) {
                     requestfirebasePermissions()
                     Foregroundmessage()
@@ -452,7 +450,8 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                     }}>
                                         <Text style={{
                                             fontSize: 16,
-                                            fontWeight: 'bold'
+                                            fontWeight: 'bold',
+                                            textTransform: 'uppercase'
                                         }}>View profile</Text>
                                         <Text
                                             style={{
@@ -493,7 +492,9 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                     }}>
                                         <Text style={{
                                             fontSize: 16,
-                                            fontWeight: 'bold'
+                                            fontWeight: 'bold',
+                                            textTransform: 'uppercase'
+
                                         }}>Become a Host</Text>
                                         <Text
                                             style={{
@@ -534,7 +535,8 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                     }}>
                                         <Text style={{
                                             fontSize: 16,
-                                            fontWeight: 'bold'
+                                            fontWeight: 'bold',
+                                            textTransform: 'uppercase'
                                         }}>Get Help</Text>
                                         <Text
                                             style={{
@@ -576,7 +578,8 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                     }}>
                                         <Text style={{
                                             fontSize: 16,
-                                            fontWeight: 'bold'
+                                            fontWeight: 'bold',
+                                            textTransform: 'uppercase'
                                         }}>Notifications</Text>
                                         <Text
                                             style={{
@@ -601,7 +604,8 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                     }}
                                     style={{
                                         fontSize: 16,
-                                        fontWeight: 'bold'
+                                        fontWeight: 'bold',
+                                        textTransform: 'uppercase'
                                     }}>
                                     Terms & Conditions
                                 </Text>
@@ -617,7 +621,8 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                     }}
                                     style={{
                                         fontSize: 16,
-                                        fontWeight: 'bold'
+                                        fontWeight: 'bold',
+                                        textTransform: 'uppercase'
                                     }}>Privacy policy</Text>
                                 {tokenFlag ? <><View
                                     style={{
@@ -628,7 +633,8 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                         onPress={() => setLogoutModal(true)}
                                         style={{
                                             fontSize: 16,
-                                            fontWeight: 'bold'
+                                            fontWeight: 'bold',
+                                            textTransform: 'uppercase'
                                         }}>Logout</Text>
                                     <View
                                         style={{
@@ -658,7 +664,8 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                         }}
                                         style={{
                                             fontSize: 16,
-                                            fontWeight: 'bold'
+                                            fontWeight: 'bold',
+                                            textTransform: 'uppercase'
                                         }}>Delete Account</Text></>
                                     :
                                     <><View

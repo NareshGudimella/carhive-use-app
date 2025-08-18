@@ -37,7 +37,6 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
         useCallback(() => {
             loadSummeryScreen(props.route.params && props.route.params.carid)
             handelCouponCode()
-            console.log('User', user)
         }, [])
     )
 
@@ -55,10 +54,8 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
             props.route.params.long,
             offercode
         )
-        console.log('Summeryresponse', response)
         if (response.code == 0) {
             setCarDetails(response.data)
-            console.log('response data', carDetails)
         } else if (response.code == 1 && response.message == 'Offer_Expired_or_Not_Started') {
             Alert.alert('Alert', 'Offer Expired')
             setCouponcode('')
@@ -79,7 +76,6 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
     const handelModelData = async () => {
         setTermsAndCondition(true)
         const response = await excuteGetResponse(`secure/cars/policies/${carDetails.carid}`)
-        console.log('t&c', response, carDetails.carid)
         if (response.code == 0) {
             setModelcancelData(response.data)
         } else {
@@ -98,12 +94,9 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
             carDetails.convenience_fee, carDetails.security_deposite,
             carDetails.protection_fee, carDetails.total_price
         )
-        console.log('total_price', carDetails.total_price)
-        console.log('paymentDetails', response, couponcode)
         if (response.code == 0) {
             setEligiabilityModal(false)
             const paymentResponse = await excuteGetResponse(`secure/cars/payment/${response.booking_car_id}`)
-            console.log('paymentmethod', paymentResponse)
             if (paymentResponse.code == 0) {
                 var options = {
                     description: 'Payment for booking',
@@ -120,26 +113,26 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                     order_id: paymentResponse.data.id,
                     theme: { color: '#F37254' }
                 }
-                console.log('success')
-                RazorpayCheckout.open(options).then((data: any) => {
-                    console.log('data', data)
-                    props.navigation.reset({
-                        index: 0,
-                        routes: [
-                            {
-                                name: 'PaymentSuccessScreen',
-                                params: { amount: paymentResponse.data.actual_amount }
-                            }
-                        ],
+                setTimeout(() => {
+                    RazorpayCheckout.open(options).then((data: any) => {
+                        props.navigation.reset({
+                            index: 0,
+                            routes: [
+                                {
+                                    name: 'PaymentSuccessScreen',
+                                    params: { amount: paymentResponse.data.actual_amount }
+                                }
+                            ],
+                        });
+                    }).catch((error: any) => {
+                        console.log('ERROR', error)
+                        Alert.alert('Payment failed', 'Please try again.',
+                            [
+                                { text: 'OK', onPress: () => console.log('OK Pressed') }
+                            ],
+                        );
                     });
-                }).catch((error: any) => {
-                    console.log('ERROR', error)
-                    Alert.alert('Payment failed', 'Please try again.',
-                        [
-                            { text: 'OK', onPress: () => console.log('OK Pressed') }
-                        ],
-                    );
-                });
+                }, 500);
             }
         } else {
             Alert.alert('Alert', 'unable to get Booking Payment Details')
@@ -147,7 +140,6 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
     }
     const handelCouponCode = async () => {
         const response = await excuteGetResponse(`secure/cars/offers`)
-        console.log('cuoponcodes', response)
 
         if (response.code == 0) {
             setCoupons(response.data)
