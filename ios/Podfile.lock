@@ -1491,7 +1491,7 @@ PODS:
   - react-native-razorpay (2.3.0):
     - razorpay-pod
     - React
-  - react-native-safe-area-context (5.5.2):
+  - react-native-safe-area-context (5.6.0):
     - React-Core
   - React-NativeModulesApple (0.79.1):
     - glog
@@ -1834,7 +1834,7 @@ PODS:
     - FirebaseCoreExtension
     - React-Core
     - RNFBApp
-  - RNGestureHandler (2.27.2):
+  - RNGestureHandler (2.28.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1865,7 +1865,7 @@ PODS:
     - React-Core
   - RNPermissions (5.4.2):
     - React-Core
-  - RNReanimated (3.19.0):
+  - RNReanimated (3.19.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1888,10 +1888,10 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNReanimated/reanimated (= 3.19.0)
-    - RNReanimated/worklets (= 3.19.0)
+    - RNReanimated/reanimated (= 3.19.1)
+    - RNReanimated/worklets (= 3.19.1)
     - Yoga
-  - RNReanimated/reanimated (3.19.0):
+  - RNReanimated/reanimated (3.19.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1914,9 +1914,9 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNReanimated/reanimated/apple (= 3.19.0)
+    - RNReanimated/reanimated/apple (= 3.19.1)
     - Yoga
-  - RNReanimated/reanimated/apple (3.19.0):
+  - RNReanimated/reanimated/apple (3.19.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1940,7 +1940,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNReanimated/worklets (3.19.0):
+  - RNReanimated/worklets (3.19.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1963,9 +1963,9 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNReanimated/worklets/apple (= 3.19.0)
+    - RNReanimated/worklets/apple (= 3.19.1)
     - Yoga
-  - RNReanimated/worklets/apple (3.19.0):
+  - RNReanimated/worklets/apple (3.19.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2415,7 +2415,7 @@ SPEC CHECKSUMS:
   react-native-image-picker: 7babe45e727db306b3f00d08c72eda3586d6e9c1
   react-native-netinfo: cec9c4e86083cb5b6aba0e0711f563e2fbbff187
   react-native-razorpay: ab51e7be3d906f49b26198d978fc6f163e846d30
-  react-native-safe-area-context: 0f7bf11598f9a61b7ceac8dc3f59ef98697e99e1
+  react-native-safe-area-context: 12c7daa0ea4fa4eeb513fc273fac6b47aa332bd6
   React-NativeModulesApple: 8a465be9a58afc56f48c1322331ffbdecd3d4877
   React-oscompat: 74eb4badd12e93899f37a5dbb03d8a638011a292
   React-perflogger: dba4ffef10c54537fa33cb2580cf6d4c48458d36
@@ -2453,10 +2453,10 @@ SPEC CHECKSUMS:
   RNFastImage: 462a183c4b0b6b26fdfd639e1ed6ba37536c3b87
   RNFBApp: 12884d3bf9b3a0223efe4a0adce516edf72c4102
   RNFBMessaging: e954bfb053a5c6bb10b26bae4bbc58a4edd41131
-  RNGestureHandler: 43ff77261c9f3cfcfd195aa16860bfdcfe108ef5
+  RNGestureHandler: 05b56a7bf6f70487bfdeed234d1f670916928203
   RNNotifee: 5e3b271e8ea7456a36eec994085543c9adca9168
   RNPermissions: e177c988f2bc79baefceb6c0b223c6120f0e5e75
-  RNReanimated: 3477436b2408e85389aec3638c64692312dc5420
+  RNReanimated: 7fe194cef376e772f1efbad325cb5d26ea3930df
   RNScreens: b062e220dfd58455779e4e9f2123c81e37d51fe7
   RNVectorIcons: e431ef1e6bef75d6ad0e33a83d376e6207962a9d
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d

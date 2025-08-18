@@ -19,7 +19,7 @@ const PaymentScreen: React.FC<Componentprops> = (props) => {
                 style={{
                     marginHorizontal: wp(5),
                     marginVertical: hp(2),
-                    marginTop:hp(3)
+                    marginTop: hp(3)
                 }}>
                 <Image
                     source={require('../assets/Back.png')}

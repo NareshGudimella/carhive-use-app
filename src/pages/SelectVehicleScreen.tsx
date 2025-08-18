@@ -204,7 +204,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                             style={{
                                                 flexDirection: 'row',
                                                 alignItems: 'center',
-                                               marginTop:hp(1)
+                                                marginTop: hp(1)
                                             }}
                                         ><Text style={{
                                             color: '#64748B',
@@ -226,7 +226,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                         </Pressable>
                                         {pricelist == true ? <View style={{
                                             flexDirection: 'row',
-                                           
+
                                         }}>
                                             {
                                                 short.map((e: any, index: any) => (
@@ -366,7 +366,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                             </View> : <></>}
                                         </View>
                                         <View style={{
-                                            marginBottom:hp(1)
+                                            marginBottom: hp(1)
                                         }}>
                                             <Pressable
                                                 style={{
@@ -393,7 +393,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                         require('../assets/down.png') :
                                                         require('../assets/top.png')} />
                                             </Pressable>
-                                          { seatinglist == true? <View
+                                            {seatinglist == true ? <View
                                                 style={{
                                                     flexWrap: 'wrap',
                                                     flexDirection: 'row',
@@ -407,7 +407,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                             selected={seaters.includes(e.value)} />
                                                     ))
                                                 }
-                                            </View>:<></>}
+                                            </View> : <></>}
                                         </View>
                                         <View style={{
                                             marginTop: hp(2),

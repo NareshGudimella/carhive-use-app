@@ -16,14 +16,12 @@ import { OtpInput } from "react-native-otp-entry";
 import { style } from "../styles/OtpStyle";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
-    aadharnumberverify, aadharotpverify, carDetails, excuteGetResponse,
-    firebasemessage, licenceverify, Login, Otp,
+    aadharnumberverify, aadharotpverify, carDetails,
+    excuteGetResponse, licenceverify, Login, Otp,
 } from "../apis/api";
 import { getToken, setToken } from "../storage/AsyncStorage";
 import { useFocusEffect } from "@react-navigation/native";
 import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
-import DeviceInfo from 'react-native-device-info';
-import messaging from '@react-native-firebase/messaging';
 import { input } from "../styles/TextInputStyle";
 import DatePicker from "react-native-date-picker";
 import moment from "moment";
@@ -89,10 +87,13 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
             console.log('usertoken', response)
             if (response.data.aadhar_verfy_flag == 0) {
                 setAadharmodal(true)
+                setIndiCator(false)
             } else if (response.data.aadhar_verfy_flag == 1 && response.data.driving_licence_flag == 0) {
                 setLicencemodal(true)
+                setIndiCator(false)
             } else if (response.data.aadhar_verfy_flag == 1 && response.data.driving_licence_flag == 1 && response.data.profile_flag == 0) {
                 props.navigation.navigate('SignupScreen')
+                setIndiCator(false)
             } else if (response.data.aadhar_verfy_flag == 1 && response.data.driving_licence_flag == 1 && response.data.profile_flag == 1) {
                 props.navigation.navigate('CarSummaryScreen',
                     {
@@ -102,6 +103,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                         lat: carData.latitude,
                         long: carData.longitude
                     })
+                setIndiCator(false)
             }
         } else {
             setMobileNumberModal(true)
@@ -769,9 +771,15 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                                 onPress={() => setOpen(true)}
                                                 style={input.continer}>
                                                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                                    <Image source={require('../assets/sms.png')} style={input.style} />
-                                                    <Text style={[input.textinput, { color: isDateSelected ? '#000' : '#9CA3AF' }]}>
-                                                        {isDateSelected ? moment(date).format('YYYY-MM-DD') : 'Date of birth'}
+                                                    <Image
+                                                        source={require('../assets/sms.png')}
+                                                        style={input.style} />
+                                                    <Text
+                                                        style={[input.textinput,
+                                                        { color: isDateSelected ? '#000' : '#9CA3AF' }]}>
+                                                        {isDateSelected ?
+                                                            moment(date).format('YYYY-MM-DD')
+                                                            : 'Date of birth'}
                                                     </Text>
                                                 </View>
                                             </Pressable>
@@ -814,7 +822,8 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                                                     setTargetType('licensefront')
                                                                 }}
                                                                 style={{
-                                                                    justifyContent: 'center', alignItems: 'center',
+                                                                    justifyContent: 'center',
+                                                                    alignItems: 'center',
                                                                     paddingVertical: hp(2)
                                                                 }}>
                                                                 <Image
@@ -914,7 +923,6 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                     </View>
 
                     <View>
-
                         {aadharotpmodal &&
                             <View>
                                 <Modal
@@ -1085,7 +1093,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                 </View>
                             </View>
                             <ScrollView
-
+                                showsVerticalScrollIndicator={false}
                                 style={{
                                     flex: 1,
                                     marginHorizontal: wp(5),
@@ -1321,41 +1329,47 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                         </Cardview>
                                     </View>
                                 )}
-                                <View style={{
-                                    marginTop: hp(1),
-                                    marginBottom: hp(5)
-                                }}>
-                                    <Cardview>
-                                        <View style={{
-                                            paddingVertical: hp(1),
-                                            paddingHorizontal: hp(2),
-                                            flexDirection: 'row',
-                                            justifyContent: 'space-between',
-                                            alignItems: 'center'
-                                        }}>
-                                            <View style={{
-                                                flexDirection: 'row',
-                                                alignItems: 'flex-end'
-                                            }}>
-                                                <Text style={{
-                                                    fontSize: 24,
-                                                    fontWeight: 'bold'
-                                                }}>₹{carData && carData.total_price}</Text>
-                                                <Text style={{
-                                                    color: '#64748B',
-                                                    top: (-3),
-                                                    marginHorizontal: wp(2)
-                                                }}>/ {carData && carData.total_kms} kms</Text>
-                                            </View>
-                                            <PrimaryButton
-                                                title='Book Now'
-                                                onclick={() => handelButtonSubmit()} />
-                                        </View>
-                                    </Cardview>
-                                </View>
                             </ScrollView>
                         </>
                     }
+                    <View style={{
+                        marginTop: hp(1),
+                        marginBottom: hp(5),
+                        marginHorizontal: wp(5)
+                    }}>
+                        <Cardview>
+                            <View style={{
+                                paddingVertical: hp(1),
+                                paddingHorizontal: hp(2),
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                alignItems: 'center'
+                            }}>
+                                <View style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'flex-end'
+                                }}>
+                                    <Text style={{
+                                        fontSize: 24,
+                                        fontWeight: 'bold'
+                                    }}>₹{carData && carData.total_price}</Text>
+                                    <Text style={{
+                                        color: '#64748B',
+                                        top: (-3),
+                                        marginHorizontal: wp(2)
+                                    }}>/ {carData && carData.total_kms} kms</Text>
+                                </View>
+
+                                {indicator ? <ActivityIndicator color='#00354a' size="large" /> :
+                                    <PrimaryButton
+                                        title='Book Now'
+                                        onclick={() => {
+                                            handelButtonSubmit()
+                                            setIndiCator(true)
+                                        }} />}
+                            </View>
+                        </Cardview>
+                    </View>
                 </View>
             </SafeAreaView>
         </GestureHandlerRootView>

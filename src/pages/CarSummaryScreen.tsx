@@ -58,6 +58,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
         console.log('Summeryresponse', response)
         if (response.code == 0) {
             setCarDetails(response.data)
+            console.log('response data', carDetails)
         } else if (response.code == 1 && response.message == 'Offer_Expired_or_Not_Started') {
             Alert.alert('Alert', 'Offer Expired')
             setCouponcode('')
@@ -119,6 +120,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                     order_id: paymentResponse.data.id,
                     theme: { color: '#F37254' }
                 }
+                console.log('success')
                 RazorpayCheckout.open(options).then((data: any) => {
                     console.log('data', data)
                     props.navigation.reset({
@@ -320,12 +322,21 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                 setTermsAndCondition(!termsAndConditions);
                             }}
                         >
-                            <BottomModelView onclick={() => setTermsAndCondition(false)}>
-                                <View style={{}}>
+                            <View style={{
+                                flex: 1,
+                                justifyContent: 'flex-end',
+                                backgroundColor: 'rgba(0,0,0,0.6)',
+                            }}>
+                                <View style={{
+                                    backgroundColor: '#ffffff',
+                                    justifyContent: 'flex-end',
+                                    borderTopLeftRadius: 20, borderTopRightRadius: 20
+                                }}>
                                     <View style={{
                                         justifyContent: 'center',
                                         alignItems: 'center',
-                                        top: -30
+                                        top: -30,
+
                                     }}>
                                         <Pressable onPress={() => setTermsAndCondition(false)} style={{
                                             position: 'absolute',
@@ -424,47 +435,47 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                     </View>
                                     <View style={{
                                         height: hp(60),
-                                        overflow: 'hidden'
+                                        flexGrow: 0
                                     }}>
                                         <ScrollView
+                                            style={{ flex: 1 }}
                                             contentContainerStyle={{
                                                 paddingHorizontal: wp(5),
+                                                paddingBottom: hp(2),
                                             }}
                                             showsVerticalScrollIndicator={true}
                                         >
-                                            {
-                                                typeofTandC === 't&c' && ModelcancelData?.terms_conditions ? (
-                                                    <Text style={{
-                                                        color: '#64748B',
-                                                        fontWeight: '500',
-                                                        lineHeight: hp(2.5),
-                                                        marginHorizontal: wp(3),
-                                                        marginVertical: hp(1)
-                                                    }}>
-                                                        {ModelcancelData.terms_conditions}
-                                                    </Text>
-                                                ) : typeofTandC === 'Cancellation' && ModelcancelData?.cancellation ? (
-                                                    <Text style={{
-                                                        color: '#64748B',
-                                                        fontWeight: '500',
-                                                        lineHeight: hp(2.5),
-                                                        marginHorizontal: wp(3),
-                                                        marginVertical: hp(1)
-                                                    }}>
-                                                        {ModelcancelData.cancellation}
-                                                    </Text>
-                                                ) : typeofTandC === 'Modification' && ModelcancelData?.modification ? (
-                                                    <Text style={{
-                                                        color: '#64748B',
-                                                        fontWeight: '500',
-                                                        lineHeight: hp(2.5),
-                                                        marginHorizontal: wp(3),
-                                                        marginVertical: hp(1)
-                                                    }}>
-                                                        {ModelcancelData.modification}
-                                                    </Text>
-                                                ) : null
-                                            }
+                                            {typeofTandC === 't&c' && ModelcancelData?.terms_conditions ? (
+                                                <Text style={{
+                                                    color: '#64748B',
+                                                    fontWeight: '500',
+                                                    lineHeight: hp(2.5),
+                                                    marginHorizontal: wp(3),
+                                                    marginVertical: hp(1)
+                                                }}>
+                                                    {ModelcancelData.terms_conditions}
+                                                </Text>
+                                            ) : typeofTandC === 'Cancellation' && ModelcancelData?.cancellation ? (
+                                                <Text style={{
+                                                    color: '#64748B',
+                                                    fontWeight: '500',
+                                                    lineHeight: hp(2.5),
+                                                    marginHorizontal: wp(3),
+                                                    marginVertical: hp(1)
+                                                }}>
+                                                    {ModelcancelData.cancellation}
+                                                </Text>
+                                            ) : typeofTandC === 'Modification' && ModelcancelData?.modification ? (
+                                                <Text style={{
+                                                    color: '#64748B',
+                                                    fontWeight: '500',
+                                                    lineHeight: hp(2.5),
+                                                    marginHorizontal: wp(3),
+                                                    marginVertical: hp(1)
+                                                }}>
+                                                    {ModelcancelData.modification}
+                                                </Text>
+                                            ) : null}
                                         </ScrollView>
                                     </View>
 
@@ -507,7 +518,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                         </View>
                                     </View>
                                 </View>
-                            </BottomModelView>
+                            </View>
                         </Modal>
                     </View>
                 }
@@ -652,7 +663,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                             style={Platform.OS === 'ios' ? {
                                                 height: hp(2.3),
                                                 width: hp(2.3),
-                                                top:hp(0.7)
+                                                top: hp(0.7)
                                             } : {}}
                                         />
                                         <Text style={{
