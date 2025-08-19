@@ -785,21 +785,33 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                                 flexDirection: 'row',
                                                                 alignItems: 'center',
                                                                 marginVertical: hp(1),
-                                                                marginBottom: hp(2)
+                                                                marginBottom: hp(2),
+                                                                justifyContent: 'space-between'
                                                             }}>
-                                                            <RadioButton
-                                                                value="address"
-                                                                status={addressChecked === 'address' ? 'checked' : 'unchecked'}
-                                                                onPress={() => setAddressChecked('address')}
-                                                                color="#34C759"
-                                                                uncheckedColor="#13131380"
-                                                            />
-                                                            <Text
+                                                            <View style={{
+                                                                flexDirection: 'row',
+                                                                alignItems: 'center'
+                                                            }}>
+                                                                <RadioButton
+                                                                    value="address"
+                                                                    status={addressChecked === 'address' ? 'checked' : 'unchecked'}
+                                                                    onPress={() => setAddressChecked('address')}
+                                                                    color="#34C759"
+                                                                    uncheckedColor="#13131380"
+                                                                />
+                                                                <Text
+                                                                    style={{
+                                                                        width: wp(60),
+                                                                        fontSize: 13,
+                                                                        fontWeight: '500',
+                                                                        marginHorizontal: wp(1)
+                                                                    }}>{e.location}</Text>
+                                                            </View>
+                                                            <Image source={require('../assets/google-maps.png')}
                                                                 style={{
-                                                                    width: wp(60),
-                                                                    fontSize: 13,
-                                                                    fontWeight: '500'
-                                                                }}>{e.location}</Text>
+                                                                    height: wp(7),
+                                                                    width: wp(7)
+                                                                }} />
                                                         </Pressable>
                                                     </View>
                                                 </View>

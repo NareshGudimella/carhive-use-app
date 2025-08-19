@@ -45,8 +45,9 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
     useFocusEffect(
         useCallback(() => {
             handelBannerImage()
-            setDropTime(new Date(pickupTime.getTime() + 12 * 60 * 60 * 1000))
-            setDropDate(new Date(dropDate.getTime() + 12 * 60 * 60 * 1000))
+            setPickupTime(new Date(pickupTime.getTime() + 1 * 60 * 60 * 1000))
+            setDropTime(new Date(pickupTime.getTime() + 13 * 60 * 60 * 1000))
+            setDropDate(new Date(dropDate.getTime() + 13 * 60 * 60 * 1000))
         }, [])
     )
 
@@ -63,7 +64,6 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
         }
     }
 
-    {/*pickup date and drop date picker*/ }
     const handelCheckDate = (latitude: any, longitude: any) => {
         if (!pickupDate) {
             Alert.alert('Alert', 'Select the Pickup date');
@@ -225,15 +225,38 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                     >
                         <View style={styles.centeredView}>
                             <View style={styles.modalView}>
-                                <Text style={{ color: '#000000', fontWeight: 'bold', fontSize: 18, textAlign: 'center' }}>Location Permission Required!</Text>
-                                <Text style={{ color: '#000000', fontWeight: '500', fontSize: 16, marginTop: hp(1), width: wp(60), textAlign: 'center', alignSelf: 'center' }}>We couldn't access your location. Please enable location services in your device settings.</Text>
-                                <View style={{ width: wp(50), alignSelf: 'center', marginTop: hp(3) }}>
+                                <Text style={{
+                                    color: '#000000',
+                                    fontWeight: 'bold',
+                                    fontSize: 18,
+                                    textAlign: 'center'
+                                }}>Location Permission Required!</Text>
+                                <Text
+                                    style={{
+                                        color: '#000000',
+                                        fontWeight: '500',
+                                        fontSize: 16,
+                                        marginTop: hp(1),
+                                        width: wp(60),
+                                        textAlign: 'center',
+                                        alignSelf: 'center'
+                                    }}>We couldn't access your location. Please enable location services in your device settings.</Text>
+                                <View
+                                    style={{
+                                        width: wp(50),
+                                        alignSelf: 'center',
+                                        marginTop: hp(3)
+                                    }}>
                                     <PrimaryButton title="Open settings"
                                         onclick={() => {
                                             handleOpenSettings()
                                         }} />
                                 </View>
-                                <View style={{ width: wp(50), alignSelf: 'center', marginTop: hp(1) }}>
+                                <View style={{
+                                    width: wp(50),
+                                    alignSelf: 'center',
+                                    marginTop: hp(1)
+                                }}>
                                     <PrimaryButton title={Platform.OS == 'android' ? "Close App" : "Close"}
                                         onclick={() => {
                                             if (Platform.OS == 'android') {
@@ -359,29 +382,26 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                             }}>Your journey awaits, book it right away.</Text>
                         </View>
                         <View>
-                            {modeltype === 'Time' &&
+                            {modeltype === 'Time' && (
                                 <DatePicker
                                     modal
                                     mode="time"
                                     open={open}
-                                    minimumDate={(pickupDate && pickupDate.getTime() > new Date().getTime()) ? new Date(new Date().setHours(0, 0, 0, 0)) : new Date()}
-                                    date={dateType === 'pickup' ? pickupTime : dropTime}
+                                    minimumDate={new Date(new Date().getTime() + 1 * 60 * 60 * 1000)}
+                                    date={pickupTime}
                                     onConfirm={(selectedtime) => {
                                         setOpen(false);
                                         if (dateType === 'pickup') {
                                             setPickupTime(selectedtime);
-                                            setDropTime(new Date(selectedtime.getTime() + 12 * 60 * 60 * 1000))
-                                        } else if (dateType === 'drop') {
-                                            setDropTime(selectedtime);
+                                            setDropTime(new Date(selectedtime.getTime() + 12 * 60 * 60 * 1000));
                                         }
                                         setDateType('');
                                     }}
                                     onCancel={() => {
-                                        setOpen(false)
+                                        setOpen(false);
                                     }}
                                 />
-                            }
-
+                            )}
                             {modeltype !== 'Time' &&
                                 < DatePicker
                                     modal

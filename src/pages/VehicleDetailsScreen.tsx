@@ -177,6 +177,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
             props.route.params.fromdate,
             props.route.params.todate
         );
+        console.log('cardetails', response1)
         if (response1.code == 0) {
             setCarData(response1.data)
         } else {
@@ -1090,15 +1091,16 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                             </View>
                             <ScrollView
                                 showsVerticalScrollIndicator={false}
+                                contentContainerStyle={{ paddingBottom: hp(3), }}
                                 style={{
                                     flex: 1,
                                     marginHorizontal: wp(5),
-                                    paddingVertical: hp(2)
+                                    paddingVertical: hp(2),
                                 }}>
                                 <Cardview>
                                     <View style={{
                                         paddingVertical: hp(1),
-                                        paddingHorizontal: hp(2)
+                                        paddingHorizontal: hp(2),
                                     }}>
                                         <Text
                                             style={{
@@ -1109,7 +1111,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                         <Text
                                             style={{
                                                 fontSize: 13,
-                                                marginVertical: wp(1.5),
+                                                marginVertical: wp(1),
                                                 color: '#64748B'
                                             }}>
                                             {textExpanded ? (
@@ -1137,7 +1139,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                         </Text>
                                     </View>
                                 </Cardview>
-                                <View style={{ marginVertical: hp(2) }}>
+                                <View style={{ marginVertical: hp(1.3) }}>
                                     <Cardview>
                                         <View style={{
                                             paddingVertical: hp(1),
@@ -1167,7 +1169,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                                                 source={{ uri: e.featureIcon }}
                                                                 style={ImageStyle.style}
                                                                 tintColor='#8A8A8F' />
-                                                            <Text style={[ImageStyle.text, {textTransform: 'uppercase', width: wp(22)}]}>{e.feature}</Text>
+                                                            <Text style={[ImageStyle.text, { textTransform: 'uppercase', width: wp(22) }]}>{e.feature}</Text>
                                                         </View>
                                                     ))}
 
@@ -1215,7 +1217,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                         style={{
                                             fontSize: 17,
                                             fontWeight: 'bold',
-                                            marginVertical: hp(1.5)
+                                            marginVertical: hp(1)
                                         }}>Documents required</Text>
                                     <Cardview>
                                         <View style={{
@@ -1231,7 +1233,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                         </View>
                                     </Cardview>
                                 </View>
-                                <View style={{ marginVertical: hp(2) }}>
+                                <View style={{ marginVertical: hp(1.5) }}>
                                     <Cardview>
                                         <View style={{
                                             paddingVertical: hp(2),
@@ -1271,7 +1273,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                                 autoPlay={false}
                                                 ref={ref}
                                                 width={wp(87)}
-                                                height={hp(18)}
+                                                height={hp(15)}
                                                 data={carData.reviews}
                                                 renderItem={({ item }: { item: any; }) => (
                                                     <View style={{ paddingVertical: hp(1), marginHorizontal: hp(2), width: wp(87) }}>
@@ -1359,7 +1361,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
 
                             </View>
                         </Cardview>
-                        <View style={{marginTop: hp(2)}}>
+                        <View style={{ marginTop: hp(2) }}>
                             {indicator ?
                                 <ActivityIndicator color='#00354a' size="large" /> :
                                 <PrimaryButton

@@ -22,28 +22,16 @@ class Componentprops extends Baseprops { }
 const SplaceScreen: React.FC<Componentprops> = (props) => {
 
     const [versionmodal, setVersionmodal] = useState<any>(false)
-    const dispatch = useDispatch()
 
     useFocusEffect(
         useCallback(() => {
-            CheckVersion()
+            CheckMaintenance()
         }, []))
 
     const loadUserDetails = async () => {
-        const token = await getToken()
-        if (token && token != '') {
-            const response = await excuteGetResponse('secure/profile')
-            if (response.code == 0) {
-                requestfirebasePermissions()
-                Foregroundmessage()
-                dispatch(updateProfile(response.data));
-                props.navigation.navigate('HomeScreen')
-            } else {
-                Alert.alert('Alert', 'Unable to get details')
-            }
-        } else {
-            props.navigation.navigate('HomeScreen')
-        }
+        requestfirebasePermissions()
+        Foregroundmessage()
+        props.navigation.navigate('HomeScreen')
     }
 
     const CheckVersion = async () => {
@@ -51,20 +39,33 @@ const SplaceScreen: React.FC<Componentprops> = (props) => {
         if (response.code == 0) {
             if (Platform.OS === 'android') {
                 const buildNumber = DeviceInfo.getBuildNumber();
-                if (buildNumber < response.data.User_Android_Version) {
+                if (buildNumber > response.data.User_Android_Version) {
                     setVersionmodal(true)
                 } else {
                     loadUserDetails()
                 }
             } else if (Platform.OS === 'ios') {
                 const buildNumber = DeviceInfo.getBuildNumber();
-                if (buildNumber < response.data.User_IOS_Version) {
+                if (buildNumber > response.data.User_IOS_Version) {
                     setVersionmodal(true)
                 } else {
                     loadUserDetails()
 
                 }
             }
+        }
+    }
+    const CheckMaintenance = async () => {
+        const response = await excuteGetResponse(`auth/maintenance`)
+        console.log('maintenance', response)
+        if (response.code == 0) {
+            if (response.data.user_maintenance == 0) {
+                CheckVersion()
+            } else {
+                props.navigation.navigate('MaintenanceScreen')
+            }
+        } else {
+            Alert.alert('Alert', 'Unable to get details')
         }
     }
 
@@ -128,4 +129,3 @@ const SplaceScreen: React.FC<Componentprops> = (props) => {
     )
 }
 export default SplaceScreen
-

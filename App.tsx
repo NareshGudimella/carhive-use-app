@@ -29,6 +29,7 @@ import RattingScreen from './src/pages/RattingScreen';
 import SplaceScreen from './src/pages/SplaceScreen';
 import NoNetworkScreen from './src/pages/NoNetworkScreen';
 import NetworkListener from './src/components/NetworkListener';
+import MaintenanceScreen from './src/pages/MaintenanceScreen';
 
 
 export const navigationRef = createNavigationContainerRef();
@@ -57,6 +58,7 @@ function RootStack() {
       <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
       <Stack.Screen name="RattingScreen" component={RattingScreen} />
       <Stack.Screen name="NoNetworkScreen" component={NoNetworkScreen} />
+      <Stack.Screen name='MaintenanceScreen' component={MaintenanceScreen} />
     </Stack.Navigator>
   );
 }
@@ -74,8 +76,8 @@ export default function App() {
   }, []);
 
   if (!isConnected) {
-    return( <NoNetworkScreen />
-       
+    return (<NoNetworkScreen />
+
     );
   }
 

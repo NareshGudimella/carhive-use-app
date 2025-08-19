@@ -19,7 +19,8 @@ import { useFocusEffect } from "@react-navigation/native";
 import { CarsList, excuteGetResponse, } from "../apis/api";
 import LinearGradient from "react-native-linear-gradient";
 import moment from "moment";
-
+import { BlurView } from "@react-native-community/blur";
+import { Grayscale } from "react-native-color-matrix-image-filters";
 
 class Componentprops extends Baseprops { }
 
@@ -93,6 +94,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
         )
         if (response.code == 0) {
             setCarsList(response.data)
+            console.log('list', response)
         } else if (response.message == "The time difference between from_date and to_date must be at least 12 hours.") {
             Alert.alert('Alert!', "The time difference between from date and to date must be at least 12 hours.")
         } else {
@@ -108,6 +110,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
     {/* Car model List */ }
     const carsModalList = async () => {
         const response = await excuteGetResponse(`auth/cars/brands`)
+        console.log('carlist', response)
         if (response.code == 0) {
             setCarBrand(response.data)
         }
@@ -543,32 +546,88 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                             ).map((e: any, index: any) => (
                                 <Pressable
                                     style={{ marginTop: hp(2) }}
-                                    onPress={() =>
-                                        props.navigation.navigate('VehicleDetailsScreen',
-                                            { fromdate: carsList.from_date, todate: carsList.to_date, id: e.carid })}
+                                    onPress={() => {
+                                        if (e.booking_flag != '1') {
+                                            props.navigation.navigate('VehicleDetailsScreen',
+                                                { fromdate: carsList.from_date, todate: carsList.to_date, id: e.carid })
+                                        }
+                                    }}
                                     key={index}>
+
+
                                     <Carousel
                                         autoPlay={false}
                                         ref={ref}
                                         width={wp(90)}
-                                        style={{}}
                                         height={hp(28)}
                                         data={e.images}
                                         renderItem={({ item }: { item: any }) => (
                                             <View>
-                                                <Image
-                                                    source={{ uri: item.image }}
-                                                    style={{
-                                                        justifyContent: "center",
-                                                        height: hp(28),
-                                                        width: wp(89),
-                                                        alignSelf: 'center',
-                                                        borderRadius: 20,
+                                                {e.booking_flag == "1" ? (
+                                                    <Grayscale>
+                                                        <Image
+                                                            source={{ uri: item.image }}
+                                                            style={{
+                                                                justifyContent: "center",
+                                                                height: hp(28),
+                                                                width: wp(89),
+                                                                alignSelf: "center",
+                                                                borderRadius: 20,
+                                                            }}
+                                                        />
+                                                    </Grayscale>
+                                                ) : (
+                                                    <Image
+                                                        source={{ uri: item.image }}
+                                                        style={{
+                                                            justifyContent: "center",
+                                                            height: hp(28),
+                                                            width: wp(89),
+                                                            alignSelf: "center",
+                                                            borderRadius: 20,
+                                                        }}
+                                                    />
+                                                )}
 
-                                                    }} />
+                                                {e.booking_flag == "1" && (
+                                                    <View
+                                                        style={{
+                                                            position: "absolute",
+                                                            top: 0,
+                                                            left: 0,
+                                                            right: 0,
+                                                            bottom: 0,
+                                                            borderRadius: 20,
+                                                            overflow: "hidden",
+                                                            backgroundColor: "rgba(0,0,0,0.25)",
+                                                            justifyContent: "center",
+                                                            alignItems: "center",
+                                                        }}
+                                                    >
+                                                        <View
+                                                            style={{
+                                                                backgroundColor: "red",
+                                                                paddingHorizontal: wp(5),
+                                                                paddingVertical: wp(1),
+                                                                borderRadius: 5,
+                                                            }}
+                                                        >
+                                                            <Text
+                                                                style={{
+                                                                    color: "#ffffff",
+                                                                    fontSize: 15,
+                                                                    fontWeight: "bold",
+                                                                }}
+                                                            >
+                                                                Booked
+                                                            </Text>
+                                                        </View>
+                                                    </View>
+                                                )}
                                             </View>
                                         )}
                                     />
+
                                     <View style={{
                                         position: 'absolute',
                                         marginLeft: 0.5,
