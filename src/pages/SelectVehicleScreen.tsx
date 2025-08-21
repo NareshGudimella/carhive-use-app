@@ -553,81 +553,69 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                         }
                                     }}
                                     key={index}>
+                                    <View>
+                                        {e.booking_flag == "1" ? (
+                                            <Grayscale>
+                                                <Image
+                                                    source={{ uri: e.images[0].image }}
+                                                    style={{
+                                                        justifyContent: "center",
+                                                        height: hp(28),
+                                                        width: wp(89),
+                                                        alignSelf: "center",
+                                                        borderRadius: 20,
+                                                    }}
+                                                />
+                                            </Grayscale>
+                                        ) : (
+                                            <Image
+                                                source={{ uri: e.images[0].image }}
+                                                style={{
+                                                    justifyContent: "center",
+                                                    height: hp(28),
+                                                    width: wp(89),
+                                                    alignSelf: "center",
+                                                    borderRadius: 20,
+                                                }}
+                                            />
+                                        )}
 
-
-                                    <Carousel
-                                        autoPlay={false}
-                                        ref={ref}
-                                        width={wp(90)}
-                                        height={hp(28)}
-                                        data={e.images}
-                                        renderItem={({ item }: { item: any }) => (
-                                            <View>
-                                                {e.booking_flag == "1" ? (
-                                                    <Grayscale>
-                                                        <Image
-                                                            source={{ uri: item.image }}
-                                                            style={{
-                                                                justifyContent: "center",
-                                                                height: hp(28),
-                                                                width: wp(89),
-                                                                alignSelf: "center",
-                                                                borderRadius: 20,
-                                                            }}
-                                                        />
-                                                    </Grayscale>
-                                                ) : (
-                                                    <Image
-                                                        source={{ uri: item.image }}
+                                        {e.booking_flag == "1" && (
+                                            <View
+                                                style={{
+                                                    position: "absolute",
+                                                    top: 0,
+                                                    left: 0,
+                                                    right: 0,
+                                                    bottom: 0,
+                                                    borderRadius: 20,
+                                                    overflow: "hidden",
+                                                    backgroundColor: "rgba(0,0,0,0.25)",
+                                                    justifyContent: "center",
+                                                    alignItems: "center",
+                                                }}
+                                            >
+                                                <View
+                                                    style={{
+                                                        backgroundColor: "red",
+                                                        paddingHorizontal: wp(5),
+                                                        paddingVertical: wp(1),
+                                                        borderRadius: 5,
+                                                    }}
+                                                >
+                                                    <Text
                                                         style={{
-                                                            justifyContent: "center",
-                                                            height: hp(28),
-                                                            width: wp(89),
-                                                            alignSelf: "center",
-                                                            borderRadius: 20,
-                                                        }}
-                                                    />
-                                                )}
-
-                                                {e.booking_flag == "1" && (
-                                                    <View
-                                                        style={{
-                                                            position: "absolute",
-                                                            top: 0,
-                                                            left: 0,
-                                                            right: 0,
-                                                            bottom: 0,
-                                                            borderRadius: 20,
-                                                            overflow: "hidden",
-                                                            backgroundColor: "rgba(0,0,0,0.25)",
-                                                            justifyContent: "center",
-                                                            alignItems: "center",
+                                                            color: "#ffffff",
+                                                            fontSize: 15,
+                                                            fontWeight: "bold",
                                                         }}
                                                     >
-                                                        <View
-                                                            style={{
-                                                                backgroundColor: "red",
-                                                                paddingHorizontal: wp(5),
-                                                                paddingVertical: wp(1),
-                                                                borderRadius: 5,
-                                                            }}
-                                                        >
-                                                            <Text
-                                                                style={{
-                                                                    color: "#ffffff",
-                                                                    fontSize: 15,
-                                                                    fontWeight: "bold",
-                                                                }}
-                                                            >
-                                                                Booked
-                                                            </Text>
-                                                        </View>
-                                                    </View>
-                                                )}
+                                                        Booked
+                                                    </Text>
+                                                </View>
                                             </View>
                                         )}
-                                    />
-
+                                    </View>
                                     <View style={{
                                         position: 'absolute',
                                         marginLeft: 0.5,

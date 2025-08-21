@@ -39,14 +39,14 @@ const SplaceScreen: React.FC<Componentprops> = (props) => {
         if (response.code == 0) {
             if (Platform.OS === 'android') {
                 const buildNumber = DeviceInfo.getBuildNumber();
-                if (buildNumber > response.data.User_Android_Version) {
+                if (buildNumber < response.data.User_Android_Version) {
                     setVersionmodal(true)
                 } else {
                     loadUserDetails()
                 }
             } else if (Platform.OS === 'ios') {
                 const buildNumber = DeviceInfo.getBuildNumber();
-                if (buildNumber > response.data.User_IOS_Version) {
+                if (buildNumber < response.data.User_IOS_Version) {
                     setVersionmodal(true)
                 } else {
                     loadUserDetails()

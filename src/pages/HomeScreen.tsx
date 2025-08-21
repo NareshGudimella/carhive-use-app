@@ -38,18 +38,16 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
     const [modeltype, setModeltype] = useState('')
     const ref = React.useRef<ICarouselInstance>(null);
     const [pickupTime, setPickupTime] = useState(new Date());
+    const [time, setTime] = useState(new Date());
     const [dropTime, setDropTime] = useState(new Date())
     const [cityname, setCityname] = useState<any>([])
     const [locationDeniedFlag, setLocationDeniedFlag] = useState(false)
 
-    useFocusEffect(
-        useCallback(() => {
-            handelBannerImage()
-            setPickupTime(new Date(pickupTime.getTime() + 1 * 60 * 60 * 1000))
-            setDropTime(new Date(pickupTime.getTime() + 13 * 60 * 60 * 1000))
-            setDropDate(new Date(dropDate.getTime() + 13 * 60 * 60 * 1000))
-        }, [])
-    )
+    useFocusEffect(useCallback(() => {
+        handelBannerImage()
+        setDropTime(new Date(pickupTime.getTime() + 12 * 60 * 60 * 1000))
+        setDropDate(new Date(dropDate.getTime() + 12 * 60 * 60 * 1000))
+    }, []))
 
     {/* Banner image api */ }
     const handelBannerImage = async () => {
@@ -382,18 +380,22 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                             }}>Your journey awaits, book it right away.</Text>
                         </View>
                         <View>
-                            {modeltype === 'Time' && (
+                            {modeltype === 'Time' &&
                                 <DatePicker
                                     modal
                                     mode="time"
                                     open={open}
-                                    minimumDate={new Date(new Date().getTime() + 1 * 60 * 60 * 1000)}
-                                    date={pickupTime}
+                                    minimumDate={(pickupDate && pickupDate.getTime() > new Date().getTime())
+                                        ? new Date(new Date().setHours(0, 0, 0, 0))
+                                        : new Date()}
+                                    date={dateType === 'pickup' ? pickupTime : dropTime}
                                     onConfirm={(selectedtime) => {
                                         setOpen(false);
                                         if (dateType === 'pickup') {
-                                            setPickupTime(selectedtime);
+                                            setPickupTime(new Date(selectedtime.getTime()));
                                             setDropTime(new Date(selectedtime.getTime() + 12 * 60 * 60 * 1000));
+                                        } else if (dateType === 'drop') {
+                                            setDropTime(selectedtime);
                                         }
                                         setDateType('');
                                     }}
@@ -401,7 +403,8 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                         setOpen(false);
                                     }}
                                 />
-                            )}
+                            }
+
                             {modeltype !== 'Time' &&
                                 < DatePicker
                                     modal
