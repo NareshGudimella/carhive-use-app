@@ -43,11 +43,16 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
     const [cityname, setCityname] = useState<any>([])
     const [locationDeniedFlag, setLocationDeniedFlag] = useState(false)
 
-    useFocusEffect(useCallback(() => {
-        handelBannerImage()
-        setDropTime(new Date(pickupTime.getTime() + 12 * 60 * 60 * 1000))
-        setDropDate(new Date(dropDate.getTime() + 12 * 60 * 60 * 1000))
-    }, []))
+    useFocusEffect(
+        useCallback(() => {
+            handelBannerImage();
+            const pickup = new Date(new Date().getTime() + 60 * 60 * 1000);
+            setPickupTime(pickup);
+            setDropTime(new Date(pickup.getTime() + 12 * 60 * 60 * 1000));
+            setDropDate(new Date(pickup.getTime() + 12 * 60 * 60 * 1000));
+        }, [])
+    );
+
 
     {/* Banner image api */ }
     const handelBannerImage = async () => {
@@ -392,8 +397,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                     onConfirm={(selectedtime) => {
                                         setOpen(false);
                                         if (dateType === 'pickup') {
-                                            setPickupTime(new Date(selectedtime.getTime()));
-                                            setDropTime(new Date(selectedtime.getTime() + 12 * 60 * 60 * 1000));
+                                            setPickupTime(selectedtime);
                                         } else if (dateType === 'drop') {
                                             setDropTime(selectedtime);
                                         }

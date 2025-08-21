@@ -8,8 +8,8 @@ import {
 import { BackButtonStyle } from "../styles/BackButtonStyle";
 import { wp, hp } from "../utils/ResponsiveScreen";
 import { BottomTabstyles } from "../styles/BottomTabstyles";
-import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
-import React, { useCallback, useEffect, useState } from "react";
+import { ICarouselInstance } from "react-native-reanimated-carousel";
+import React, { useCallback,  useState } from "react";
 import { BottomModelView } from "../components/BottomModelView";
 import FilterButton from "../components/FilterButton";
 import PrimaryButton from "../components/PrimaryButton";
@@ -19,7 +19,6 @@ import { useFocusEffect } from "@react-navigation/native";
 import { CarsList, excuteGetResponse, } from "../apis/api";
 import LinearGradient from "react-native-linear-gradient";
 import moment from "moment";
-import { BlurView } from "@react-native-community/blur";
 import { Grayscale } from "react-native-color-matrix-image-filters";
 
 class Componentprops extends Baseprops { }
