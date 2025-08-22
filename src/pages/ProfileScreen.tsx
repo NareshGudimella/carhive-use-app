@@ -34,6 +34,7 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
         useCallback(() => {
             loadToken()
             loadCityName()
+            console.log('user', user)
         }, [])
     )
 

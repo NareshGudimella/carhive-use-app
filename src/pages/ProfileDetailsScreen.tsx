@@ -39,6 +39,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
         const response = await excuteGetResponse('secure/profile')
         if (response.code == 0) {
             setProfileDetails(response.data)
+            console.log('user', response.data)
             handleInputChangeValue('name', response.data && response.data.name)
             handleInputChangeValue('email', response.data && response.data.email)
             handleInputChangeValue('gender', response.data && response.data.gender)
@@ -53,6 +54,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
     }
     const updateEmail = async () => {
         const response = await userUpdateProfile(userDetailsObj.email)
+        console.log('response', response)
         if (response.code == 0) {
             Alert.alert('Alert', 'Your email is updated')
         } else {
@@ -372,15 +374,16 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                             </View>
                         </Cardview>
                     </View>}
-                    <View style={{
-                        marginBottom: hp(3)
+                   
+                </View>
+            </ScrollView>
+            <View style={{
+                        marginBottom: hp(3), marginHorizontal: wp(5)
                     }}>
                         <PrimaryButton title='Update' onclick={() => {
                             updateEmail()
                         }} />
                     </View>
-                </View>
-            </ScrollView>
         </SafeAreaView>
     )
 }

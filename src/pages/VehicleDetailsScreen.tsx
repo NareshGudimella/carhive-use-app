@@ -310,8 +310,6 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                             }, 500);
                                             break;
                                     }
-
-
                                 }}
                             />
                         )}

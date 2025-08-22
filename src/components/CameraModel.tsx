@@ -35,11 +35,13 @@ const CameraModalScreen: React.FC<Componentprops> = (props) => {
             }
         } else if (Platform.OS == 'ios') {
             const grant = await check(PERMISSIONS.IOS.CAMERA)
-            if (grant) {
+            if (grant == 'granted') {
                 cameraClick()
             } else {
                 const granted = await request(PERMISSIONS.IOS.CAMERA)
                 if (granted == 'granted') {
+                    cameraClick()
+                } else {
                     Linking.openSettings()
                 }
             }
@@ -47,24 +49,27 @@ const CameraModalScreen: React.FC<Componentprops> = (props) => {
     }
 
     const cameraClick = async () => {
-
-        const result: any = await launchCamera({
+        const result = await launchCamera({
             mediaType: 'photo',
             quality: 1,
             maxHeight: 600,
             maxWidth: 600
         })
-        setImage(result.assets[0])
+        if (result.assets && result.assets.length > 0) {
+            setImage(result.assets[0])
+        }
     }
 
     const galleryClick = async () => {
-        const result: any = await launchImageLibrary({
+        const result = await launchImageLibrary({
             mediaType: 'photo',
             quality: 1,
             maxHeight: 600,
             maxWidth: 600
         })
-        setImage(result.assets[0])
+        if (result.assets && result.assets.length > 0) {
+            setImage(result.assets[0])
+        }
     }
 
     return (

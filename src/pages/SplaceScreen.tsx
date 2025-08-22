@@ -21,6 +21,7 @@ class Componentprops extends Baseprops { }
 
 const SplaceScreen: React.FC<Componentprops> = (props) => {
 
+    const dispatch = useDispatch()
     const [versionmodal, setVersionmodal] = useState<any>(false)
 
     useFocusEffect(
@@ -29,9 +30,20 @@ const SplaceScreen: React.FC<Componentprops> = (props) => {
         }, []))
 
     const loadUserDetails = async () => {
-        requestfirebasePermissions()
-        Foregroundmessage()
-        props.navigation.navigate('HomeScreen')
+        const token = await getToken()
+        if (token && token != '') {
+            const response = await excuteGetResponse('secure/profile')
+            if (response.code == 0) {
+                requestfirebasePermissions()
+                Foregroundmessage()
+                dispatch(updateProfile(response.data));
+                props.navigation.navigate('HomeScreen')
+            } else {
+                Alert.alert('Alert', 'Unable to get details')
+            }
+        } else {
+            props.navigation.navigate('HomeScreen')
+        }
     }
 
     const CheckVersion = async () => {

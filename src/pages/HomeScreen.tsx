@@ -95,6 +95,12 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
 
         if (cityname && cityname.cityId !== '') {
             if (pickupDateTime < dropDateTime) {
+                const diffMs = dropDateTime.getTime() - pickupDateTime.getTime();
+                const diffHours = diffMs / (1000 * 60 * 60); 
+                if (diffHours < 12) {
+                    Alert.alert('Alert', 'Pickup and Drop must be at least 12 hours.');
+                    return;
+                }
                 props.navigation.navigate('SelectVehicleScreen', {
                     lat: latitude,
                     long: longitude,
@@ -106,13 +112,12 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                 });
             } else {
                 Alert.alert('Alert', 'Please select a valid Drop Date and Time after Pickup');
-                return
+                return;
             }
         } else {
             Alert.alert('Alert', 'Please select the City');
-            return
+            return;
         }
-
     };
 
     const VerifyLocationPermission = async () => {

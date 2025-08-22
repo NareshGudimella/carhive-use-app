@@ -77,7 +77,6 @@ export default function App() {
 
   if (!isConnected) {
     return (<NoNetworkScreen />
-
     );
   }
 
