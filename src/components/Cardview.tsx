@@ -5,10 +5,10 @@ export const Cardview = ({ children }: { children: any }) => {
         <View
             style={{
                 backgroundColor: '#ffffff',
-                elevation: 2,
                 borderRadius: 15,
                 borderWidth:0.5,
-                borderColor:'#EAECF2'
+                borderColor:'#EAECF2',
+                elevation: 1
             }}>
             {children}
         </View>

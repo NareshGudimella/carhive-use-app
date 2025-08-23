@@ -39,7 +39,6 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
         const response = await excuteGetResponse('secure/profile')
         if (response.code == 0) {
             setProfileDetails(response.data)
-            console.log('user', response.data)
             handleInputChangeValue('name', response.data && response.data.name)
             handleInputChangeValue('email', response.data && response.data.email)
             handleInputChangeValue('gender', response.data && response.data.gender)
@@ -54,7 +53,14 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
     }
     const updateEmail = async () => {
         const response = await userUpdateProfile(userDetailsObj.email)
-        console.log('response', response)
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!userDetailsObj.email || userDetailsObj.email.trim().length == 0) {
+            Alert.alert('Alert', 'Enter your email')
+            return
+        } else if (!regex.test(userDetailsObj.email)) {
+            Alert.alert('Alert', 'Invalid email format')
+            return
+          }
         if (response.code == 0) {
             Alert.alert('Alert', 'Your email is updated')
         } else {
@@ -151,7 +157,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                             </View>
                             <Cardview>
                                 <TextInput
-                                    placeholder='Enter Name'
+                                    placeholder='Your Name'
                                     placeholderTextColor='#000000'
                                     value={userDetailsObj.name}
                                     onChangeText={text => handleInputChangeValue('name', text)}
@@ -164,9 +170,10 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                     }} />
                             </Cardview>
                             <View style={{ marginVertical: hp(0.8) }} />
+                            <Text style={{color: '#000000', fontWeight: 'bold', marginBottom: hp(1.5),  marginHorizontal: wp(2), fontSize: 16}}>Only email is editable</Text>
                             <Cardview>
                                 <TextInput
-                                    placeholder='Enter Email'
+                                    placeholder='Your Email'
                                     placeholderTextColor='#000000'
                                     editable={true}
                                     value={userDetailsObj.email}

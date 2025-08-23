@@ -1,19 +1,17 @@
-import { Alert, Image, Linking, Modal, PermissionsAndroid, Platform, Pressable, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Image, Linking, Modal, PermissionsAndroid, Platform, Pressable, ScrollView, Text, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { wp, hp } from "../utils/ResponsiveScreen";
 import Textinput from "../components/TextInput";
 import PrimaryButton from "../components/PrimaryButton";
 import { Dropdown } from "react-native-element-dropdown";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { input } from "../styles/TextInputStyle";
-import DatePicker from "react-native-date-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { excuteGetResponse, SignUp } from "../apis/api";
 import moment from "moment";
-import CameraModalScreen from "../components/CameraModel";
 import { CenterModalView } from "../components/CenterModelView";
 import { useFocusEffect } from "@react-navigation/native";
-import { Asset, launchCamera, launchImageLibrary } from "react-native-image-picker";
+import { Asset, launchCamera } from "react-native-image-picker";
 import { check, PERMISSIONS, request } from "react-native-permissions";
 class Componentprops extends Baseprops { }
 
@@ -22,14 +20,12 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
     const [isFocus, setIsFocus] = useState(false);
     const [date, setDate] = useState(new Date());
     const [open, setOpen] = useState(false);
-    const [isDateSelected, setIsDateSelected] = useState(false);
-    const [userName, setUserName] = useState('');
     const [userEmail, setUserEmail] = useState('');
-    const [cameraModal, SetCaremaModal] = useState(false)
     const [profileImage, setProfileImage] = useState<Asset | null>(null)
     const [userDetailsObj, setUserDetailsObj] = useState<any>({})
     const [successKycModal, setSuccessKycModal] = useState(false)
     const [profilDetails, setProfileDetails] = useState<any>(null)
+    const [indicator, setIndiCator] = useState(false)
 
     const genderData = [
         { label: "MALE", value: "MALE" },
@@ -42,9 +38,12 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
         }, []))
 
     const handelSignup = async () => {
-
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (userEmail.trim().length == 0) {
             Alert.alert('Alert', 'Enter your Email')
+            return
+        } else if (!regex.test(userEmail)) {
+            Alert.alert('Alert', 'Invalid email format')
             return
         }
         if (profileImage == null) {
@@ -58,9 +57,18 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
             object.gender = profilDetails.gender,
             object.dob = moment(date).format('YYYY-MM-DD'),
             object.profile_pic = profileImage
+        setIndiCator(true)
         const response = await SignUp(object);
+        setIndiCator(false)
         if (response.code == 0) {
-            setSuccessKycModal(true)
+            props.navigation.navigate('CarSummaryScreen',
+                {
+                    carid: props.route && props.route.params && props.route.params.carid,
+                    fromDate: props.route && props.route.params && props.route.params.from_date,
+                    toDate: props.route && props.route.params && props.route.params.to_date,
+                    lat: props.route && props.route.params && props.route.params.latitude,
+                    long: props.route && props.route.params &&props.route.params.longitude
+                })
         } else if (response.message == 'NAME_NOT_MATCH' && response.code == 1) {
             Alert.alert('Alert', 'Enter your name as per aadhar card')
             return
@@ -355,10 +363,13 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
                         marginVertical: hp(3),
                     }}
                 >
+
+                    {indicator &&
+                        <ActivityIndicator color="#00354a" size="large" style={{ marginBottom: hp(1) }} />
+                    }
                     <PrimaryButton
                         title="Submit"
                         onclick={() => {
-                            handleInputChangeValue
                             handelSignup()
                         }}
                     />

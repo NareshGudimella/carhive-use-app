@@ -93,7 +93,6 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
         )
         if (response.code == 0) {
             setCarsList(response.data)
-            console.log('list', response)
         } else if (response.message == "The time difference between from_date and to_date must be at least 12 hours.") {
             Alert.alert('Alert!', "The time difference between from date and to date must be at least 12 hours.")
         } else {
@@ -109,7 +108,6 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
     {/* Car model List */ }
     const carsModalList = async () => {
         const response = await excuteGetResponse(`auth/cars/brands`)
-        console.log('carlist', response)
         if (response.code == 0) {
             setCarBrand(response.data)
         }
@@ -514,7 +512,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                     style={BottomTabstyles.selectedstyle}
                                 />
                                 <TextInput
-                                    placeholder="Search any car..."
+                                    placeholder="Search by brand or model"
                                     placeholderTextColor='#000000'
                                     onChangeText={SetSearch}
                                     value={search}

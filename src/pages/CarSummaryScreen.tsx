@@ -16,6 +16,7 @@ import { useFocusEffect } from "@react-navigation/native";
 //@ts-ignore
 import RazorpayCheckout from 'react-native-razorpay';
 import { useSelector } from "react-redux";
+import moment from "moment";
 
 class Componentprops extends Baseprops { }
 
@@ -40,18 +41,12 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
         }, [])
     )
 
-    useEffect(() => {
-        if (couponcode != '') {
-            loadSummeryScreen(props.route.params && props.route.params.carid, couponcode)
-        }
-    }, [couponcode])
-
     const loadSummeryScreen = async (carid: any, offercode?: any) => {
         const response = await summery(carid,
-            props.route.params.fromDate,
-            props.route.params.toDate,
-            props.route.params.lat,
-            props.route.params.long,
+            props.route && props.route.params && props.route.params.fromDate,
+            props.route && props.route.params && props.route.params.toDate,
+            props.route && props.route.params && props.route.params.lat,
+            props.route && props.route.params && props.route.params.long,
             offercode
         )
         if (response.code == 0) {
@@ -59,18 +54,14 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
         } else if (response.code == 1 && response.message == 'Offer_Expired_or_Not_Started') {
             Alert.alert('Alert', 'Offer Expired')
             setCouponcode('')
-            return
         } else if (response.code == 1 && response.message == 'Offer_Not_Applicable_minimum_amount') {
             Alert.alert('Alert', 'This offer isn’t applicable for this ride, as your minimum balance needs to be above ₹1200.')
             setCouponcode('')
-            return
         } else if (response.code == 1 && response.message == 'Offer_Not_Applicable') {
-            Alert.alert('Alert', 'Offer not available')
+            Alert.alert('Alert', 'Coupon code is invalid')
             setCouponcode('')
-            return
         } else {
             Alert.alert('Alert', 'Unable to get details')
-            return
         }
     }
     const handelModelData = async () => {
@@ -214,6 +205,9 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                             placeholderTextColor='#757575' />
                                         <Pressable
                                             onPress={() => {
+                                                if (couponcode != '') {
+                                                    loadSummeryScreen(props.route.params && props.route.params.carid, couponcode)
+                                                }
                                                 setCoupanModalScreen(false)
                                             }}
                                             style={{
@@ -233,10 +227,10 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                                 }}>Apply</Text>
                                         </Pressable>
                                     </View>
-                                    <Text style={{
+                                    {cuopon.length != 0 && <Text style={{
                                         fontSize: 14,
                                         fontWeight: 'bold'
-                                    }}>Available</Text>
+                                    }}>Available</Text>}
                                     <View>
                                         {cuopon && cuopon.map((e: any, index: any) => (
                                             <View key={index} style={{ marginVertical: hp(1) }}>
@@ -590,8 +584,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                                 color: '#64748B',
                                                 fontWeight: '400',
                                                 width: wp(60)
-                                            }}>Digilocker or original -issued
-                                                at least 6 months ago</Text>
+                                            }}>Original or copy</Text>
                                         </View>
                                     </View>
                                     <View style={{
@@ -609,13 +602,37 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                                 fontSize: 16,
                                                 fontWeight: 'bold'
                                             }}>
-                                                Aadhar/Passport
+                                                Deposit
                                             </Text>
                                             <Text style={{
                                                 color: '#64748B',
                                                 fontWeight: '400',
                                                 width: wp(60)
-                                            }}>Digilocker or original or copy</Text>
+                                            }}>Two wheeler or cash</Text>
+                                        </View>
+                                    </View>
+                                    <View style={{
+                                        flexDirection: 'row',
+                                        marginVertical: hp(1)
+                                    }}>
+                                        <Image
+                                            source={require('../assets/personalcard1.png')}
+                                            style={{
+                                                height: 32,
+                                                width: 40
+                                            }} />
+                                        <View style={{ marginHorizontal: wp(3) }}>
+                                            <Text style={{
+                                                fontSize: 16,
+                                                fontWeight: 'bold'
+                                            }}>
+                                                Aadhar Card
+                                            </Text>
+                                            <Text style={{
+                                                color: '#64748B',
+                                                fontWeight: '400',
+                                                width: wp(60)
+                                            }}>Original or copy</Text>
                                         </View>
                                     </View>
                                     <View style={{
@@ -667,9 +684,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                         }}>
                                             I acknowledge that in the absence of
                                             the documents at the time of delivery,
-                                            the car will not be handed over and
-                                            cancellation charge (up to Rs 5,000)
-                                            will apply
+                                            the car will not be handed over
                                         </Text>
                                     </View>
                                     <View
@@ -682,25 +697,6 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                             onclick={() => {
                                                 handelPaymentDetails()
                                             }} />
-                                    </View>
-                                    <View style={{
-                                        justifyContent: "center",
-                                        alignItems: "center"
-                                    }}>
-                                        <Text
-                                            style={{
-                                                color: "#9CA3AF",
-                                                width: wp(70),
-                                                textAlign: "center",
-                                                lineHeight: hp(2.5)
-                                            }}
-                                        >
-                                            By signing up you agree to
-                                            <Text style={{ color: "#00354a" }}>
-                                                {" "}
-                                                Terms of Services & Privacy Policy.
-                                            </Text>
-                                        </Text>
                                     </View>
                                 </View>
                             </BottomModelView>
@@ -735,7 +731,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                             fontSize: 16,
                             fontWeight: 'bold',
                             marginHorizontal: wp(2)
-                        }}>Summary</Text>
+                        }}>Booking Summary</Text>
                     </View>
                     <View>
                         {carDetails && <Image
@@ -777,13 +773,13 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                 <Text style={{
                                     fontSize: 15,
                                     fontWeight: 'bold'
-                                }}>{carDetails && carDetails.from_date?.slice(0, 10)}</Text>
+                                }}>{moment(carDetails && carDetails.from_date).format('YYYY-MM-DD')}</Text>
                                 <Text style={{
                                     color: '#27272780',
                                     fontWeight: '500',
                                     marginTop: 2,
                                     fontSize: 13
-                                }}>{carDetails && carDetails.from_date?.slice(10, 16)}</Text>
+                                }}>{moment(carDetails && carDetails.from_date).format('hh:mm A')}</Text>
                             </View>
                             <Image
                                 source={require('../assets/arrow.png')}
@@ -796,13 +792,13 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                 <Text style={{
                                     fontSize: 15,
                                     fontWeight: 'bold'
-                                }}>{carDetails && carDetails.to_date?.slice(0, 10)}</Text>
+                                }}>{moment(carDetails && carDetails.to_date).format('YYYY-MM-DD')}</Text>
                                 <Text style={{
                                     color: '#27272780',
                                     fontWeight: '500',
                                     marginTop: 2,
                                     fontSize: 13
-                                }}>{carDetails && carDetails.to_date?.slice(10, 16)}</Text>
+                                }}>{moment(carDetails && carDetails.to_date).format('hh:mm A')}</Text>
                             </View>
                         </View>
                     </Cardview>
@@ -876,7 +872,8 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                         couponcode != 0 ?
                                             <Text style={{
                                                 color: '#64748B',
-                                                marginHorizontal: wp(3)
+                                                marginHorizontal: wp(3),
+                                                width: wp(60)
                                             }}>{couponcode}</Text>
                                             : <Text style={{
                                                 color: '#64748B',
@@ -914,15 +911,6 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                                 color: '#64748B',
                                                 textDecorationLine: 'underline'
                                             }}>Trip Charges</Text>
-                                            <Image
-                                                source={require('../assets/info.png')}
-                                                style={{
-                                                    height: 10,
-                                                    width: 10,
-                                                    marginTop: 3,
-                                                    marginHorizontal: 3
-                                                }}
-                                            />
                                         </View>
                                         <Text style={{
                                             fontWeight: 'bold',
@@ -939,15 +927,6 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                             color: '#64748B',
                                             textDecorationLine: 'underline'
                                         }}>Taxes</Text>
-                                        <Image
-                                            source={require('../assets/info.png')}
-                                            style={{
-                                                height: 10,
-                                                width: 10,
-                                                marginTop: 3,
-                                                marginHorizontal: 3
-                                            }}
-                                        />
                                     </View>
                                     <Text style={{
                                         fontWeight: 'bold',
@@ -964,15 +943,6 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                             color: '#64748B',
                                             textDecorationLine: 'underline'
                                         }}>Convenience Fees</Text>
-                                        <Image
-                                            source={require('../assets/info.png')}
-                                            style={{
-                                                height: 10,
-                                                width: 10,
-                                                marginTop: 3,
-                                                marginHorizontal: 3
-                                            }}
-                                        />
                                     </View>
                                     <Text style={{
                                         fontWeight: 'bold',
@@ -1007,15 +977,6 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                             color: '#64748B',
                                             textDecorationLine: 'underline'
                                         }}>Trip Protection Fee</Text>
-                                        <Image
-                                            source={require('../assets/info.png')}
-                                            style={{
-                                                height: 10,
-                                                width: 10,
-                                                marginTop: 3,
-                                                marginHorizontal: 3
-                                            }}
-                                        />
                                     </View>
                                     <Text style={{
                                         fontWeight: 'bold',
@@ -1033,7 +994,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                             textDecorationLine: 'underline'
                                         }}>Coupon</Text>
                                         <Text style={{
-                                            color: '#0D9D32'
+                                            color: '#0D9D32',
                                         }}>({carDetails && carDetails.Offercode})</Text>
                                     </View>
                                     <Text style={{

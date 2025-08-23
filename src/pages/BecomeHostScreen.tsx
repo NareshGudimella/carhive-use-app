@@ -46,8 +46,12 @@ const BecomeHostScreen: React.FC<Componentprops> = (props) => {
             Alert.alert('Alert', 'Enter host name')
             return
         }
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (email.trim().length == 0) {
             Alert.alert('Alert', 'Enter host Email')
+            return
+        } else if (!regex.test(email)) {
+            Alert.alert('Alert', 'Invalid email format')
             return
         }
         if (number.trim().length == 0 && number.trim().length != 10) {
@@ -69,8 +73,8 @@ const BecomeHostScreen: React.FC<Componentprops> = (props) => {
             Alert.alert('Alert', 'This email is already registered.');
         } else if (response.message == "MOBILE_NUM_EXIST") {
             Alert.alert('Alert', 'This mobile number is already registered.');
-        } else  {
-            Alert.alert('Alert', 'Error on Hosting')
+        } else {
+            Alert.alert('Alert', 'We were unable to process your request at this moment. Please check your details and try again.');
         }
     }
     const handelCity = async () => {
@@ -129,6 +133,7 @@ const BecomeHostScreen: React.FC<Componentprops> = (props) => {
                         <Textinput placeholder='Mobile number'
                             onChangeText={setNumber}
                             value={number}
+                            max={10}
                             image={require('../assets/sms.png')}
                             keyboardtype='numeric' />
                         <Dropdown
@@ -147,7 +152,7 @@ const BecomeHostScreen: React.FC<Componentprops> = (props) => {
                             containerStyle={{
                                 borderRadius: 8,
                                 backgroundColor: "#EEEFF2",
-                                
+
                             }}
                             placeholderStyle={{
                                 fontSize: 16,

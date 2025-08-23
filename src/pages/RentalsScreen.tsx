@@ -516,7 +516,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                     marginVertical: hp(1)
                 }}>Rentals</Text>
             </View>
-            <View style={{
+            {rentalData.length != 0 && <View style={{
                 backgroundColor: '#ffffff',
                 borderRadius: 10,
                 elevation: 1,
@@ -530,7 +530,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                 <Image source={require('../assets/search.png')}
                     style={input.imgstyle} />
                 <TextInput
-                    placeholder="Search by Vehicle..."
+                    placeholder="Search by Vehicle Brand"
                     placeholderTextColor='#64748B'
                     onChangeText={setSearchData}
                     value={searchData}
@@ -540,7 +540,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                         width: wp(70),
                         marginHorizontal: wp(2)
                     }} />
-            </View>
+            </View>}
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 style={{
@@ -548,6 +548,9 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                     marginHorizontal: wp(5),
                     marginVertical: hp(1)
                 }}>
+
+                {rentalData.length == 0 && <Text style={{ color: '#000000', textAlign: 'center', fontWeight: 'bold', marginTop: hp(2) }}>No bookings user</Text>}
+
                 {rentalData && rentalData.filter((e1: any) => searchData.trim === '' ||
                     e1.brand?.toLowerCase().includes(searchData.toLowerCase())).map((e: any, index: any) => (
                         <View key={index}>

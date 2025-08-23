@@ -314,7 +314,7 @@ const NotificationScreen: React.FC<Componentprops> = (props) => {
                     fontSize: 16,
                     fontWeight: 'bold',
                     marginHorizontal: wp(2)
-                }}>Summary</Text>
+                }}>Notification</Text>
             </View>
 
             <ScrollView style={{

@@ -10,19 +10,10 @@ import moment from "moment";
 
 class Componentprops extends Baseprops { }
 
-const shippingdata = [
-    { id: 1, txt: 'Booking Placed', date: 'at 10/08/2025, 10:00AM', state: 'yes' },
-    { id: 2, txt: 'Booking Accepted', date: 'at 10/08/2025, 10:00AM', state: 'yes' },
-    { id: 3, txt: 'Vehicle Handed Over', date: 'Pending', state: 'No' },
-    { id: 4, txt: 'Request for Return', date: 'Pending', state: 'No' },
-    { id: 5, txt: 'Extended Service', date: 'Pending', state: 'No' },
-    { id: 6, txt: 'Returned', date: 'Pending', state: 'No' }
-]
-
 const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
 
     const [orderDetails, setOrderDetails] = useState<any>(null)
-    
+
     useFocusEffect(
         useCallback(() => {
             if (props.route.params && props.route.params.Id) {
@@ -160,7 +151,7 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                         fontWeight: '500',
                                         marginTop: 2,
                                         fontSize: 13
-                                    }}>{orderDetails && moment(orderDetails.from_date).format('HH:mm A')}</Text>
+                                    }}>{orderDetails && moment(orderDetails.from_date).format('hh:mm A')}</Text>
                                 </View>
                                 <Image
                                     source={require('../assets/arrow.png')}
@@ -179,7 +170,7 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                         fontWeight: '500',
                                         marginTop: 2,
                                         fontSize: 13
-                                    }}>{orderDetails && moment(orderDetails.to_date).format('HH:mm A')}</Text>
+                                    }}>{orderDetails && moment(orderDetails.to_date).format('hh:mm A')}</Text>
                                 </View>
                             </View>
                         </Cardview>
@@ -263,15 +254,6 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                             color: '#64748B',
                                             textDecorationLine: 'underline'
                                         }}>Trip Charges</Text>
-                                        <Image
-                                            source={require('../assets/info.png')}
-                                            style={{
-                                                height: 10,
-                                                width: 10,
-                                                marginTop: 3,
-                                                marginHorizontal: 3
-                                            }}
-                                        />
                                     </View>
                                     <Text style={{
                                         fontWeight: 'bold',
@@ -288,15 +270,7 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                             color: '#64748B',
                                             textDecorationLine: 'underline'
                                         }}>Taxes</Text>
-                                        <Image
-                                            source={require('../assets/info.png')}
-                                            style={{
-                                                height: 10,
-                                                width: 10,
-                                                marginTop: 3,
-                                                marginHorizontal: 3
-                                            }}
-                                        />
+
                                     </View>
                                     <Text style={{
                                         fontWeight: 'bold',
@@ -313,15 +287,7 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                             color: '#64748B',
                                             textDecorationLine: 'underline'
                                         }}>Convenience Fees</Text>
-                                        <Image
-                                            source={require('../assets/info.png')}
-                                            style={{
-                                                height: 10,
-                                                width: 10,
-                                                marginTop: 3,
-                                                marginHorizontal: 3
-                                            }}
-                                        />
+
                                     </View>
                                     <Text style={{
                                         fontWeight: 'bold',
@@ -356,25 +322,17 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                             color: '#64748B',
                                             textDecorationLine: 'underline'
                                         }}>Trip Protection Fee</Text>
-                                        <Image
-                                            source={require('../assets/info.png')}
-                                            style={{
-                                                height: 10,
-                                                width: 10,
-                                                marginTop: 3,
-                                                marginHorizontal: 3
-                                            }}
-                                        />
                                     </View>
                                     <Text style={{
                                         fontWeight: 'bold',
                                         fontSize: 15
                                     }}>₹ {orderDetails && orderDetails.protection_fee}</Text>
                                 </View>
-                                <View style={{
+                                {orderDetails && orderDetails.offercode && <View style={{
                                     flexDirection: 'row',
                                     justifyContent: 'space-between'
                                 }}>
+
                                     <View style={{ flexDirection: 'row' }}>
                                         <Text style={{
                                             color: '#64748B',
@@ -389,7 +347,7 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                         fontSize: 15,
                                         color: '#FF0000'
                                     }}>-₹ {orderDetails && orderDetails.offer_price}</Text>
-                                </View>
+                                </View>}
                                 {
                                     orderDetails && orderDetails.extended_price != null &&
                                     <View style={{
@@ -402,15 +360,7 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                                 color: '#64748B',
                                                 textDecorationLine: 'underline'
                                             }}>Extended trip Fee</Text>
-                                            <Image
-                                                source={require('../assets/info.png')}
-                                                style={{
-                                                    height: 10,
-                                                    width: 10,
-                                                    marginTop: 3,
-                                                    marginHorizontal: 3
-                                                }}
-                                            />
+
                                         </View>
                                         <Text style={{
                                             fontWeight: 'bold',
@@ -431,15 +381,7 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                                 color: '#64748B',
                                                 textDecorationLine: 'underline'
                                             }}>Extra kms Fee</Text>
-                                            <Image
-                                                source={require('../assets/info.png')}
-                                                style={{
-                                                    height: 10,
-                                                    width: 10,
-                                                    marginTop: 3,
-                                                    marginHorizontal: 3
-                                                }}
-                                            />
+
                                         </View>
                                         <Text style={{
                                             fontWeight: 'bold',
@@ -461,7 +403,7 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                         fontSize: 16,
                                         fontWeight: 'bold',
                                         color: '#64748B'
-                                    }}>To Pay</Text>
+                                    }}>Paid</Text>
                                     <Text style={{
                                         fontSize: 16,
                                         fontWeight: 'bold'

@@ -69,7 +69,6 @@ const SplaceScreen: React.FC<Componentprops> = (props) => {
     }
     const CheckMaintenance = async () => {
         const response = await excuteGetResponse(`auth/maintenance`)
-        console.log('maintenance', response)
         if (response.code == 0) {
             if (response.data.user_maintenance == 0) {
                 CheckVersion()

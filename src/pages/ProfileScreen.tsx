@@ -409,7 +409,7 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                 style={{
                                     fontSize: 20,
                                     fontWeight: 'bold',
-                                }}>Hi, {user && user.name}</Text>
+                                }}>Hi, {(user && user.name && user.name != '') ? user.name : 'Guest'}</Text>
                             <Text
                                 style={{
                                     color: '#64748B',
@@ -458,7 +458,8 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                             style={{
                                                 fontSize: 12,
                                                 fontWeight: '500',
-                                                color: '#64748B'
+                                                color: '#64748B',
+                                                width: wp(55)
                                             }}>Update your personal
                                             info conveniently</Text>
                                     </View>
@@ -501,9 +502,10 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                             style={{
                                                 fontSize: 12,
                                                 fontWeight: '500',
-                                                color: '#64748B'
+                                                color: '#64748B',
+                                                width: wp(55)
                                             }}>You want to become a
-                                            host for your car...</Text>
+                                            host for your car</Text>
                                     </View>
                                 </Pressable>
                                 <View
@@ -543,7 +545,8 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                             style={{
                                                 fontSize: 12,
                                                 fontWeight: '500',
-                                                color: '#64748B'
+                                                color: '#64748B',
+                                                width: wp(55)
                                             }}>Assistance at your fingertips,
                                             support just a click.</Text>
                                     </View>

@@ -33,6 +33,7 @@ import { useDispatch } from "react-redux";
 import { Foregroundmessage, requestfirebasePermissions } from "../firebase/firebase";
 import CarViewScreen from "./CarViewScreen";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import ReadMore from '@fawazahmed/react-native-read-more';
 
 
 class Componentprops extends Baseprops { }
@@ -92,7 +93,13 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                 setLicencemodal(true)
                 setIndiCator(false)
             } else if (response.data.aadhar_verfy_flag == 1 && response.data.driving_licence_flag == 1 && response.data.profile_flag == 0) {
-                props.navigation.navigate('SignupScreen')
+                props.navigation.navigate('SignupScreen', {
+                    carid: carData && carData.carid,
+                    from_date: carData && carData.from_date,
+                    to_date: carData && carData.to_date,
+                    latitude:  carData && carData.latitude,
+                    longitude: carData && carData.longitude
+                })
                 setIndiCator(false)
             } else if (response.data.aadhar_verfy_flag == 1 && response.data.driving_licence_flag == 1 && response.data.profile_flag == 1) {
                 props.navigation.navigate('CarSummaryScreen',
@@ -150,7 +157,13 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                         setLicencemodal(true)
                     } else if (profileresponse.data.aadhar_verfy_flag == 1 && profileresponse.data.driving_licence_flag == 1 && profileresponse.data.profile_flag == 0) {
                         setOtpModal(false)
-                        props.navigation.navigate('SignupScreen')
+                        props.navigation.navigate('SignupScreen', {
+                            carid: carData.carid,
+                            fromDate: carData.from_date,
+                            toDate: carData.to_date,
+                            lat: carData.latitude,
+                            long: carData.longitude
+                        })
                     } else if (profileresponse.data.aadhar_verfy_flag == 1 && profileresponse.data.driving_licence_flag == 1 && profileresponse.data.profile_flag == 1) {
                         setOtpModal(false)
                         props.navigation.navigate('CarSummaryScreen',
@@ -177,7 +190,6 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
             props.route.params.fromdate,
             props.route.params.todate
         );
-        console.log('cardetails', response1)
         if (response1.code == 0) {
             setCarData(response1.data)
         } else {
@@ -225,7 +237,6 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
         setIndiCator(true)
         const response = await aadharotpverify(object)
         setIndiCator(false)
-        console.log('aadharotp', response)
         if (response.code == 0) {
             setAadharotpmodal(false)
             setOtpModal(false)
@@ -259,10 +270,16 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
         const response = await licenceverify(object)
         setIndiCator(false)
         if (response.code == 0) {
-            setLicencemodal(false)
+           setLicencemodal(false)
             props.navigation.reset({
                 index: 0,
-                routes: [{ name: 'SignupScreen' }]
+                routes: [{ name: 'SignupScreen', params: {
+                    carid: carData.carid,
+                    from_date: carData.from_date,
+                    to_date: carData.to_date,
+                    latitude: carData.latitude,
+                    longitude: carData.longitude
+                  }, }]
             })
         } else if (response.message == 'LICIENCE_NOT_FOUND') {
             Alert.alert('Alert', 'License not found. Please check your details and try again.');
@@ -1078,13 +1095,6 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                             style={BackButtonStyle.style}
                                             tintColor='#ffffff' />
                                     </Pressable>
-                                    <Text
-                                        style={{
-                                            color: '#ffffff',
-                                            marginHorizontal: wp(2),
-                                            fontWeight: 'bold'
-                                        }}
-                                    >Vehicle details</Text>
                                 </View>
                             </View>
                             <ScrollView
@@ -1106,35 +1116,15 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                                 fontWeight: 'bold'
                                             }}
                                         >{carData && carData.brand_name} {carData && carData.model_name}</Text>
-                                        <Text
-                                            style={{
-                                                fontSize: 13,
-                                                marginVertical: wp(1),
-                                                color: '#64748B'
-                                            }}>
-                                            {textExpanded ? (
-                                                <>
-                                                    {carData && carData.car_description}{' '}
-                                                    <Text
-                                                        onPress={() => setTextExpanded(false)}
-                                                        style={{ color: '#00354a' }}
-                                                    >
-                                                        Show less &lt;&lt;
-                                                    </Text>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    {carData && carData.car_description}
-                                                    {' '}
-                                                    <Text
-                                                        onPress={() => setTextExpanded(true)}
-                                                        style={{ color: '#00354a' }}
-                                                    >
-                                                        See all &gt;&gt;
-                                                    </Text>
-                                                </>
-                                            )}
-                                        </Text>
+                                        <ReadMore
+                                            numberOfLines={3}
+                                            seeLessText="See Less"
+                                            seeMoreText="See More"
+                                            seeMoreStyle={{ color: "#00354a", fontWeight: "bold" }}
+                                            seeLessStyle={{ color: "#00354a", fontWeight: "bold" }}
+                                            style={{ color: '#00354a' }}>
+                                            {carData && carData.car_description}
+                                        </ReadMore>
                                     </View>
                                 </Cardview>
                                 <View style={{ marginVertical: hp(1.3) }}>

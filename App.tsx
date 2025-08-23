@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   NavigationContainer,
   createNavigationContainerRef,
@@ -65,25 +65,26 @@ function RootStack() {
 
 export default function App() {
 
-  const [isConnected, setIsConneted] = React.useState(true)
+  const [isConnected, setIsConneted] = React.useState(0)
 
-  React.useEffect(() => {
+  useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state: any) => {
-      setIsConneted(state.isConnected)
-      console.log('network', isConnected)
+      setIsConneted(state.isConnected?1:-1)
     });
     return () => unsubscribe();
   }, []);
 
-  if (!isConnected) {
-    return (<NoNetworkScreen />
-    );
+  if (isConnected == 0) {
+    return <></>
+  }
+
+  if (isConnected == -1) {
+    return <NoNetworkScreen />
   }
 
   return (
     <Provider store={store}>
       <NavigationContainer ref={navigationRef}>
-        <NetworkListener />
         <RootStack />
       </NavigationContainer>
     </Provider>
