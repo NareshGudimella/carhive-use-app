@@ -26,7 +26,9 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
 
     useFocusEffect(
         useCallback(() => {
-            loadUserDetails()
+            setTimeout(() => {
+                loadUserDetails()
+            }, 100);
         }, [])
     )
     const genderData = [
@@ -38,11 +40,11 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
     const loadUserDetails = async () => {
         const response = await excuteGetResponse('secure/profile')
         if (response.code == 0) {
-            setProfileDetails(response.data)
             handleInputChangeValue('name', response.data && response.data.name)
             handleInputChangeValue('email', response.data && response.data.email)
             handleInputChangeValue('gender', response.data && response.data.gender)
             setDate(response.data.dob)
+            setProfileDetails(response.data)
         } else {
             Alert.alert('Alert', 'Login your account')
         }
@@ -53,6 +55,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
     }
     const updateEmail = async () => {
         const response = await userUpdateProfile(userDetailsObj.email)
+        console.log('res', response)
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!userDetailsObj.email || userDetailsObj.email.trim().length == 0) {
             Alert.alert('Alert', 'Enter your email')
@@ -60,7 +63,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
         } else if (!regex.test(userDetailsObj.email)) {
             Alert.alert('Alert', 'Invalid email format')
             return
-          }
+        }
         if (response.code == 0) {
             Alert.alert('Alert', 'Your email is updated')
         } else {
@@ -166,11 +169,12 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                         height: hp(6),
                                         marginHorizontal: wp(4),
                                         fontSize: 16,
-                                        fontWeight: 'bold'
+                                        fontWeight: 'bold',
+                                        color: '#000000'
                                     }} />
                             </Cardview>
                             <View style={{ marginVertical: hp(0.8) }} />
-                            <Text style={{color: '#000000', fontWeight: 'bold', marginBottom: hp(1.5),  marginHorizontal: wp(2), fontSize: 16}}>Only email is editable</Text>
+                            <Text style={{ color: '#000000', fontWeight: 'bold', marginBottom: hp(1.5), marginHorizontal: wp(2), fontSize: 16 }}>Only email is editable</Text>
                             <Cardview>
                                 <TextInput
                                     placeholder='Your Email'
@@ -182,7 +186,8 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                         height: hp(6),
                                         marginHorizontal: wp(4),
                                         fontSize: 16,
-                                        fontWeight: 'bold'
+                                        fontWeight: 'bold',
+                                        color: '#000000'
                                     }} />
                             </Cardview>
                             <View style={{ marginVertical: hp(0.8) }} />
@@ -381,16 +386,16 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                             </View>
                         </Cardview>
                     </View>}
-                   
+
                 </View>
             </ScrollView>
             <View style={{
-                        marginBottom: hp(3), marginHorizontal: wp(5)
-                    }}>
-                        <PrimaryButton title='Update' onclick={() => {
-                            updateEmail()
-                        }} />
-                    </View>
+                marginBottom: hp(3), marginHorizontal: wp(5)
+            }}>
+                <PrimaryButton title='Update' onclick={() => {
+                    updateEmail()
+                }} />
+            </View>
         </SafeAreaView>
     )
 }

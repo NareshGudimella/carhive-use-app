@@ -49,6 +49,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
             props.route && props.route.params && props.route.params.long,
             offercode
         )
+        console.log('asadjeofj', response)
         if (response.code == 0) {
             setCarDetails(response.data)
         } else if (response.code == 1 && response.message == 'Offer_Expired_or_Not_Started') {
@@ -60,6 +61,10 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
         } else if (response.code == 1 && response.message == 'Offer_Not_Applicable') {
             Alert.alert('Alert', 'Coupon code is invalid')
             setCouponcode('')
+        } else if(response.message == "BOOKING_EXIST") {
+            Alert.alert('Alert!', 'Booking already exists!', [
+                {text: 'OK', onPress: () => {props.navigation.navigate('RentalsScreen')}},
+              ]);
         } else {
             Alert.alert('Alert', 'Unable to get details')
         }
