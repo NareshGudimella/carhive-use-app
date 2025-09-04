@@ -706,7 +706,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                                 fontWeight: 'bold',
                                                                 color: '#64748B'
                                                             }}>
-                                                            Delivery date :{moment(e.to_date).format('DD MMM YYYY HH:mm A')}
+                                                            Delivery date :{moment(e.from_date).format('DD MMM YYYY HH:mm A')}
                                                         </Text>
                                                         <Text
                                                             style={{
