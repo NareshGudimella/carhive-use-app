@@ -27,5 +27,8 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
       </activity>
+      <meta-data
+    android:name="com.facebook.sdk.CodelessDebugLogEnabled"
+    android:value="true" />
     </application>
 </manifest>

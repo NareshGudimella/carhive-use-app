@@ -220,7 +220,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                 setAadharotpmodal(true)
             }, 1000);
         } else {
-            Alert.alert('Alert', 'Unable to get details')
+            Alert.alert('Alert', 'Verification pending, please contact our support.')
         }
     }
 
@@ -282,9 +282,9 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                   }, }]
             })
         } else if (response.message == 'LICIENCE_NOT_FOUND') {
-            Alert.alert('Alert', 'License not found. Please check your details and try again.');
+            Alert.alert('Alert', 'Verification pending, please contact our support.');
         } else {
-            Alert.alert('Alert', 'Something went wrong. Please try again later.');
+            Alert.alert('Alert', 'Verification pending, please contact our support.');
         }
     }
     return (

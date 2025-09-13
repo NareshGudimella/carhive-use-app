@@ -42,16 +42,35 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
     const [dropTime, setDropTime] = useState(new Date())
     const [cityname, setCityname] = useState<any>([])
     const [locationDeniedFlag, setLocationDeniedFlag] = useState(false)
+    const [timeFlag, setTimeFlag] = useState<any>('')
 
     useFocusEffect(
         useCallback(() => {
             handelBannerImage();
-            const pickup = new Date(new Date().getTime() + 60 * 60 * 1000);
-            setPickupTime(pickup);
-            setDropTime(new Date(pickup.getTime() + 12 * 60 * 60 * 1000));
-            setDropDate(new Date(pickup.getTime() + 12 * 60 * 60 * 1000));
+            loadHoursFlag()
         }, [])
     );
+
+    const loadHoursFlag = async () => {
+        const response = await excuteGetResponse('auth/hours')
+        console.log('reshours', response)
+        if (response.code == 0) {
+            setTimeFlag(response.data && response.data.hours_flag)
+            if (response.data && response.data.hours_flag != 1) {
+                const pickup = new Date(new Date().getTime() + 60 * 60 * 1000);
+                setPickupTime(pickup);
+                setDropTime(new Date(pickup.getTime() + 12 * 60 * 60 * 1000));
+                setDropDate(new Date(pickup.getTime() + 12 * 60 * 60 * 1000));
+            } else {
+                const pickup = new Date(new Date().getTime() + 60 * 60 * 1000);
+                setPickupTime(pickup);
+                setDropTime(new Date(pickup.getTime() + 24 * 60 * 60 * 1000));
+                setDropDate(new Date(pickup.getTime() + 24 * 60 * 60 * 1000));
+            }
+        } else {
+            Alert.alert('ALert', 'unable to get details')
+        }
+    }
 
 
     {/* Banner image api */ }
@@ -96,8 +115,13 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
         if (cityname && cityname.cityId !== '') {
             if (pickupDateTime < dropDateTime) {
                 const diffMs = dropDateTime.getTime() - pickupDateTime.getTime();
-                const diffHours = diffMs / (1000 * 60 * 60); 
-                if (diffHours < 12) {
+                const diffHours = diffMs / (1000 * 60 * 60);
+                if (timeFlag == 1) {
+                    if (diffHours < 24) {
+                        Alert.alert('Alert', '⚠️ Booking Notice Due to high demand, Carhive is temporarily not accepting bookings shorter than 24 hours. We regret the inconvenience and appreciate your understanding.');
+                        return;
+                    }
+                } else if (diffHours < 12) {
                     Alert.alert('Alert', 'Pickup and Drop must be at least 12 hours.');
                     return;
                 }

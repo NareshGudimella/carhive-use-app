@@ -95,6 +95,8 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
             setCarsList(response.data)
         } else if (response.message == "The time difference between from_date and to_date must be at least 12 hours.") {
             Alert.alert('Alert!', "The time difference between from date and to date must be at least 12 hours.")
+        } else if (response.message == "The time difference between from_date and to_date must be at least 24 hours.") {
+            Alert.alert('Alert!', "The time difference between from date and to date must be at least 24 hours.")
         } else {
             Alert.alert('Alert', 'unable to get details ', [
                 {

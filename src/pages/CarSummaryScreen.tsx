@@ -33,6 +33,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
     const [couponModalScreen, setCoupanModalScreen] = useState(false)
     const [cuopon, setCoupons] = useState([])
     const [couponcode, setCouponcode] = useState<any>('')
+    const [flag, setFlag] = useState(false)
 
     useFocusEffect(
         useCallback(() => {
@@ -52,6 +53,16 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
         console.log('asadjeofj', response)
         if (response.code == 0) {
             setCarDetails(response.data)
+            if (carDetails && carDetails.from_date && carDetails.to_date) {
+                const fromDate = moment(carDetails.from_date);
+                const toDate = moment(carDetails.to_date);
+                const durationInHours = toDate.diff(fromDate, 'hours', true); // true -> get float value
+                if (durationInHours >= 24) {
+                    setFlag(true)
+                } else {
+                    console.log('Duration is less than or equal to 24 hours.');
+                }
+            }
         } else if (response.code == 1 && response.message == 'Offer_Expired_or_Not_Started') {
             Alert.alert('Alert', 'Offer Expired')
             setCouponcode('')
@@ -61,10 +72,10 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
         } else if (response.code == 1 && response.message == 'Offer_Not_Applicable') {
             Alert.alert('Alert', 'Coupon code is invalid')
             setCouponcode('')
-        } else if(response.message == "BOOKING_EXIST") {
+        } else if (response.message == "BOOKING_EXIST") {
             Alert.alert('Alert!', 'Booking already exists!', [
-                {text: 'OK', onPress: () => {props.navigation.navigate('RentalsScreen')}},
-              ]);
+                { text: 'OK', onPress: () => { props.navigation.navigate('RentalsScreen') } },
+            ]);
         } else {
             Alert.alert('Alert', 'Unable to get details')
         }
@@ -1029,9 +1040,17 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                 </View>
                             </View>
                         </Cardview>
+                     {flag &&  <Text style={{
+                            fontSize: 16,
+                            fontWeight: '500', marginHorizontal: wp(4),
+                            marginTop: hp(2)
+                        }}>💡 Save More with 24-Hour Bookings
+                            At Carhive, bookings shorter than 24 hours include a 10% price increase.
+                            Book for 24 hours or more to enjoy standard rates and save money. 🚗✨</Text> }
                     </View>
                 </ScrollView>
             </View>
+
             <View
                 style={{
                     backgroundColor: '#27272708',

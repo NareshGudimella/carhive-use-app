@@ -1,6 +1,6 @@
 import {
     Alert,
-    Image, Linking, Modal, Platform, Pressable,
+    Image, Linking, Modal, Pressable,
     ScrollView, Text, TextInput, TouchableOpacity, View
 } from "react-native";
 import { Baseprops } from "../utils/navigation";
@@ -9,11 +9,11 @@ import { input } from "../styles/TextInputStyle";
 import BottomTabNavigation from "../components/BottomTab";
 import { Cardview } from "../components/Cardview";
 import { RadioButton } from "react-native-paper";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import PrimaryButton from "../components/PrimaryButton";
 import { CenterModalView } from "../components/CenterModelView";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { excuteGetResponse, firebasemessage, Login, Otp } from "../apis/api";
+import { excuteGetResponse, Login, Otp } from "../apis/api";
 import { useFocusEffect } from "@react-navigation/native";
 import moment from "moment";
 import { getToken, setToken } from "../storage/AsyncStorage";
@@ -21,8 +21,6 @@ import { BottomModelView } from "../components/BottomModelView";
 import Textinput from "../components/TextInput";
 import { OtpInput } from "react-native-otp-entry";
 import { style } from "../styles/OtpStyle";
-import messaging from '@react-native-firebase/messaging';
-import DeviceInfo from "react-native-device-info";
 import { updateProfile } from "../storage/redux";
 import { useDispatch, useSelector } from "react-redux";
 //@ts-ignore
