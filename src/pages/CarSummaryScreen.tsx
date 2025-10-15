@@ -54,10 +54,12 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
         if (response.code == 0) {
             setCarDetails(response.data)
             if (carDetails && carDetails.from_date && carDetails.to_date) {
+                console.log('rrrrr')
                 const fromDate = moment(carDetails.from_date);
                 const toDate = moment(carDetails.to_date);
-                const durationInHours = toDate.diff(fromDate, 'hours', true); // true -> get float value
-                if (durationInHours >= 24) {
+                const durationInHours = toDate.diff(fromDate, 'hours', true);
+                console.log('Duration', durationInHours)
+                if (durationInHours < 24) {
                     setFlag(true)
                 } else {
                     console.log('Duration is less than or equal to 24 hours.');
@@ -905,8 +907,28 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                             </Pressable>
                         </Cardview>
                     </View>
+                    {flag &&
+                        <Cardview>
+                            <View style={{
+                                paddingHorizontal: wp(4),
+                                paddingVertical: hp(1)
+                            }}>
+                                <Text style={{
+                                    fontSize: 16,
+                                    fontWeight: 'bold'
+                                }}>Note:</Text>
+                                <Text style={{
+                                    fontSize: 16,
+                                    fontWeight: '500',
+                                    marginTop: 2
+                                }}>💡 Save More with 24-Hour Bookings
+                                    At Carhive, bookings shorter than 24 hours include a 10% price increase.
+                                    Book for 24 hours or more to enjoy standard rates and save money. 🚗✨</Text>
+                            </View>
+                        </Cardview>
+                    }
 
-                    <View style={{ marginBottom: hp(3) }}>
+                    <View style={{ marginVertical: hp(2) }}>
                         <Text style={{
                             fontSize: 16,
                             fontWeight: 'bold',
@@ -1040,13 +1062,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                 </View>
                             </View>
                         </Cardview>
-                     {flag &&  <Text style={{
-                            fontSize: 16,
-                            fontWeight: '500', marginHorizontal: wp(4),
-                            marginTop: hp(2)
-                        }}>💡 Save More with 24-Hour Bookings
-                            At Carhive, bookings shorter than 24 hours include a 10% price increase.
-                            Book for 24 hours or more to enjoy standard rates and save money. 🚗✨</Text> }
+
                     </View>
                 </ScrollView>
             </View>
