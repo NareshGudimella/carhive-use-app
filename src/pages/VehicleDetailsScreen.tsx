@@ -97,7 +97,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                     carid: carData && carData.carid,
                     from_date: carData && carData.from_date,
                     to_date: carData && carData.to_date,
-                    latitude:  carData && carData.latitude,
+                    latitude: carData && carData.latitude,
                     longitude: carData && carData.longitude
                 })
                 setIndiCator(false)
@@ -270,16 +270,18 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
         const response = await licenceverify(object)
         setIndiCator(false)
         if (response.code == 0) {
-           setLicencemodal(false)
+            setLicencemodal(false)
             props.navigation.reset({
                 index: 0,
-                routes: [{ name: 'SignupScreen', params: {
-                    carid: carData.carid,
-                    from_date: carData.from_date,
-                    to_date: carData.to_date,
-                    latitude: carData.latitude,
-                    longitude: carData.longitude
-                  }, }]
+                routes: [{
+                    name: 'SignupScreen', params: {
+                        carid: carData.carid,
+                        from_date: carData.from_date,
+                        to_date: carData.to_date,
+                        latitude: carData.latitude,
+                        longitude: carData.longitude
+                    },
+                }]
             })
         } else if (response.message == 'LICIENCE_NOT_FOUND') {
             Alert.alert('Alert', 'Verification pending, please contact our support.');
@@ -774,10 +776,11 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                             <Textinput
                                                 image={require('../assets/users.png')}
                                                 placeholder='Enter your driving licence number'
-                                                keyboardtype='default'
+                                                keyboardtype='ascii-capable'
                                                 value={licencenumber}
                                                 onChangeText={setlicencenumber}
                                                 max={20}
+                                                autoCapitalize="characters"
                                             />
                                             <Pressable
                                                 onPress={() => setOpen(true)}
@@ -795,6 +798,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                                     </Text>
                                                 </View>
                                             </Pressable>
+                                            <Text style={{ color: '#000000', fontWeight: 'bold', fontSize: 16, opacity: 0.7, marginStart: wp(3) }}>Date of Birth ( as per Driving Licence )</Text>
                                             <DatePicker
                                                 modal
                                                 open={open}

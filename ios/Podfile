@@ -27,7 +27,7 @@ target 'carhive_user' do
     :app_path => "#{Pod::Config.instance.installation_root}/..",
     :fabric_enabled => false,
     :hermes_enabled => true,
-    :new_arch_enabled => false
+    :new_arch_enabled => true
   )
   setup_permissions([
     'LocationWhenInUse',

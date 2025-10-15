@@ -10,6 +10,7 @@ class Componentprops extends Baseprops {
     onChangeText?: any
     max?: any
     edit?: any
+    autoCapitalize?: any
 }
 
 const Textinput: React.FC<Componentprops> = (props) => {
@@ -27,6 +28,7 @@ const Textinput: React.FC<Componentprops> = (props) => {
                 onChangeText={props.onChangeText}
                 maxLength={props.max}
                 editable={props.edit}
+                autoCapitalize={props.autoCapitalize}
             />
         </View>
     )
