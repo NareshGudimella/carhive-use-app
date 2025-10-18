@@ -23,7 +23,7 @@ import { getToken, setToken } from "../storage/AsyncStorage";
 import { useFocusEffect } from "@react-navigation/native";
 import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
 import { input } from "../styles/TextInputStyle";
-import DatePicker from "react-native-date-picker";
+//import DatePicker from "react-native-date-picker";
 import moment from "moment";
 import CameraModalScreen from "../components/CameraModel";
 import { Asset } from "react-native-image-picker";
@@ -34,7 +34,7 @@ import { Foregroundmessage, requestfirebasePermissions } from "../firebase/fireb
 import CarViewScreen from "./CarViewScreen";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import ReadMore from '@fawazahmed/react-native-read-more';
-
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 class Componentprops extends Baseprops { }
 
@@ -291,6 +291,75 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
     }
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
+
+            {Platform.OS === 'ios' ? (
+                <Modal
+                    visible={open}
+                    transparent
+                    animationType="slide"
+                    onRequestClose={() => setOpen(false)}>
+                    <View
+                        style={{
+                            flex: 1,
+                            justifyContent: 'flex-end',
+                            backgroundColor: 'rgba(0,0,0,0.5)',
+                        }}>
+                        <View
+                            style={{
+                                backgroundColor: '#fff',
+                                borderTopLeftRadius: 15,
+                                borderTopRightRadius: 15,
+                                paddingVertical: 10,
+                            }}>
+                            <DateTimePicker
+                                value={date}
+                                mode="date"
+                                display="spinner"
+                                onChange={(event, selectedDate) => {
+                                    if (selectedDate) {
+                                        setDate(selectedDate);
+                                        setIsDateSelected(true);
+                                    }
+                                }}
+                                minimumDate={new Date()}
+                            />
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-around',
+                                    borderTopWidth: 1,
+                                    borderColor: '#ddd',
+                                    paddingVertical: 10,
+                                }}>
+                                <Text
+                                    onPress={() => setOpen(false)}
+                                    style={{ fontSize: 16, color: 'red' }}>
+                                    Cancel
+                                </Text>
+                                <Text
+                                    onPress={() => setOpen(false)}
+                                    style={{ fontSize: 16, color: '#00354a' }}>
+                                    Confirm
+                                </Text>
+                            </View>
+                        </View>
+                    </View>
+                </Modal>
+            ) : (
+                <DateTimePicker
+                    value={date}
+                    mode="date"
+                    display="default"
+                    onChange={(event, selectedDate) => {
+                        setOpen(false);
+                        if (event.type === 'set' && selectedDate) {
+                            setDate(selectedDate);
+                            setIsDateSelected(true);
+                        }
+                    }}
+                />
+            )}
+
             <SafeAreaView style={{ flex: 1 }}>
                 <View>
                     <View>
@@ -799,22 +868,23 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                                 </View>
                                             </Pressable>
                                             <Text style={{ color: '#000000', fontWeight: 'bold', fontSize: 16, opacity: 0.7, marginStart: wp(3) }}>Date of Birth ( as per Driving Licence )</Text>
-                                            <DatePicker
-                                                modal
-                                                open={open}
-                                                date={date}
-                                                mode="date"
-                                                dividerColor="#00354a"
-                                                onConfirm={(selectedDate) => {
-                                                    setOpen(false);
-                                                    setDate(selectedDate);
-                                                    setIsDateSelected(true);
-                                                }}
-                                                onCancel={() => {
-                                                    setOpen(false);
-                                                }}
-                                                theme="light"
-                                            />
+                                            {/* {Platform.OS == 'android' &&
+                                                <DatePicker
+                                                    modal
+                                                    open={open}
+                                                    date={date}
+                                                    mode="date"
+                                                    dividerColor="#00354a"
+                                                    onConfirm={(selectedDate) => {
+                                                        setOpen(false);
+                                                        setDate(selectedDate);
+                                                        setIsDateSelected(true);
+                                                    }}
+                                                    onCancel={() => {
+                                                        setOpen(false);
+                                                    }}
+                                                    theme="light"
+                                                />} */}
                                             <Text style={{
                                                 fontSize: 18,
                                                 fontWeight: 'bold',

@@ -21,11 +21,13 @@ import { CarouselimageStyles } from "../styles/CarouselimageStyles";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { excuteGetResponse } from "../apis/api";
 import { useFocusEffect } from "@react-navigation/native";
-import DatePicker from "react-native-date-picker";
+//import DatePicker from "react-native-date-picker";
 import Geolocation from "@react-native-community/geolocation";
 import { check, PERMISSIONS, request, RESULTS } from "react-native-permissions";
 import { getCity } from "../storage/AsyncStorage";
 import moment from "moment";
+import DateTimePicker from '@react-native-community/datetimepicker';
+
 class Componentprops extends Baseprops { }
 
 const HomeScreen: React.FC<Componentprops> = (props) => {
@@ -247,6 +249,141 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
 
     return (
         <GestureHandlerRootView style={[Background.bgcolor, { flex: 1 }]}>
+
+            {(Platform.OS === 'ios' && modeltype === 'Time') && (
+                <Modal
+                    visible={open}
+                    transparent={true}
+                    animationType="slide"
+                    onRequestClose={() => setOpen(false)}
+                >
+                    <View style={{
+                        flex: 1,
+                        justifyContent: 'flex-end',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        alignItems: 'center',
+                    }}>
+                        <View style={{
+                            backgroundColor: 'white',
+                            borderTopLeftRadius: 15,
+                            borderTopRightRadius: 15,
+                            paddingBottom: 20,
+                        }}>
+                            <DateTimePicker
+                                value={dateType === 'pickup' ? pickupTime : dropTime}
+                                mode="time"
+                                display="spinner"
+                                minuteInterval={1}
+                                onChange={(event, selectedTime) => {
+                                    if (selectedTime) {
+                                        if (dateType === 'pickup') {
+                                            setPickupTime(selectedTime);
+                                        } else if (dateType === 'drop') {
+                                            setDropTime(selectedTime);
+                                        }
+                                    }
+                                }}
+                            />
+                            <View style={{
+                                flexDirection: 'row',
+                                justifyContent: 'space-around',
+                                borderTopWidth: 1,
+                                borderColor: '#ddd',
+                                paddingTop: 10
+                            }}>
+                                <Text
+                                    onPress={() => {
+                                        setOpen(false);
+                                        setDateType('');
+                                    }}
+                                    style={{ fontSize: 16, color: 'red' }}
+                                >
+                                    Cancel
+                                </Text>
+                                <Text
+                                    onPress={() => {
+                                        setOpen(false);
+                                        setDateType('');
+                                    }}
+                                    style={{ fontSize: 16, color: 'blue' }}
+                                >
+                                    Confirm
+                                </Text>
+                            </View>
+                        </View>
+                    </View>
+                </Modal>
+            )}
+
+            {(Platform.OS === 'ios' && modeltype !== 'Time') && (
+                <Modal
+                    visible={open}
+                    transparent={true}
+                    animationType="slide"
+                    onRequestClose={() => {
+                        setOpen(false);
+                        setDateType('');
+                    }}
+                >
+                    <View
+                        style={{
+                            flex: 1,
+                            justifyContent: 'flex-end',
+                            backgroundColor: 'rgba(0,0,0,0.5)',
+                            alignItems: 'center',
+                        }}>
+                        <View
+                            style={{
+                                backgroundColor: 'white',
+                                borderTopLeftRadius: 15,
+                                borderTopRightRadius: 15,
+                                paddingBottom: 20,
+                            }}>
+                            <DateTimePicker
+                                value={dateType === 'pickup' ? pickupDate : dropDate}
+                                mode="date"
+                                display="spinner"
+                                minimumDate={new Date()}
+                                onChange={(event, selectedDate) => {
+                                    if (selectedDate) {
+                                        if (dateType === 'pickup') {
+                                            setPickupDate(selectedDate);
+                                        } else if (dateType === 'drop') {
+                                            setDropDate(selectedDate);
+                                        }
+                                    }
+                                }}
+                            />
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-around',
+                                    borderTopWidth: 1,
+                                    borderColor: '#ddd',
+                                    paddingTop: 10,
+                                }}>
+                                <Text
+                                    onPress={() => {
+                                        setOpen(false);
+                                        setDateType('');
+                                    }}
+                                    style={{ fontSize: 16, color: 'red' }}>
+                                    Cancel
+                                </Text>
+                                <Text
+                                    onPress={() => {
+                                        setOpen(false);
+                                        setDateType('');
+                                    }}
+                                    style={{ fontSize: 16, color: 'blue' }}>
+                                    Confirm
+                                </Text>
+                            </View>
+                        </View>
+                    </View>
+                </Modal>
+            )}
+
             <SafeAreaView style={{ flex: 1 }}>
 
                 <View>
@@ -414,7 +551,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                             }}>Your journey awaits, book it right away.</Text>
                         </View>
                         <View>
-                            {modeltype === 'Time' &&
+                            {/* {(Platform.OS == 'android' && modeltype === 'Time') &&
                                 <DatePicker
                                     modal
                                     mode="time"
@@ -436,9 +573,33 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                         setOpen(false);
                                     }}
                                 />
-                            }
+                            } */}
 
-                            {modeltype !== 'Time' &&
+                            {Platform.OS === 'android' && modeltype === 'Time' && open && (
+                                <DateTimePicker
+                                    value={dateType === 'pickup' ? pickupTime : dropTime} // current selected time
+                                    mode="time"
+                                    display="spinner" // or "clock", Android styling
+                                    minimumDate={
+                                        pickupDate && pickupDate.getTime() > new Date().getTime()
+                                            ? new Date(new Date().setHours(0, 0, 0, 0))
+                                            : new Date()
+                                    }
+                                    onChange={(event, selectedTime) => {
+                                        setOpen(false); // close picker
+                                        if (event.type === 'set' && selectedTime) { // user confirmed selection
+                                            if (dateType === 'pickup') {
+                                                setPickupTime(selectedTime);
+                                            } else if (dateType === 'drop') {
+                                                setDropTime(selectedTime);
+                                            }
+                                        }
+                                        setDateType('');
+                                    }}
+                                />
+                            )}
+
+                            {/* {(Platform.OS == 'android' && modeltype !== 'Time') &&
                                 < DatePicker
                                     modal
                                     mode={"date"}
@@ -458,7 +619,27 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                         setOpen(false);
                                         setDateType('');
                                     }}
-                                />}
+                                />} */}
+
+                            {Platform.OS === 'android' && modeltype !== 'Time' && open && (
+                                <DateTimePicker
+                                    value={dateType === 'pickup' ? pickupDate : dropDate} // current selected date
+                                    mode="date"
+                                    display="default" // or "spinner" for Android style
+                                    minimumDate={new Date()}
+                                    onChange={(event, selectedDate) => {
+                                        setOpen(false); // close picker
+                                        if (event.type === 'set' && selectedDate) { // user confirmed selection
+                                            if (dateType === 'pickup') {
+                                                setPickupDate(selectedDate);
+                                            } else if (dateType === 'drop') {
+                                                setDropDate(selectedDate);
+                                            }
+                                        }
+                                        setDateType('');
+                                    }}
+                                />
+                            )}
                         </View>
                         <Cardview>
                             <View style={{

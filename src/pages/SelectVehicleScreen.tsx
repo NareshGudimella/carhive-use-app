@@ -9,7 +9,7 @@ import { BackButtonStyle } from "../styles/BackButtonStyle";
 import { wp, hp } from "../utils/ResponsiveScreen";
 import { BottomTabstyles } from "../styles/BottomTabstyles";
 import { ICarouselInstance } from "react-native-reanimated-carousel";
-import React, { useCallback,  useState } from "react";
+import React, { useCallback, useState } from "react";
 import { BottomModelView } from "../components/BottomModelView";
 import FilterButton from "../components/FilterButton";
 import PrimaryButton from "../components/PrimaryButton";
@@ -19,7 +19,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { CarsList, excuteGetResponse, } from "../apis/api";
 import LinearGradient from "react-native-linear-gradient";
 import moment from "moment";
-import { Grayscale } from "react-native-color-matrix-image-filters";
+//import { Grayscale } from "react-native-color-matrix-image-filters";
 
 class Componentprops extends Baseprops { }
 
@@ -91,6 +91,7 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
             seaters
 
         )
+        console.log('response ideifjf', response)
         if (response.code == 0) {
             setCarsList(response.data)
         } else if (response.message == "The time difference between from_date and to_date must be at least 12 hours.") {
@@ -553,8 +554,11 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                     }}
                                     key={index}>
                                     <View>
-                                        {e.booking_flag == "1" ? (
-                                            <Grayscale>
+
+                                        {e?.images?.length > 0 &&
+                                            typeof e.images[0].image === "string" &&
+                                            e.images[0].image.startsWith("http") ? (
+                                            e.booking_flag == "1" ? (
                                                 <Image
                                                     source={{ uri: e.images[0].image }}
                                                     style={{
@@ -565,18 +569,31 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                         borderRadius: 20,
                                                     }}
                                                 />
-                                            </Grayscale>
+                                            ) : (
+                                                <Image
+                                                    source={{ uri: e.images[0].image }}
+                                                    style={{
+                                                        justifyContent: "center",
+                                                        height: hp(28),
+                                                        width: wp(89),
+                                                        alignSelf: "center",
+                                                        borderRadius: 20,
+                                                    }}
+                                                />
+                                            )
                                         ) : (
-                                            <Image
-                                                source={{ uri: e.images[0].image }}
+                                            <View
                                                 style={{
                                                     justifyContent: "center",
                                                     height: hp(28),
                                                     width: wp(89),
                                                     alignSelf: "center",
                                                     borderRadius: 20,
+                                                    backgroundColor: "#ccc",
                                                 }}
-                                            />
+                                            >
+                                                <Text style={{ alignSelf: "center", color: "#333" }}>No Image</Text>
+                                            </View>
                                         )}
 
                                         {e.booking_flag == "1" && (
