@@ -315,6 +315,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                 value={date}
                                 mode="date"
                                 display="spinner"
+                                themeVariant="light"
                                 onChange={(event, selectedDate) => {
                                     if (selectedDate) {
                                         setDate(selectedDate);
@@ -350,6 +351,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                     value={date}
                     mode="date"
                     display="default"
+                    themeVariant="light"
                     onChange={(event, selectedDate) => {
                         setOpen(false);
                         if (event.type === 'set' && selectedDate) {

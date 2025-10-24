@@ -120,6 +120,7 @@ const ExtendServiceRequestScreen: React.FC<Componentprops> = (props) => {
                                         value={dropTime}
                                         mode="time"
                                         display="spinner"
+                                        themeVariant="light"
                                         onChange={(event, selectedTime) => {
                                             if (selectedTime) {
                                                 setDropTime(selectedTime);
@@ -171,6 +172,7 @@ const ExtendServiceRequestScreen: React.FC<Componentprops> = (props) => {
                                         value={dropDate}
                                         mode="date"
                                         display="spinner"
+                                        themeVariant="light"
                                         minimumDate={new Date()}
                                         onChange={(event, selectedDate) => {
                                             if (selectedDate) {
@@ -209,6 +211,7 @@ const ExtendServiceRequestScreen: React.FC<Componentprops> = (props) => {
                             value={dropTime}
                             mode="time"
                             display="default"
+                            themeVariant='light'
                             onChange={(event, selectedTime) => {
                                 setOpen(false);
                                 if (event.type === 'set' && selectedTime) {
@@ -221,6 +224,7 @@ const ExtendServiceRequestScreen: React.FC<Componentprops> = (props) => {
                             value={dropDate}
                             mode="date"
                             display="default"
+                            themeVariant="light"
                             minimumDate={new Date()}
                             onChange={(event, selectedDate) => {
                                 setOpen(false);

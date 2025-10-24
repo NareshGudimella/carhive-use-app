@@ -274,6 +274,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                 mode="time"
                                 display="spinner"
                                 minuteInterval={1}
+                                themeVariant="light" 
                                 onChange={(event, selectedTime) => {
                                     if (selectedTime) {
                                         if (dateType === 'pickup') {
@@ -344,6 +345,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                 mode="date"
                                 display="spinner"
                                 minimumDate={new Date()}
+                                themeVariant="light" 
                                 onChange={(event, selectedDate) => {
                                     if (selectedDate) {
                                         if (dateType === 'pickup') {
@@ -580,6 +582,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                     value={dateType === 'pickup' ? pickupTime : dropTime} // current selected time
                                     mode="time"
                                     display="spinner" // or "clock", Android styling
+                                    themeVariant="light"
                                     minimumDate={
                                         pickupDate && pickupDate.getTime() > new Date().getTime()
                                             ? new Date(new Date().setHours(0, 0, 0, 0))
@@ -625,6 +628,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                 <DateTimePicker
                                     value={dateType === 'pickup' ? pickupDate : dropDate} // current selected date
                                     mode="date"
+                                    themeVariant="light"
                                     display="default" // or "spinner" for Android style
                                     minimumDate={new Date()}
                                     onChange={(event, selectedDate) => {
