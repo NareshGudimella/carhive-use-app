@@ -322,7 +322,6 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                         setIsDateSelected(true);
                                     }
                                 }}
-                                minimumDate={new Date()}
                             />
                             <View
                                 style={{
@@ -338,7 +337,12 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                     Cancel
                                 </Text>
                                 <Text
-                                    onPress={() => setOpen(false)}
+                                    onPress={() => {
+                                        setOpen(false)
+                                        setTimeout(() => {
+                                            setLicencemodal(true)
+                                        }, 500);
+                                    }}
                                     style={{ fontSize: 16, color: '#00354a' }}>
                                     Confirm
                                 </Text>
@@ -346,21 +350,25 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                         </View>
                     </View>
                 </Modal>
-            ) : (
-                <DateTimePicker
-                    value={date}
-                    mode="date"
-                    display="default"
-                    themeVariant="light"
-                    onChange={(event, selectedDate) => {
-                        setOpen(false);
-                        if (event.type === 'set' && selectedDate) {
-                            setDate(selectedDate);
-                            setIsDateSelected(true);
-                        }
-                    }}
-                />
-            )}
+            ) :
+                <>
+                    {open && (
+                        <DateTimePicker
+                            value={date}
+                            mode="date"
+                            display="default"
+                            themeVariant="light"
+                            onChange={(event, selectedDate) => {
+                                setOpen(false);
+                                if (event.type === 'set' && selectedDate) {
+                                    setDate(selectedDate);
+                                    setIsDateSelected(true);
+                                }
+                            }}
+                        />
+                    )}
+                </>
+            }
 
             <SafeAreaView style={{ flex: 1 }}>
                 <View>
@@ -854,7 +862,13 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                                 autoCapitalize="characters"
                                             />
                                             <Pressable
-                                                onPress={() => setOpen(true)}
+                                                onPress={() => {
+                                                    setLicencemodal(false)
+                                                    setTimeout(() => {
+                                                        setOpen(true)
+                                                    }, 500);
+
+                                                }}
                                                 style={input.continer}>
                                                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                                     <Image

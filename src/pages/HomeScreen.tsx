@@ -148,98 +148,86 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
 
     const VerifyLocationPermission = async () => {
         if (Platform.OS === 'android') {
-            const granted = await PermissionsAndroid.check(
-                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-            );
-            const granted1 = await PermissionsAndroid.check(
-                PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION
-            );
-
-            if (granted && granted1) {
-                Geolocation.getCurrentPosition(
-                    (position) => {
-                        const { latitude, longitude } = position.coords;
-                        handelCheckDate(latitude, longitude);
-                    },
-                    (error) => {
-                        console.log("Location error:", error);
-                        Alert.alert(
-                            "Location Required",
-                            "Please turn on the location services (GPS) in your phone.",
-                            [{ text: "OK" }]
-                        );
-                    }
-                );
-            } else {
-                const granted = await PermissionsAndroid.requestMultiple([
-                    PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
-                    PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-                ]);
-
-                if (
-                    granted[PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION] ===
-                    PermissionsAndroid.RESULTS.GRANTED &&
-                    granted[PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION] ===
-                    PermissionsAndroid.RESULTS.GRANTED
-                ) {
-                    Geolocation.getCurrentPosition(
-                        (position) => {
-                            const { latitude, longitude } = position.coords;
-                            handelCheckDate(latitude, longitude);
-                        },
-                        (error) => {
-                            console.log("Location error:", error);
-                            Alert.alert(
-                                "Location Required",
-                                "Please turn on the location services (GPS) in your phone.",
-                                [{ text: "OK" }]
-                            );
-                        }
-                    );
-                } else {
-                    setLocationDeniedFlag(true);
-                }
+          try {
+            const fine = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+            const coarse = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION);
+      
+            if (!fine || !coarse) {
+              const granted = await PermissionsAndroid.requestMultiple([
+                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+              ]);
+              if (
+                granted[PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION] !== PermissionsAndroid.RESULTS.GRANTED ||
+                granted[PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION] !== PermissionsAndroid.RESULTS.GRANTED
+              ) {
+                Alert.alert('Location Required', 'Please enable Location permission in settings.');
+                return;
+              }
             }
+      
+            Geolocation.getCurrentPosition(
+              (pos: any) => {
+                console.log('Got fast location:', pos);
+                const { latitude, longitude } = pos.coords;
+                handelCheckDate(latitude, longitude);
+              },
+              async (error: any) => {
+                console.log('Fast location failed:', error);
+                if (error.code === 3 || error.code === 2) {
+                  console.log('Retrying with high accuracy...');
+                  Geolocation.getCurrentPosition(
+                    (pos2: any) => {
+                      console.log('Got precise location:', pos2);
+                      const { latitude, longitude } = pos2.coords;
+                      handelCheckDate(latitude, longitude);
+                    },
+                    (error2: any) => {
+                      console.log('Precise location error:', error2);
+                      Alert.alert(
+                        'Location Required',
+                        'Unable to get your location. Please turn on GPS and try again.',
+                        [{ text: 'OK' }]
+                      );
+                    },
+                    { enableHighAccuracy: true, timeout: 5000, maximumAge: 5000 }
+                  );
+                } else {
+                  Alert.alert('Location Error', 'Unable to detect location. Please enable GPS.');
+                }
+              },
+              { enableHighAccuracy: false, timeout: 7000, maximumAge: 5000 }
+            );
+          } catch (err) {
+            console.log('Permission error:', err);
+          }
         } else if (Platform.OS === 'ios') {
-            const granted = await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
-            if (granted === 'granted') {
-                Geolocation.getCurrentPosition(
-                    (position) => {
-                        const { latitude, longitude } = position.coords;
-                        handelCheckDate(latitude, longitude);
-                    },
-                    (error) => {
-                        console.log("Location error:", error);
-                        Alert.alert(
-                            "Location Required",
-                            "Please turn on the location services (GPS) in your phone.",
-                            [{ text: "OK" }]
-                        );
-                    }
-                );
+          const status = await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+          if (status === RESULTS.GRANTED) {
+            Geolocation.getCurrentPosition(
+              (pos: any) => {
+                const { latitude, longitude } = pos.coords;
+                handelCheckDate(latitude, longitude);
+              },
+              (error: any) => {
+                console.log('iOS location error:', error);
+                Alert.alert('Location Required', 'Please enable Location Services.');
+              },
+              { enableHighAccuracy: true, timeout: 10000, maximumAge: 5000 }
+            );
+          } else {
+            const req = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+            if (req === RESULTS.GRANTED) {
+              VerifyLocationPermission(); // retry
             } else {
-                const requestResult = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
-                if (requestResult === 'granted') {
-                    Geolocation.getCurrentPosition(
-                        (position) => {
-                            const { latitude, longitude } = position.coords;
-                            handelCheckDate(latitude, longitude);
-                        },
-                        (error) => {
-                            console.log("Location error:", error);
-                            Alert.alert(
-                                "Location Required",
-                                "Please turn on the location services (GPS) in your phone.",
-                                [{ text: "OK" }]
-                            );
-                        }
-                    );
-                } else {
-                    setLocationDeniedFlag(true);
-                }
+              Alert.alert('Location Required', 'Please enable Location permission in Settings.', [
+                { text: 'Open Settings', onPress: () => Linking.openSettings },
+                { text: 'Cancel' },
+              ]);
             }
+          }
         }
-    };
+      };
 
     const handleOpenSettings = async () => {
         setLocationDeniedFlag(false)
