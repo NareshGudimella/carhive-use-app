@@ -6,7 +6,6 @@ import { SelectorBoxStyle } from "../styles/Selectorbox";
 import { BottomTabstyles } from "../styles/BottomTabstyles";
 import PrimaryButton from "../components/PrimaryButton";
 import { SafeAreaView } from "react-native-safe-area-context";
-//import DatePicker from "react-native-date-picker";
 import { useCallback, useState } from "react";
 import moment from "moment";
 import { excuteGetResponse, extendtime } from "../apis/api";
@@ -20,7 +19,7 @@ const ExtendServiceRequestScreen: React.FC<Componentprops> = (props) => {
     const [dropTime, setDropTime] = useState(new Date());
     const [open, setOpen] = useState(false);
     const [modeltype, setModeltype] = useState<'Date' | 'Time' | ''>('');
-    const [carData, setCarData] = useState<any>(null)
+    const [carData, setCarData] = useState<any>(null);
 
     useFocusEffect(
         useCallback(() => {
@@ -29,6 +28,7 @@ const ExtendServiceRequestScreen: React.FC<Componentprops> = (props) => {
             }
         }, [])
     )
+
     const ExtendsCarDetails = async (car_booking_id: any) => {
         const response = await excuteGetResponse(`secure/cars/bookings/extend/${car_booking_id}`)
         if (response.code == 0) {
@@ -37,49 +37,31 @@ const ExtendServiceRequestScreen: React.FC<Componentprops> = (props) => {
             setDropTime(new Date(response.data.to_date))
         } else if (response.message == 'Ride_has_already_ended') {
             Alert.alert('Alert', 'Ride has already ended', [
-                {
-                    text: 'Ok',
-                    onPress: () => props.navigation.goBack(),
-                    style: 'cancel',
-                },
+                { text: 'Ok', onPress: () => props.navigation.goBack(), style: 'cancel' },
             ])
             return
         } else if (response.message == 'Request_already_sent') {
             Alert.alert('Alert', 'Request already sent', [
-                {
-                    text: 'Ok',
-                    onPress: () => props.navigation.goBack(),
-                    style: 'cancel',
-                },
+                { text: 'Ok', onPress: () => props.navigation.goBack(), style: 'cancel' },
             ])
             return
         } else if (response.message == 'Cannot_extend_ride_within_5_hours_of_end_time') {
             Alert.alert('Alert', 'Cannot extend ride before 5 hours of return vehicle', [
-                {
-                    text: 'Ok',
-                    onPress: () => props.navigation.goBack(),
-                    style: 'cancel',
-                },
+                { text: 'Ok', onPress: () => props.navigation.goBack(), style: 'cancel' },
             ])
             return
         } else {
             Alert.alert('Alert', 'Unable to get CarDetils', [
-                {
-                    text: 'Ok',
-                    onPress: () => props.navigation.goBack(),
-                    style: 'cancel',
-                },
+                { text: 'Ok', onPress: () => props.navigation.goBack(), style: 'cancel' },
             ])
             return
         }
     }
 
     const requestExtendtime = async (bookingID: any) => {
-        const response = await extendtime(bookingID,
-            `${moment(dropDate).format('YYYY-MM-DD')} 
-             ${moment(dropTime).format('HH:mm:ss')}`)
-        console.log('request Success', response, bookingID,
-            `${moment(dropDate).format('YYYY-MM-DD')} ${moment(dropTime).format('HH:MM:ss')}`)
+        const combinedDateTime = `${moment(dropDate).format('YYYY-MM-DD')} ${moment(dropTime).format('HH:mm:ss')}`
+        const response = await extendtime(bookingID, combinedDateTime)
+        console.log('request Success', response, bookingID, combinedDateTime)
         if (response.code == 0) {
             props.navigation.reset({
                 index: 0,
@@ -91,135 +73,92 @@ const ExtendServiceRequestScreen: React.FC<Componentprops> = (props) => {
         }
     }
 
+    const openPicker = (type: 'Date' | 'Time') => {
+        setModeltype(type)
+        setOpen(true)
+    }
+
+    const closePicker = () => {
+        setOpen(false)
+        setModeltype('')
+    }
+
     return (
         <SafeAreaView style={{ flex: 1 }}>
 
+            {Platform.OS === 'ios' && (
+                <Modal
+                    visible={open}
+                    transparent
+                    animationType="slide"
+                    onRequestClose={closePicker}
+                >
+                    <View style={{
+                        flex: 1,
+                        justifyContent: 'flex-end',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                    }}>
+                        <View style={{
+                            backgroundColor: 'white',
+                            borderTopLeftRadius: 15,
+                            borderTopRightRadius: 15,
+                            paddingBottom: 20,
+                        }}>
+                            {modeltype === 'Date' && (
+                                <DateTimePicker
+                                    value={dropDate}
+                                    mode="date"
+                                    display="spinner"
+                                    themeVariant="light"
+                                    minimumDate={new Date()}
+                                    onChange={(event, selectedDate) => {
+                                        if (selectedDate) {
+                                            setDropDate(selectedDate);
+                                        }
+                                    }}
+                                />
+                            )}
+                            {modeltype === 'Time' && (
+                                <DateTimePicker
+                                    value={dropTime}
+                                    mode="time"
+                                    display="spinner"
+                                    themeVariant="light"
+                                    onChange={(event, selectedTime) => {
+                                        if (selectedTime) {
+                                            setDropTime(selectedTime);
+                                        }
+                                    }}
+                                />
+                            )}
+                            <View style={{
+                                flexDirection: 'row',
+                                justifyContent: 'space-around',
+                                borderTopWidth: 1,
+                                borderColor: '#ddd',
+                                paddingTop: 10,
+                            }}>
+                                <Text
+                                    onPress={closePicker}
+                                    style={{ fontSize: 16, color: 'red' }}
+                                >
+                                    Cancel
+                                </Text>
+                                <Text
+                                    onPress={closePicker}
+                                    style={{ fontSize: 16, color: 'blue' }}
+                                >
+                                    Confirm
+                                </Text>
+                            </View>
+                        </View>
+                    </View>
+                </Modal>
+            )}
 
-            {Platform.OS === 'ios' ? (
+            {Platform.OS === 'android' && open && (
                 <>
-                    {modeltype === 'Time' ? (
-                        <Modal
-                            visible={open}
-                            transparent
-                            animationType="slide"
-                            onRequestClose={() => setOpen(false)}>
-                            <View
-                                style={{
-                                    flex: 1,
-                                    justifyContent: 'flex-end',
-                                    backgroundColor: 'rgba(0,0,0,0.5)',
-                                }}>
-                                <View
-                                    style={{
-                                        backgroundColor: 'white',
-                                        borderTopLeftRadius: 15,
-                                        borderTopRightRadius: 15,
-                                        paddingBottom: 20,
-                                    }}>
-                                    <DateTimePicker
-                                        value={dropTime}
-                                        mode="time"
-                                        display="spinner"
-                                        themeVariant="light"
-                                        onChange={(event, selectedTime) => {
-                                            if (selectedTime) {
-                                                setDropTime(selectedTime);
-                                            }
-                                        }}
-                                    />
-                                    <View
-                                        style={{
-                                            flexDirection: 'row',
-                                            justifyContent: 'space-around',
-                                            borderTopWidth: 1,
-                                            borderColor: '#ddd',
-                                            paddingTop: 10,
-                                        }}>
-                                        <Text
-                                            onPress={() => setOpen(false)}
-                                            style={{ fontSize: 16, color: 'red' }}>
-                                            Cancel
-                                        </Text>
-                                        <Text
-                                            onPress={() => setOpen(false)}
-                                            style={{ fontSize: 16, color: 'blue' }}>
-                                            Confirm
-                                        </Text>
-                                    </View>
-                                </View>
-                            </View>
-                        </Modal>
-                    ) : modeltype === 'Date' ? (
-                        <Modal
-                            visible={open}
-                            transparent
-                            animationType="slide"
-                            onRequestClose={() => setOpen(false)}>
-                            <View
-                                style={{
-                                    flex: 1,
-                                    justifyContent: 'flex-end',
-                                    backgroundColor: 'rgba(0,0,0,0.5)',
-                                }}>
-                                <View
-                                    style={{
-                                        backgroundColor: 'white',
-                                        borderTopLeftRadius: 15,
-                                        borderTopRightRadius: 15,
-                                        paddingBottom: 20,
-                                    }}>
-                                    <DateTimePicker
-                                        value={dropDate}
-                                        mode="date"
-                                        display="spinner"
-                                        themeVariant="light"
-                                        minimumDate={new Date()}
-                                        onChange={(event, selectedDate) => {
-                                            if (selectedDate) {
-                                                setDropDate(selectedDate);
-                                            }
-                                        }}
-                                    />
-                                    <View
-                                        style={{
-                                            flexDirection: 'row',
-                                            justifyContent: 'space-around',
-                                            borderTopWidth: 1,
-                                            borderColor: '#ddd',
-                                            paddingTop: 10,
-                                        }}>
-                                        <Text
-                                            onPress={() => setOpen(false)}
-                                            style={{ fontSize: 16, color: 'red' }}>
-                                            Cancel
-                                        </Text>
-                                        <Text
-                                            onPress={() => setOpen(false)}
-                                            style={{ fontSize: 16, color: 'blue' }}>
-                                            Confirm
-                                        </Text>
-                                    </View>
-                                </View>
-                            </View>
-                        </Modal>
-                    ) : null}
-                </>
-            ) : (
-                <>
-                    {modeltype === 'Time' ? (
-                        <DateTimePicker
-                            value={dropTime}
-                            mode="time"
-                            display="default"
-                            themeVariant='light'
-                            onChange={(event, selectedTime) => {
-                                setOpen(false);
-                                if (event.type === 'set' && selectedTime) {
-                                    setDropTime(selectedTime);
-                                }
-                            }}
-                        />
-                    ) : modeltype === 'Date' ? (
+                    {modeltype === 'Date' && (
                         <DateTimePicker
                             value={dropDate}
                             mode="date"
@@ -228,12 +167,28 @@ const ExtendServiceRequestScreen: React.FC<Componentprops> = (props) => {
                             minimumDate={new Date()}
                             onChange={(event, selectedDate) => {
                                 setOpen(false);
+                                setModeltype('');
                                 if (event.type === 'set' && selectedDate) {
                                     setDropDate(selectedDate);
                                 }
                             }}
                         />
-                    ) : null}
+                    )}
+                    {modeltype === 'Time' && (
+                        <DateTimePicker
+                            value={dropTime}
+                            mode="time"
+                            display="default"
+                            themeVariant="light"
+                            onChange={(event, selectedTime) => {
+                                setOpen(false);
+                                setModeltype('');
+                                if (event.type === 'set' && selectedTime) {
+                                    setDropTime(selectedTime);
+                                }
+                            }}
+                        />
+                    )}
                 </>
             )}
 
@@ -245,14 +200,10 @@ const ExtendServiceRequestScreen: React.FC<Componentprops> = (props) => {
                             alignItems: 'center',
                             margin: wp(5)
                         }}>
-                            <Pressable
-                                onPress={() => props.navigation.goBack()}>
+                            <Pressable onPress={() => props.navigation.goBack()}>
                                 <Image
                                     source={require('../assets/Back.png')}
-                                    style={{
-                                        height: 40,
-                                        width: 40
-                                    }}
+                                    style={{ height: 40, width: 40 }}
                                 />
                             </Pressable>
                             <Text style={{
@@ -274,18 +225,18 @@ const ExtendServiceRequestScreen: React.FC<Componentprops> = (props) => {
                                     alignItems: 'center',
                                     marginBottom: hp(1)
                                 }}>
-                                    {carData && <Image
-                                        source={{
-                                            uri: carData.car_image
-                                        }}
-                                        style={{
-                                            position: 'absolute',
-                                            height: hp(20),
-                                            width: hp(25),
-                                            top: hp(-12),
-                                            borderRadius: 15
-                                        }}
-                                    />}
+                                    {carData && (
+                                        <Image
+                                            source={{ uri: carData.car_image }}
+                                            style={{
+                                                position: 'absolute',
+                                                height: hp(20),
+                                                width: hp(25),
+                                                top: hp(-12),
+                                                borderRadius: 15
+                                            }}
+                                        />
+                                    )}
                                     <Text style={{
                                         marginTop: hp(11),
                                         fontSize: 17,
@@ -299,8 +250,7 @@ const ExtendServiceRequestScreen: React.FC<Componentprops> = (props) => {
                                         fontWeight: 'bold',
                                         marginVertical: hp(1)
                                     }}>
-                                        {carData && carData.carname
-                                        }
+                                        {carData && carData.carname}
                                     </Text>
                                 </View>
                             </Cardview>
@@ -311,39 +261,11 @@ const ExtendServiceRequestScreen: React.FC<Componentprops> = (props) => {
                             fontWeight: 'bold',
                             marginHorizontal: wp(5),
                             marginVertical: hp(1.5)
-                        }}>Extend Date & Time</Text>
+                        }}>
+                            Extend Date & Time
+                        </Text>
 
                         <View style={{ marginHorizontal: wp(5) }}>
-
-                            {/* {Platform.OS == 'android' && <>
-                                {modeltype === 'Time' ? (
-                                    <DatePicker
-                                        modal
-                                        mode="time"
-                                        open={open}
-                                        date={dropTime}
-                                        onConfirm={(selectedTime) => {
-                                            setOpen(false);
-                                            setDropTime(selectedTime);
-                                        }}
-                                        onCancel={() => setOpen(false)}
-                                    />
-                                ) : modeltype === 'Date' ? (
-                                    <DatePicker
-                                        modal
-                                        mode="date"
-                                        open={open}
-                                        date={dropDate}
-                                        onConfirm={(selectedDate) => {
-                                            setOpen(false);
-                                            setDropDate(selectedDate);
-                                        }}
-                                        onCancel={() => setOpen(false)}
-                                    />
-                                ) : null}
-                            </>} */}
-
-
                             <Cardview>
                                 <View style={{
                                     flexDirection: 'row',
@@ -352,10 +274,7 @@ const ExtendServiceRequestScreen: React.FC<Componentprops> = (props) => {
                                     marginVertical: hp(1.5)
                                 }}>
                                     <Pressable
-                                        onPress={() => {
-                                            setModeltype('Date');
-                                            setOpen(true);
-                                        }}
+                                        onPress={() => openPicker('Date')}
                                         style={[SelectorBoxStyle.style, { flexDirection: 'row' }]}
                                     >
                                         <Image
@@ -373,10 +292,7 @@ const ExtendServiceRequestScreen: React.FC<Componentprops> = (props) => {
                                     </Pressable>
 
                                     <Pressable
-                                        onPress={() => {
-                                            setModeltype('Time');
-                                            setOpen(true);
-                                        }}
+                                        onPress={() => openPicker('Time')}
                                         style={[SelectorBoxStyle.style, { flexDirection: 'row' }]}
                                     >
                                         <Image
@@ -388,12 +304,13 @@ const ExtendServiceRequestScreen: React.FC<Componentprops> = (props) => {
                                             fontSize: 14,
                                             fontWeight: '600'
                                         }}>
-                                            {moment(dropTime).format('HH:MM A')}
+                                            {moment(dropTime).format('hh:mm A')}
                                         </Text>
                                     </Pressable>
                                 </View>
                             </Cardview>
                         </View>
+
                         <View style={{ marginHorizontal: wp(5) }}>
                             <Text style={{
                                 color: '#64748B99',
@@ -401,7 +318,9 @@ const ExtendServiceRequestScreen: React.FC<Componentprops> = (props) => {
                                 fontSize: 13,
                                 marginVertical: hp(2),
                                 marginTop: hp(4)
-                            }}>Note :</Text>
+                            }}>
+                                Note :
+                            </Text>
 
                             {[
                                 "Additional charges apply based on hourly or daily rates.",
@@ -415,19 +334,22 @@ const ExtendServiceRequestScreen: React.FC<Componentprops> = (props) => {
                                         color: '#64748B99',
                                         fontSize: 13,
                                         lineHeight: hp(3)
-                                    }}>{note}</Text>
+                                    }}>
+                                        {note}
+                                    </Text>
                                 </View>
                             ))}
                         </View>
                     </ScrollView>
 
                     <View style={{ marginHorizontal: wp(5), marginVertical: hp(3) }}>
-                        <PrimaryButton title='Request Now'
-                            onclick={() => {
-                                requestExtendtime(carData.car_booking_id)
-                            }} />
+                        <PrimaryButton
+                            title='Request Now'
+                            onclick={() => requestExtendtime(carData.car_booking_id)}
+                        />
                     </View>
-                </View>}
+                </View>
+            }
         </SafeAreaView>
     );
 };

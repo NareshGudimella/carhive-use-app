@@ -39,6 +39,7 @@ export const Token = async () => {
         console.log('failed to get the FCM token', error)
     }
 }
+
 export const Foregroundmessage = async () => {
     messaging().onMessage(async remoteMessage => {
         const title = remoteMessage.notification?.title

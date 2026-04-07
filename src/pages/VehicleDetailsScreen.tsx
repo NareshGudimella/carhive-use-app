@@ -68,6 +68,9 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
     const [carImageVisible, setCarImageVisible] = useState(false)
     const [selectedImage, setSelectedImage] = useState<any>(null)
 
+    const [loginIndicator, setLoginIndicator] = useState(false)
+    const [otpIndicator, setOtpIndicator] = useState(false)
+
     useFocusEffect(
         useCallback(() => {
             if (props.route.params && props.route.params?.id) {
@@ -122,7 +125,9 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
             Alert.alert('Alert', 'Invalid mobile number')
             return
         }
+        setLoginIndicator(true)
         const response = await Login(phoneNumber)
+        setLoginIndicator(false)
         if (response.code == 0) {
             setOtpModal(true)
         } else {
@@ -135,14 +140,14 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
             Alert.alert('Alert!', 'Enter a valid 4-digit OTP.');
             return;
         }
-        setIndiCator(true)
+        setOtpIndicator(true)
         const response = await Otp(phoneNumber, otp)
         if (response.code == 0) {
             setToken(response.data.token)
             const token = await getToken()
             if (token && token != '') {
                 const profileresponse = await excuteGetResponse('secure/profile')
-                setIndiCator(false)
+                setOtpIndicator(false)
                 if (profileresponse.code == 0) {
                     requestfirebasePermissions()
                     Foregroundmessage()
@@ -176,10 +181,12 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                             })
                     }
                 } else {
+                    setOtpIndicator(false)
                     Alert.alert('Alert', 'Unable to profile details.')
                 }
             }
         } else {
+            setOtpIndicator(false)
             Alert.alert('Alert', 'Invalid Otp')
         }
     }
@@ -489,6 +496,8 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                                         fontWeight: '500'
                                                     }}>  Privacy policy</Text>
                                             </Text>
+                                            {/* FIX: ActivityIndicator now shows inside the mobile number modal */}
+                                            {loginIndicator && <ActivityIndicator color='#00354a' size="large" />}
                                             <View style={{ marginVertical: hp(2) }}>
                                                 <PrimaryButton title='Request OTP'
                                                     onclick={() => {
@@ -551,7 +560,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                                     marginBottom: hp(1.5),
                                                     width: wp(80)
                                                 }}
-                                            >We’ve sent an SMS with an activation
+                                            >We've sent an SMS with an activation
                                                 code to your phone
                                                 <Text
                                                     style={{
@@ -583,7 +592,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                                 <Text style={{
                                                     fontSize: 16,
                                                     color: '#64748B'
-                                                }}>I didn’t receive a code</Text>
+                                                }}>I didn't receive a code</Text>
                                                 <TouchableOpacity onPress={async () => {
                                                     const response = await Login(phoneNumber)
                                                 }}>
@@ -596,7 +605,8 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                                 </TouchableOpacity>
 
                                             </View>
-                                            {indicator && <ActivityIndicator color='#00354a' size="large" />}
+                                            {/* FIX: ActivityIndicator now shows inside the OTP modal */}
+                                            {otpIndicator && <ActivityIndicator color='#00354a' size="large" />}
                                             <View style={{ marginBottom: hp(2), marginTop: hp(2) }}>
                                                 <PrimaryButton
                                                     title='Verify'
@@ -1075,7 +1085,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                                     marginBottom: hp(1.5),
                                                     width: wp(80)
                                                 }}
-                                            >We’ve sent an SMS with an activation
+                                            >We've sent an SMS with an activation
                                                 code to your phone
 
                                             </Text>
