@@ -71,6 +71,12 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
     const [loginIndicator, setLoginIndicator] = useState(false)
     const [otpIndicator, setOtpIndicator] = useState(false)
 
+    // FIX 1: Added carLoadingIndicator for initial vehicle details fetch
+    const [carLoadingIndicator, setCarLoadingIndicator] = useState(false)
+
+    // FIX 2: Added licenceIndicator for licence submit separately from aadhar indicator
+    const [licenceIndicator, setLicenceIndicator] = useState(false)
+
     useFocusEffect(
         useCallback(() => {
             if (props.route.params && props.route.params?.id) {
@@ -120,6 +126,8 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
         }
     }
 
+    // FIX 3: handelLogin no longer closes the modal before calling the API.
+    // The modal stays open so loginIndicator is visible to the user during the request.
     const handelLogin = async () => {
         if (phoneNumber.trim().length != 10) {
             Alert.alert('Alert', 'Invalid mobile number')
@@ -129,6 +137,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
         const response = await Login(phoneNumber)
         setLoginIndicator(false)
         if (response.code == 0) {
+            setMobileNumberModal(false)
             setOtpModal(true)
         } else {
             Alert.alert('Alert', 'Unable to get Phone number')
@@ -191,12 +200,14 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
         }
     }
 
+    // FIX 4: Added carLoadingIndicator around the vehicle details fetch
     const handelVicheDetails = async (carid: any) => {
-
+        setCarLoadingIndicator(true)
         const response1 = await carDetails(carid,
             props.route.params.fromdate,
             props.route.params.todate
         );
+        setCarLoadingIndicator(false)
         if (response1.code == 0) {
             setCarData(response1.data)
         } else {
@@ -255,6 +266,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
             return
         }
     }
+
     const handelLicencedata = async () => {
         if (licencenumber != 16 && licencenumber == 0) {
             Alert.alert('Alert', 'Enter your valid driving licence')
@@ -273,9 +285,10 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
         object.driving_licence_back = licenseback
         object.dl_number = licencenumber
         object.dob = moment(date).format('YYYY-MM-DD')
-        setIndiCator(true)
+        // FIX 5: Use licenceIndicator so aadhar modal indicator is not affected
+        setLicenceIndicator(true)
         const response = await licenceverify(object)
-        setIndiCator(false)
+        setLicenceIndicator(false)
         if (response.code == 0) {
             setLicencemodal(false)
             props.navigation.reset({
@@ -496,14 +509,12 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                                         fontWeight: '500'
                                                     }}>  Privacy policy</Text>
                                             </Text>
-                                            {/* FIX: ActivityIndicator now shows inside the mobile number modal */}
+                                            {/* FIX 3: loginIndicator now shows inside the modal while the API is running */}
                                             {loginIndicator && <ActivityIndicator color='#00354a' size="large" />}
                                             <View style={{ marginVertical: hp(2) }}>
                                                 <PrimaryButton title='Request OTP'
-                                                    onclick={() => {
-                                                        setMobileNumberModal(false),
-                                                            handelLogin()
-                                                    }}
+                                                    // FIX 3: Do NOT close the modal here. handelLogin closes it after success.
+                                                    onclick={() => handelLogin()}
                                                 />
                                             </View>
                                         </View>
@@ -605,7 +616,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                                 </TouchableOpacity>
 
                                             </View>
-                                            {/* FIX: ActivityIndicator now shows inside the OTP modal */}
+                                            {/* otpIndicator is already correct — modal stays open during verify */}
                                             {otpIndicator && <ActivityIndicator color='#00354a' size="large" />}
                                             <View style={{ marginBottom: hp(2), marginTop: hp(2) }}>
                                                 <PrimaryButton
@@ -1019,7 +1030,8 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                                         color: '#00354a'
                                                     }}>  Privacy policy</Text>
                                             </Text>
-                                            {indicator && <ActivityIndicator color='#00354a' size="large" />}
+                                            {/* FIX 5: licenceIndicator is now separate from aadhar indicator */}
+                                            {licenceIndicator && <ActivityIndicator color='#00354a' size="large" />}
                                             <View style={{ marginVertical: hp(2) }}>
                                                 <PrimaryButton title='Submit'
                                                     onclick={() => {
@@ -1044,14 +1056,16 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                     onRequestClose={() => {
                                         setAadharotpmodal(!aadharotpmodal);
                                     }}>
-                                    <BottomModelView onclick={() => setOtpModal(false)}>
+                                    {/* FIX 6: onclick on BottomModelView now correctly closes aadharotpmodal */}
+                                    <BottomModelView onclick={() => setAadharotpmodal(false)}>
                                         <View style={{
                                             marginHorizontal: wp(5),
                                             marginVertical: hp(2)
                                         }}>
                                             <Pressable
                                                 onPress={() => {
-                                                    setOtpModal(false)
+                                                    // FIX 6: Close button correctly closes aadharotpmodal (not otpModal)
+                                                    setAadharotpmodal(false)
                                                     setAadharmodal(true)
                                                     setAadharotp('')
                                                 }}
@@ -1153,269 +1167,278 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                         </View>
                         :
                         <>
-                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                {carData && <Carousel
-                                    autoPlay={false}
-                                    ref={ref}
-                                    width={wp(94)}
-                                    style={{}}
-                                    height={hp(23)}
-                                    data={carData.gallery}
-                                    renderItem={({ item }: { item: any; }) => (
-                                        <View style={{
-                                            justifyContent: 'center',
-                                            alignItems: 'center'
-                                        }}>
-                                            <Image source={{ uri: item.image }}
-                                                style={{
-                                                    height: hp(22),
-                                                    width: wp(92),
-                                                    borderRadius: 20,
-                                                    marginTop: hp(1)
-                                                }} />
-                                        </View>
-                                    )} />}
-                            </View>
-                            <View style={{
-                                position: 'absolute',
-                                top: hp(3),
-                                marginHorizontal: wp(7),
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                                width: wp(86)
-                            }}>
-                                <View style={{
-                                    flexDirection: 'row',
-                                    alignItems: 'center'
-                                }}>
-                                    <Pressable onPress={() => props.navigation.goBack()}>
-                                        <Image
-                                            source={require('../assets/Back.png')}
-                                            style={BackButtonStyle.style}
-                                            tintColor='#ffffff' />
-                                    </Pressable>
+                            {/* FIX 4: Show full-screen loader while car data is being fetched */}
+                            {carLoadingIndicator ? (
+                                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                    <ActivityIndicator color='#00354a' size="large" />
                                 </View>
-                            </View>
-                            <ScrollView
-                                showsVerticalScrollIndicator={false}
-                                contentContainerStyle={{ paddingBottom: hp(3), }}
-                                style={{
-                                    flex: 1,
-                                    marginHorizontal: wp(5),
-                                    paddingVertical: hp(2),
-                                }}>
-                                <Cardview>
-                                    <View style={{
-                                        paddingVertical: hp(1),
-                                        paddingHorizontal: hp(2),
-                                    }}>
-                                        <Text
-                                            style={{
-                                                fontSize: 17,
-                                                fontWeight: 'bold'
-                                            }}
-                                        >{carData && carData.brand_name} {carData && carData.model_name}</Text>
-                                        <ReadMore
-                                            numberOfLines={3}
-                                            seeLessText="See Less"
-                                            seeMoreText="See More"
-                                            seeMoreStyle={{ color: "#00354a", fontWeight: "bold" }}
-                                            seeLessStyle={{ color: "#00354a", fontWeight: "bold" }}
-                                            style={{ color: '#00354a' }}>
-                                            {carData && carData.car_description}
-                                        </ReadMore>
-                                    </View>
-                                </Cardview>
-                                <View style={{ marginVertical: hp(1.3) }}>
-                                    <Cardview>
-                                        <View style={{
-                                            paddingVertical: hp(1),
-                                            paddingHorizontal: hp(2)
-                                        }}>
-                                            <Text
-                                                style={{
-                                                    fontSize: 17,
-                                                    fontWeight: 'bold'
-                                                }}>Equipment</Text>
-                                            <View style={{
-                                                flexDirection: 'row',
-                                                marginVertical: wp(2)
-                                            }}>
+                            ) : (
+                                <>
+                                    <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                        {carData && <Carousel
+                                            autoPlay={false}
+                                            ref={ref}
+                                            width={wp(94)}
+                                            style={{}}
+                                            height={hp(23)}
+                                            data={carData.gallery}
+                                            renderItem={({ item }: { item: any; }) => (
                                                 <View style={{
-                                                    flexDirection: 'row',
-                                                    flexWrap: 'wrap'
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center'
                                                 }}>
-                                                    {carData && carData.features.map((e: any, index: any) => (
-                                                        <View key={index} style={{
-                                                            flexDirection: 'row',
-                                                            alignItems: 'center',
-                                                            width: wp(40),
-                                                            marginVertical: hp(0.5)
-                                                        }}>
-                                                            <Image
-                                                                source={{ uri: e.featureIcon }}
-                                                                style={ImageStyle.style}
-                                                                tintColor='#8A8A8F' />
-                                                            <Text style={[ImageStyle.text, { textTransform: 'uppercase', width: wp(22) }]}>{e.feature}</Text>
-                                                        </View>
-                                                    ))}
-
+                                                    <Image source={{ uri: item.image }}
+                                                        style={{
+                                                            height: hp(22),
+                                                            width: wp(92),
+                                                            borderRadius: 20,
+                                                            marginTop: hp(1)
+                                                        }} />
                                                 </View>
-                                            </View>
-                                        </View>
-                                    </Cardview>
-                                </View>
-                                <View>
-                                    <Text style={{
-                                        fontSize: 17,
-                                        fontWeight: 'bold',
-                                        marginBottom: hp(1)
-                                    }}>Host Details</Text>
-                                    <Cardview>
+                                            )} />}
+                                    </View>
+                                    <View style={{
+                                        position: 'absolute',
+                                        top: hp(3),
+                                        marginHorizontal: wp(7),
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between',
+                                        width: wp(86)
+                                    }}>
                                         <View style={{
-                                            paddingVertical: hp(1),
-                                            paddingHorizontal: hp(2),
                                             flexDirection: 'row',
                                             alignItems: 'center'
                                         }}>
-                                            <Image
-                                                source={require('../assets/user.png')}
-                                                style={{
-                                                    height: 60,
-                                                    width: 60,
-                                                    borderRadius: 30
-                                                }} />
-                                            <View style={{ width: wp(60), marginStart: wp(3) }}>
-                                                <Text style={{
-                                                    fontSize: 18,
-                                                    fontWeight: 'bold'
-                                                }}>{carData && carData.hosted_by}</Text>
+                                            <Pressable onPress={() => props.navigation.goBack()}>
+                                                <Image
+                                                    source={require('../assets/Back.png')}
+                                                    style={BackButtonStyle.style}
+                                                    tintColor='#ffffff' />
+                                            </Pressable>
+                                        </View>
+                                    </View>
+                                    <ScrollView
+                                        showsVerticalScrollIndicator={false}
+                                        contentContainerStyle={{ paddingBottom: hp(3), }}
+                                        style={{
+                                            flex: 1,
+                                            marginHorizontal: wp(5),
+                                            paddingVertical: hp(2),
+                                        }}>
+                                        <Cardview>
+                                            <View style={{
+                                                paddingVertical: hp(1),
+                                                paddingHorizontal: hp(2),
+                                            }}>
+                                                <Text
+                                                    style={{
+                                                        fontSize: 17,
+                                                        fontWeight: 'bold'
+                                                    }}
+                                                >{carData && carData.brand_name} {carData && carData.model_name}</Text>
+                                                <ReadMore
+                                                    numberOfLines={3}
+                                                    seeLessText="See Less"
+                                                    seeMoreText="See More"
+                                                    seeMoreStyle={{ color: "#00354a", fontWeight: "bold" }}
+                                                    seeLessStyle={{ color: "#00354a", fontWeight: "bold" }}
+                                                    style={{ color: '#00354a' }}>
+                                                    {carData && carData.car_description}
+                                                </ReadMore>
+                                            </View>
+                                        </Cardview>
+                                        <View style={{ marginVertical: hp(1.3) }}>
+                                            <Cardview>
                                                 <View style={{
+                                                    paddingVertical: hp(1),
+                                                    paddingHorizontal: hp(2)
+                                                }}>
+                                                    <Text
+                                                        style={{
+                                                            fontSize: 17,
+                                                            fontWeight: 'bold'
+                                                        }}>Equipment</Text>
+                                                    <View style={{
+                                                        flexDirection: 'row',
+                                                        marginVertical: wp(2)
+                                                    }}>
+                                                        <View style={{
+                                                            flexDirection: 'row',
+                                                            flexWrap: 'wrap'
+                                                        }}>
+                                                            {carData && carData.features.map((e: any, index: any) => (
+                                                                <View key={index} style={{
+                                                                    flexDirection: 'row',
+                                                                    alignItems: 'center',
+                                                                    width: wp(40),
+                                                                    marginVertical: hp(0.5)
+                                                                }}>
+                                                                    <Image
+                                                                        source={{ uri: e.featureIcon }}
+                                                                        style={ImageStyle.style}
+                                                                        tintColor='#8A8A8F' />
+                                                                    <Text style={[ImageStyle.text, { textTransform: 'uppercase', width: wp(22) }]}>{e.feature}</Text>
+                                                                </View>
+                                                            ))}
+
+                                                        </View>
+                                                    </View>
+                                                </View>
+                                            </Cardview>
+                                        </View>
+                                        <View>
+                                            <Text style={{
+                                                fontSize: 17,
+                                                fontWeight: 'bold',
+                                                marginBottom: hp(1)
+                                            }}>Host Details</Text>
+                                            <Cardview>
+                                                <View style={{
+                                                    paddingVertical: hp(1),
+                                                    paddingHorizontal: hp(2),
                                                     flexDirection: 'row',
                                                     alignItems: 'center'
                                                 }}>
+                                                    <Image
+                                                        source={require('../assets/user.png')}
+                                                        style={{
+                                                            height: 60,
+                                                            width: 60,
+                                                            borderRadius: 30
+                                                        }} />
+                                                    <View style={{ width: wp(60), marginStart: wp(3) }}>
+                                                        <Text style={{
+                                                            fontSize: 18,
+                                                            fontWeight: 'bold'
+                                                        }}>{carData && carData.hosted_by}</Text>
+                                                        <View style={{
+                                                            flexDirection: 'row',
+                                                            alignItems: 'center'
+                                                        }}>
+                                                        </View>
+                                                    </View>
                                                 </View>
-                                            </View>
+                                            </Cardview>
                                         </View>
-                                    </Cardview>
-                                </View>
-                                <View>
-                                    <Text
-                                        style={{
-                                            fontSize: 17,
-                                            fontWeight: 'bold',
-                                            marginVertical: hp(1)
-                                        }}>Documents required</Text>
-                                    <Cardview>
-                                        <View style={{
-                                            paddingVertical: hp(2),
-                                            paddingHorizontal: hp(2)
-                                        }}>
-                                            <View style={{ marginHorizontal: wp(3) }}>
-                                                <Text style={{
-                                                    fontSize: 14,
-                                                    fontWeight: '500'
-                                                }}>{carData && carData.user_documents}</Text>
-                                            </View>
-                                        </View>
-                                    </Cardview>
-                                </View>
-                                <View style={{ marginVertical: hp(1.5) }}>
-                                    <Cardview>
-                                        <View style={{
-                                            paddingVertical: hp(2),
-                                            paddingHorizontal: hp(2)
-                                        }}>
+                                        <View>
                                             <Text
                                                 style={{
                                                     fontSize: 17,
-                                                    fontWeight: 'bold'
-                                                }}>Images</Text>
-                                            <ScrollView
-                                                horizontal
-                                                showsHorizontalScrollIndicator={false}
-                                                style={{ marginTop: hp(1) }}>
-                                                {carData && carData.gallery.map((e: any, index: any) => (
-                                                    <TouchableOpacity onPress={() => { setCarImageVisible(true), setSelectedImage(e.image) }} key={index}>
-                                                        <Image
-                                                            source={{ uri: e.image }}
-                                                            style={{
-                                                                height: 75,
-                                                                width: 120,
-                                                                marginRight: wp(2),
-                                                                borderRadius: 15
-                                                            }} />
-                                                    </TouchableOpacity>
-
-                                                ))}
-                                            </ScrollView>
-                                        </View>
-                                    </Cardview>
-                                </View>
-
-                                {carData && carData.reviews && carData.reviews.length > 0 && (
-                                    <View>
-                                        <Cardview>
-                                            <Carousel
-                                                autoPlay={false}
-                                                ref={ref}
-                                                width={wp(87)}
-                                                height={hp(15)}
-                                                data={carData.reviews}
-                                                renderItem={({ item }: { item: any; }) => (
-                                                    <View style={{ paddingVertical: hp(1), marginHorizontal: hp(2), width: wp(87) }}>
+                                                    fontWeight: 'bold',
+                                                    marginVertical: hp(1)
+                                                }}>Documents required</Text>
+                                            <Cardview>
+                                                <View style={{
+                                                    paddingVertical: hp(2),
+                                                    paddingHorizontal: hp(2)
+                                                }}>
+                                                    <View style={{ marginHorizontal: wp(3) }}>
                                                         <Text style={{
-                                                            fontSize: 17,
-                                                            fontWeight: 'bold',
-                                                            marginBottom: hp(1)
-                                                        }}>Reviews</Text>
-
-                                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                                            <Image
-                                                                source={require('../assets/user.png')}
-                                                                style={{
-                                                                    height: 45,
-                                                                    width: 45,
-                                                                    borderRadius: 22
-                                                                }} />
-                                                            <View style={{ marginHorizontal: wp(3) }}>
-                                                                <Text style={{
-                                                                    fontSize: 16,
-                                                                    fontWeight: 'bold',
-                                                                    width: wp(60),
-                                                                }}>{item.name}</Text>
-                                                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                                                    <Rating
-                                                                        readonly
-                                                                        startingValue={item.rating}
-                                                                        imageSize={11}
-                                                                        ratingCount={5}
-                                                                        fractions={1}
-                                                                        style={{ marginLeft: 8 }} />
-                                                                    <Text style={{
-                                                                        fontSize: 12,
-                                                                        fontWeight: '500',
-                                                                        color: '#8A8A8F',
-                                                                        marginHorizontal: wp(2)
-                                                                    }}>
-                                                                        {item.time || '15 minutes ago'}
-                                                                    </Text>
-                                                                </View>
-                                                            </View>
-                                                        </View>
-                                                        <Text
-                                                            numberOfLines={1}
-                                                            style={{
-                                                                fontWeight: '500',
-                                                                marginVertical: hp(2),
-                                                            }}>{item.review}</Text>
+                                                            fontSize: 14,
+                                                            fontWeight: '500'
+                                                        }}>{carData && carData.user_documents}</Text>
                                                     </View>
-                                                )} />
-                                        </Cardview>
-                                    </View>
-                                )}
-                            </ScrollView>
+                                                </View>
+                                            </Cardview>
+                                        </View>
+                                        <View style={{ marginVertical: hp(1.5) }}>
+                                            <Cardview>
+                                                <View style={{
+                                                    paddingVertical: hp(2),
+                                                    paddingHorizontal: hp(2)
+                                                }}>
+                                                    <Text
+                                                        style={{
+                                                            fontSize: 17,
+                                                            fontWeight: 'bold'
+                                                        }}>Images</Text>
+                                                    <ScrollView
+                                                        horizontal
+                                                        showsHorizontalScrollIndicator={false}
+                                                        style={{ marginTop: hp(1) }}>
+                                                        {carData && carData.gallery.map((e: any, index: any) => (
+                                                            <TouchableOpacity onPress={() => { setCarImageVisible(true), setSelectedImage(e.image) }} key={index}>
+                                                                <Image
+                                                                    source={{ uri: e.image }}
+                                                                    style={{
+                                                                        height: 75,
+                                                                        width: 120,
+                                                                        marginRight: wp(2),
+                                                                        borderRadius: 15
+                                                                    }} />
+                                                            </TouchableOpacity>
+
+                                                        ))}
+                                                    </ScrollView>
+                                                </View>
+                                            </Cardview>
+                                        </View>
+
+                                        {carData && carData.reviews && carData.reviews.length > 0 && (
+                                            <View>
+                                                <Cardview>
+                                                    <Carousel
+                                                        autoPlay={false}
+                                                        ref={ref}
+                                                        width={wp(87)}
+                                                        height={hp(15)}
+                                                        data={carData.reviews}
+                                                        renderItem={({ item }: { item: any; }) => (
+                                                            <View style={{ paddingVertical: hp(1), marginHorizontal: hp(2), width: wp(87) }}>
+                                                                <Text style={{
+                                                                    fontSize: 17,
+                                                                    fontWeight: 'bold',
+                                                                    marginBottom: hp(1)
+                                                                }}>Reviews</Text>
+
+                                                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                                    <Image
+                                                                        source={require('../assets/user.png')}
+                                                                        style={{
+                                                                            height: 45,
+                                                                            width: 45,
+                                                                            borderRadius: 22
+                                                                        }} />
+                                                                    <View style={{ marginHorizontal: wp(3) }}>
+                                                                        <Text style={{
+                                                                            fontSize: 16,
+                                                                            fontWeight: 'bold',
+                                                                            width: wp(60),
+                                                                        }}>{item.name}</Text>
+                                                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                                            <Rating
+                                                                                readonly
+                                                                                startingValue={item.rating}
+                                                                                imageSize={11}
+                                                                                ratingCount={5}
+                                                                                fractions={1}
+                                                                                style={{ marginLeft: 8 }} />
+                                                                            <Text style={{
+                                                                                fontSize: 12,
+                                                                                fontWeight: '500',
+                                                                                color: '#8A8A8F',
+                                                                                marginHorizontal: wp(2)
+                                                                            }}>
+                                                                                {item.time || '15 minutes ago'}
+                                                                            </Text>
+                                                                        </View>
+                                                                    </View>
+                                                                </View>
+                                                                <Text
+                                                                    numberOfLines={1}
+                                                                    style={{
+                                                                        fontWeight: '500',
+                                                                        marginVertical: hp(2),
+                                                                    }}>{item.review}</Text>
+                                                            </View>
+                                                        )} />
+                                                </Cardview>
+                                            </View>
+                                        )}
+                                    </ScrollView>
+                                </>
+                            )}
                         </>
                     }
                     <View style={{

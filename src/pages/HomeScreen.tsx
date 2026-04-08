@@ -270,14 +270,13 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                 >
                     <View style={{
                         flex: 1,
-                        justifyContent: 'flex-end',
+                        justifyContent: 'center',
                         backgroundColor: 'rgba(0,0,0,0.5)',
                         alignItems: 'center',
                     }}>
                         <View style={{
                             backgroundColor: 'white',
-                            borderTopLeftRadius: 15,
-                            borderTopRightRadius: 15,
+                            borderRadius:15,
                             paddingBottom: 20,
                         }}>
                             <DateTimePicker
@@ -325,14 +324,13 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                 >
                     <View style={{
                         flex: 1,
-                        justifyContent: 'flex-end',
+                        justifyContent: 'center',
                         backgroundColor: 'rgba(0,0,0,0.5)',
                         alignItems: 'center',
                     }}>
                         <View style={{
                             backgroundColor: 'white',
-                            borderTopLeftRadius: 15,
-                            borderTopRightRadius: 15,
+                            borderRadius:15,
                             paddingBottom: 20,
                         }}>
                             <DateTimePicker

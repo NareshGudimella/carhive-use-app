@@ -31,6 +31,7 @@ const SplaceScreen: React.FC<Componentprops> = (props) => {
 
     const loadUserDetails = async () => {
         const token = await getToken()
+        console.log(token)
         if (token && token != '') {
             const response = await excuteGetResponse('secure/profile')
             if (response.code == 0) {

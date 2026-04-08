@@ -14,7 +14,7 @@ import {
 import { Baseprops } from "../utils/navigation";
 import BottomTabNavigation from "../components/BottomTab";
 import { wp, hp } from "../utils/ResponsiveScreen";
-import { Cardview } from "../components/Cardview"; 
+import { Cardview } from "../components/Cardview";
 import { useCallback, useState } from "react";
 import { BottomModelView } from "../components/BottomModelView";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -48,6 +48,7 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
     const [logoutLoading, setLogoutLoading] = useState(false)
     const [resendLoading, setResendLoading] = useState(false)
     const [deleteLoading, setDeleteLoading] = useState(false)
+    const [citys, setCitys] = useState<any>([])
 
     useFocusEffect(
         useCallback(() => {
@@ -58,17 +59,43 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
 
     const loadCityName = async () => {
         try {
-            const cityStr: any = await getCity()
-            if (!cityStr) return
-            const city = JSON.parse(cityStr)
-            if (city && city.number) {
-                setCityCustomerCare(city.number)
+            const response = await excuteGetResponse('auth/cities')
+            console.log('cities', response)
+    
+            if (response.code === 0) {
+                setCitys(response.data)
+    
+                const cityStr = await getCity()
+                if (!cityStr) return
+    
+                let city = null
+                try {
+                    city = JSON.parse(cityStr)
+                } catch (e) {
+                    console.log('JSON parse error', e)
+                }
+    
+                console.log('city from storage', city)
+    
+                if (city?.cityId) {
+    
+                    const matchedCity = response.data.find(
+                        (item:any) => item.cityId === city.cityId
+                    )
+    
+                    console.log('matchedCity', matchedCity)
+    
+                    if (matchedCity?.number) {
+                        setCityCustomerCare(matchedCity.number)
+                    }
+                }
             }
+    
         } catch (e) {
             console.log('loadCityName error', e)
         }
     }
-
+    
     const loadToken = async () => {
         const token = await getToken()
         setTokenFlag(!!(token && token !== ''))
@@ -479,7 +506,7 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                             <View style={{ marginHorizontal: wp(3) }}>
                                                 <Text style={{
                                                     fontSize: 16, fontWeight: 'bold',
-                                                    textTransform: 'uppercase',
+
                                                 }}>
                                                     View profile
                                                 </Text>
@@ -616,7 +643,6 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                                 onPress={handelDeleteAccount}
                                                 style={{
                                                     fontSize: 16, fontWeight: 'bold',
-                                                    textTransform: 'uppercase',
                                                 }}
                                             >
                                                 Delete Account

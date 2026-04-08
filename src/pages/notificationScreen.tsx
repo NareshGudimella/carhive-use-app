@@ -3,7 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Baseprops } from "../utils/navigation";
 import {
     Image, Pressable, ScrollView, Text, View, Dimensions,
-    Alert, Modal, TouchableOpacity
+    Alert, Modal, TouchableOpacity, ActivityIndicator
 } from "react-native";
 import AutoHeightImage from 'react-native-auto-height-image';
 import { hp, wp } from "../utils/ResponsiveScreen";
@@ -21,7 +21,7 @@ import {
     Foregroundmessage,
     requestfirebasePermissions
 } from '../firebase/firebase';
-
+ 
 class Componentprops extends Baseprops { }
 
 const NotificationScreen: React.FC<Componentprops> = (props) => {
@@ -29,6 +29,7 @@ const NotificationScreen: React.FC<Componentprops> = (props) => {
     const dispatch = useDispatch()
     const screenWidth = Dimensions.get('window').width - wp(18);
     const [notification, setNotification] = useState<any>([])
+    const [loading, setLoading] = useState(false)
     const [mobileNumberModal, setMobileNumberModal] = useState(false)
     const [otpModal, setOtpModal] = useState(false)
     const [phoneNumber, setPhoneNumber] = useState<any>('')
@@ -43,7 +44,10 @@ const NotificationScreen: React.FC<Componentprops> = (props) => {
     const loadNotification = async () => {
         const token = await getToken()
         if (token && token != '') {
+            setLoading(true)
             const response = await excuteGetResponse(`secure/notifications`)
+            setLoading(false)
+            console.log('notification', response)
             if (response.code == 0) {
                 setNotification(response.data)
             } else {
@@ -235,7 +239,7 @@ const NotificationScreen: React.FC<Componentprops> = (props) => {
                                         marginBottom: hp(1.5),
                                         width: wp(80)
                                     }}
-                                >We’ve sent an SMS with an activation
+                                >We've sent an SMS with an activation
                                     code to your phone
                                     <Text
                                         style={{
@@ -267,7 +271,7 @@ const NotificationScreen: React.FC<Componentprops> = (props) => {
                                     <Text style={{
                                         fontSize: 16,
                                         color: '#64748B'
-                                    }}>I didn’t receive a code</Text>
+                                    }}>I didn't receive a code</Text>
                                     <TouchableOpacity onPress={async () => {
                                         const response = await Login(phoneNumber)
                                     }}>
@@ -317,79 +321,90 @@ const NotificationScreen: React.FC<Componentprops> = (props) => {
                 }}>Notification</Text>
             </View>
 
-            <ScrollView style={{
-                flex: 1,
-                marginHorizontal: wp(5),
-                marginTop: hp(1)
-            }}>
-                {
-                    notification && notification.map((e: any, index: any) => (
-                        <View key={index}
-                            style={{
-                                backgroundColor: '#ffffff',
-                                marginVertical: 4,
-                                borderRadius: 10,
-                                padding: wp(2)
-                            }}>
-                            <View style={{
-                                flexDirection: 'row',
-                                marginVertical: 2.5
-                            }}>
+            {loading ? (
+                <View style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}>
+                    <ActivityIndicator size="large" color="#00354a" />
+                </View>
+            ) : (
+                <ScrollView style={{
+                    flex: 1,
+                    marginHorizontal: wp(5),
+                    marginTop: hp(1)
+                }}>
+                    {
+                        notification && notification.map((e: any, index: any) => (
+                            <View key={index}
+                                style={{
+                                    backgroundColor: '#ffffff',
+                                    marginVertical: 4,
+                                    borderRadius: 10,
+                                    padding: wp(2)
+                                }}>
                                 <View style={{
-                                    backgroundColor: '#EEEEEE80',
-                                    height: 40,
-                                    width: 40,
-                                    margin: 5,
+                                    flexDirection: 'row',
+                                    marginVertical: 2.5
+                                }}>
+                                    <View style={{
+                                        backgroundColor: '#EEEEEE80',
+                                        height: 40,
+                                        width: 40,
+                                        margin: 5,
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        borderRadius: 20,
+                                    }}>
+                                        <Image source={require('../assets/bell2.png')}
+                                            style={{
+                                                height: 16,
+                                                width: 16
+                                            }} />
+                                    </View>
+                                    <View style={{ marginHorizontal: wp(2) }}>
+                                        <Text style={{
+                                            fontSize: 15,
+                                            fontWeight: 'bold'
+                                        }}>{e.title}</Text>
+                                        <Text
+                                            style={{
+                                                color: '#64748B',
+                                                fontWeight: '400',
+                                                fontSize: 14,
+                                                marginTop: 1,
+                                                width: wp(70)
+                                            }}>{e.message}</Text>
+                                    </View>
+                                </View>
+                                {e.image_path && <View style={{
+                                    marginTop: 10,
                                     justifyContent: 'center',
                                     alignItems: 'center',
-                                    borderRadius: 20,
+                                    marginHorizontal: wp(2)
                                 }}>
-                                    <Image source={require('../assets/bell2.png')}
+                                    <AutoHeightImage
+                                        width={screenWidth}
+                                        source={{ uri: e.image_path }}
                                         style={{
-                                            height: 16,
-                                            width: 16
-                                        }} />
-                                </View>
-                                <View style={{ marginHorizontal: wp(2) }}>
-                                    <Text style={{
-                                        fontSize: 15,
-                                        fontWeight: 'bold'
-                                    }}>{e.title}</Text>
-                                    <Text
-                                        style={{
-                                            color: '#64748B',
-                                            fontWeight: '400',
-                                            fontSize: 14,
-                                            marginTop: 1,
-                                            width: wp(70)
-                                        }}>{e.message}</Text>
+                                            borderRadius: 10
+                                        }}
+                                    />
+                                </View>}
+                                <View style={{
+                                    marginTop: 5,
+                                    alignItems: 'flex-end',
+                                    marginHorizontal: wp(2)
+                                }}>
+                                    <Text style={{ fontWeight: 'bold' }}>{e.time}</Text>
                                 </View>
                             </View>
-                            {e.image_path && <View style={{
-                                marginTop: 10,
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                marginHorizontal: wp(2)
-                            }}>
-                                <AutoHeightImage
-                                    width={screenWidth}
-                                    source={{ uri: e.image_path }}
-                                    style={{
-                                        borderRadius: 10
-                                    }}
-                                />
-                            </View>}
-                            <View style={{
-                                marginTop: 5,
-                                alignItems: 'flex-end',
-                                marginHorizontal: wp(2)
-                            }}>
-                                <Text style={{ fontWeight: 'bold' }}>{e.time}</Text>
-                            </View>
-                        </View>
-                    ))
-                }
-            </ScrollView>
+                        ))
+                    }
+                </ScrollView>
+            )}
+
         </SafeAreaView>
     );
 };

@@ -20,6 +20,7 @@ const ExtendServiceRequestScreen: React.FC<Componentprops> = (props) => {
     const [open, setOpen] = useState(false);
     const [modeltype, setModeltype] = useState<'Date' | 'Time' | ''>('');
     const [carData, setCarData] = useState<any>(null);
+    const [errorMessage, setErrorMessage] = useState<string>('');
 
     useFocusEffect(
         useCallback(() => {
@@ -63,17 +64,22 @@ const ExtendServiceRequestScreen: React.FC<Componentprops> = (props) => {
         const response = await extendtime(bookingID, combinedDateTime)
         console.log('request Success', response, bookingID, combinedDateTime)
         if (response.code == 0) {
+            setErrorMessage('')
             props.navigation.reset({
                 index: 0,
                 routes: [{ name: 'RentalsScreen' }]
             })
+        } else if (response.code == 1) {
+            setErrorMessage(response.message || 'Car is already booked on the selected date.')
+            return
         } else {
-            Alert.alert('Alert', 'Unable to extend time')
+            setErrorMessage(response.message || 'Unable to extend time')
             return
         }
     }
 
     const openPicker = (type: 'Date' | 'Time') => {
+        setErrorMessage('')
         setModeltype(type)
         setOpen(true)
     }
@@ -95,14 +101,13 @@ const ExtendServiceRequestScreen: React.FC<Componentprops> = (props) => {
                 >
                     <View style={{
                         flex: 1,
-                        justifyContent: 'flex-end',
+                        justifyContent: 'center',
                         backgroundColor: 'rgba(0,0,0,0.5)',
                     }}>
                         <View style={{
                             backgroundColor: 'white',
-                            borderTopLeftRadius: 15,
-                            borderTopRightRadius: 15,
                             paddingBottom: 20,
+                            borderRadius: 20
                         }}>
                             {modeltype === 'Date' && (
                                 <DateTimePicker
@@ -310,6 +315,28 @@ const ExtendServiceRequestScreen: React.FC<Componentprops> = (props) => {
                                 </View>
                             </Cardview>
                         </View>
+
+                        {errorMessage !== '' && (
+                            <View style={{
+                                marginHorizontal: wp(5),
+                                marginTop: hp(1.5),
+                                backgroundColor: '#FEE2E2',
+                                borderRadius: 8,
+                                padding: wp(3),
+                                flexDirection: 'row',
+                                alignItems: 'center'
+                            }}>
+                                <Text style={{ fontSize: 16, marginRight: wp(2) }}>⚠️</Text>
+                                <Text style={{
+                                    color: '#DC2626',
+                                    fontSize: 13,
+                                    fontWeight: '600',
+                                    flex: 1
+                                }}>
+                                    {errorMessage}
+                                </Text>
+                            </View>
+                        )}
 
                         <View style={{ marginHorizontal: wp(5) }}>
                             <Text style={{
