@@ -39,7 +39,6 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
 
     const loadUserDetails = async () => {
         const response = await excuteGetResponse('secure/profile')
-        console.log('user', response)
         if (response.code == 0) {
             handleInputChangeValue('name', response.data && response.data.name)
             handleInputChangeValue('email', response.data && response.data.email)

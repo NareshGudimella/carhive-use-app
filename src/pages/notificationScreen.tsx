@@ -256,7 +256,6 @@ const NotificationScreen: React.FC<Componentprops> = (props) => {
                                     focusColor="#E8ECF4"
                                     focusStickBlinkingDuration={500}
                                     onTextChange={(text) => setOtp(text)}
-                                    onFilled={(text) => console.log(`OTP is ${text}`)}
                                     textInputProps={{
                                         accessibilityLabel: "One-Time Password",
                                     }}

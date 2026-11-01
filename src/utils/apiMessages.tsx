@@ -45,6 +45,21 @@ const MESSAGES: Record<string, FriendlyMessage> = {
         title: 'Licence service is busy',
         message: 'The licence verification service is not responding right now. Please try again in a few minutes.',
     },
+    DL_NAME_MISMATCH: {
+        kind: 'error',
+        title: 'Name does not match',
+        message: 'The name on your driving licence does not match the name on your verified Aadhaar. Please use your own licence, or contact support.',
+    },
+    AADHAAR_REQUIRED: {
+        kind: 'warning',
+        title: 'Verify Aadhaar first',
+        message: 'Please verify your Aadhaar before adding your driving licence.',
+    },
+    KYC_REQUIRED: {
+        kind: 'warning',
+        title: 'Verification needed',
+        message: 'Please complete your Aadhaar and driving licence verification before booking.',
+    },
     LICIENCE_VERIFICATION_FAILED: {
         kind: 'error',
         title: 'Licence not verified',

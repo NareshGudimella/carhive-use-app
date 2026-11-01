@@ -72,3 +72,9 @@ yarn-error.log
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# Signing keys and generated bundles
+*.keystore
+*.jks
+!debug.keystore
+android/app/src/main/assets/*.bundle

@@ -139,7 +139,6 @@ export const LoginCarDetails = async (carid: any, from_date: any, to_date: any) 
 export const SignUp = async (body: any) => {
     const formdata = new FormData();
 
-    console.log('signupvalue', Object.entries<any>(body));
 
     for (const [key, value] of Object.entries<any>(body)) {
         if (key === 'profile_pic' && value?.uri) {

@@ -36,7 +36,7 @@ import { registerNavigation } from './src/utils/session';
 import { registerNotificationTapHandlers } from './src/firebase/firebase';
 
 
-export const navigationRef = createNavigationContainerRef();
+export const navigationRef = createNavigationContainerRef<any>();
 // Lets the request wrappers and notification taps navigate without importing App.tsx.
 registerNavigation(navigationRef);
 const Stack = createNativeStackNavigator();

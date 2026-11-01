@@ -63,3 +63,20 @@ jest.mock('@react-native-community/geolocation', () => ({
     setRNConfiguration: jest.fn(),
   },
 }));
+
+jest.mock('react-native-keychain', () => {
+  let store = {};
+  return {
+    setGenericPassword: jest.fn((username, password, options = {}) => {
+      store[options.service || 'default'] = { username, password };
+      return Promise.resolve({ service: options.service || 'default' });
+    }),
+    getGenericPassword: jest.fn((options = {}) =>
+      Promise.resolve(store[options.service || 'default'] || false),
+    ),
+    resetGenericPassword: jest.fn((options = {}) => {
+      delete store[options.service || 'default'];
+      return Promise.resolve(true);
+    }),
+  };
+});

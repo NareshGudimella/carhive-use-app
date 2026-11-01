@@ -4,7 +4,7 @@
 
 import { NavigationContainerRefWithCurrent } from "@react-navigation/native";
 import { store, removeProfile } from "../storage/redux";
-import { removeToken } from "../storage/AsyncStorage";
+import { removeToken, removeCity } from "../storage/AsyncStorage";
 import { showMessage } from "../components/MessageModal";
 
 let navigationRef: NavigationContainerRefWithCurrent<any> | null = null
@@ -32,6 +32,7 @@ export const resetTo = (name: string, params?: any) => {
 export const clearSession = async () => {
     store.dispatch(removeProfile(null))
     await removeToken()
+    await removeCity()
 }
 
 // Called by the request wrappers on HTTP 401 (expired/invalid token) or

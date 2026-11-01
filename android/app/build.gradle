@@ -58,20 +58,41 @@ react {
 /**
  * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
  */
-def enableProguardInReleaseBuilds = false
+def enableProguardInReleaseBuilds = true
+
+def releaseSigningKeys = [
+    'CARHIVE_USER_UPLOAD_STORE_FILE',
+    'CARHIVE_USER_UPLOAD_STORE_PASSWORD',
+    'CARHIVE_USER_UPLOAD_KEY_ALIAS',
+    'CARHIVE_USER_UPLOAD_KEY_PASSWORD',
+]
+def hasReleaseSigning = releaseSigningKeys.every { project.hasProperty(it) }
+
+// Fail clearly when a release artifact is requested without signing properties.
+// Debug builds are unaffected.
+gradle.taskGraph.whenReady { graph ->
+    def wantsRelease = graph.allTasks.any {
+        it.project == project && it.name ==~ /(?i).*(assemble|bundle|package).*Release.*/
+    }
+    if (wantsRelease && !hasReleaseSigning) {
+        def missing = releaseSigningKeys.findAll { !project.hasProperty(it) }
+        throw new GradleException("Release signing is not configured. Missing Gradle properties: ${missing.join(', ')}. " +
+            "Run scripts/setup-release-signing.sh or set them in ~/.gradle/gradle.properties.")
+    }
+}
 
 /**
  * The preferred build flavor of JavaScriptCore (JSC)
  *
  * For example, to use the international variant, you can use:
- * `def jscFlavor = io.github.react-native-community:jsc-android-intl:2026004.+`
+ * `def jscFlavor = 'io.github.react-native-community:jsc-android-intl:2026004.0.1'`
  *
  * The international variant includes ICU i18n library and necessary data
  * allowing to use e.g. `Date.toLocaleString` and `String.localeCompare` that
  * give correct results when using with locales other than en-US. Note that
  * this variant is about 6MiB larger per architecture than default.
  */
-def jscFlavor = 'io.github.react-native-community:jsc-android:2026004.+'
+def jscFlavor = 'io.github.react-native-community:jsc-android:2026004.0.1'
 
 android {
     ndkVersion rootProject.ext.ndkVersion
@@ -95,10 +116,13 @@ android {
         }
 
         release {
-            storeFile file('carhive.keystore')
-            storePassword '123456'
-            keyAlias 'carhive'
-            keyPassword '123456'
+            // Credentials come from Gradle properties (e.g. ~/.gradle/gradle.properties).
+            if (hasReleaseSigning) {
+                storeFile file(project.property('CARHIVE_USER_UPLOAD_STORE_FILE'))
+                storePassword project.property('CARHIVE_USER_UPLOAD_STORE_PASSWORD')
+                keyAlias project.property('CARHIVE_USER_UPLOAD_KEY_ALIAS')
+                keyPassword project.property('CARHIVE_USER_UPLOAD_KEY_PASSWORD')
+            }
         }
     }
     buildTypes {
@@ -106,10 +130,9 @@ android {
             signingConfig signingConfigs.debug
         }
         release {
-            // Caution! In production, you need to generate your own keystore file.
-            // see https://reactnative.dev/docs/signed-apk-android.
             signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
+            shrinkResources enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
@@ -119,7 +142,6 @@ dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
     implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
-    implementation 'com.facebook.android:facebook-marketing:latest.release' 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {
