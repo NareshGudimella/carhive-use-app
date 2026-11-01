@@ -31,7 +31,7 @@ import { Asset } from "react-native-image-picker";
 import { CameraView } from "../components/CameraView";
 import { updateProfile } from "../storage/redux";
 import { useDispatch } from "react-redux";
-import { Foregroundmessage, requestfirebasePermissions } from "../firebase/firebase";
+import { Foregroundmessage, registerForPush } from "../firebase/firebase";
 import CarViewScreen from "./CarViewScreen";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import ReadMore from '@fawazahmed/react-native-read-more';
@@ -203,7 +203,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                 const profileresponse = await excuteGetResponse('secure/profile')
                 setOtpIndicator(false)
                 if (profileresponse.code == 0) {
-                    requestfirebasePermissions()
+                    registerForPush()
                     Foregroundmessage()
                     dispatch(updateProfile(profileresponse.data));
                     showAccountRestored(response)

@@ -27,7 +27,7 @@ import { style } from "../styles/OtpStyle";
 import { OtpInput } from "react-native-otp-entry";
 import { deleteAccount, excuteGetResponse, Login, Otp } from "../apis/api";
 import Textinput from "../components/TextInput";
-import { Foregroundmessage, requestfirebasePermissions } from "../firebase/firebase";
+import { Foregroundmessage, registerForPush } from "../firebase/firebase";
 import { showMessage } from "../components/MessageModal";
 import { getFriendlyError } from "../utils/apiMessages";
 import { clearSession, showAccountRestored } from "../utils/session";
@@ -168,7 +168,7 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                 if (response.data.token && response.data.token !== '') {
                     const profileresponse = await excuteGetResponse('secure/profile')
                     if (profileresponse.code === 0) {
-                        requestfirebasePermissions()
+                        registerForPush()
                         Foregroundmessage()
                         setOtpModal(false)
                         dispatch(updateProfile(profileresponse.data))

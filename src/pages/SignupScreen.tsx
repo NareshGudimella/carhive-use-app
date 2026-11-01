@@ -1,4 +1,4 @@
-import { ActivityIndicator, Alert, Image, Linking, Modal, PermissionsAndroid, Platform, Pressable, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Image, Modal, Pressable, ScrollView, Text, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { wp, hp } from "../utils/ResponsiveScreen";
 import Textinput from "../components/TextInput";
@@ -12,7 +12,7 @@ import moment from "moment";
 import { CenterModalView } from "../components/CenterModelView";
 import { useFocusEffect } from "@react-navigation/native";
 import { Asset, launchCamera } from "react-native-image-picker";
-import { check, PERMISSIONS, request } from "react-native-permissions";
+import { ensureCameraPermission } from "../utils/permissions";
 class Componentprops extends Baseprops { }
 
 const SignupScreen: React.FC<Componentprops> = (props) => {
@@ -102,30 +102,8 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
     }
 
     const cameraPermissions = async () => {
-        if (Platform.OS == 'android') {
-            const check =
-                await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CAMERA)
-            if (check) {
-                cameraClick()
-            } else {
-                const granted =
-                    await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA)
-                if (granted == PermissionsAndroid.RESULTS.GRANTED) {
-                    cameraClick()
-                } else {
-                    Linking.openSettings()
-                }
-            }
-        } else if (Platform.OS == 'ios') {
-            const grant = await check(PERMISSIONS.IOS.CAMERA)
-            if (grant) {
-                cameraClick()
-            } else {
-                const granted = await request(PERMISSIONS.IOS.CAMERA)
-                if (granted == 'granted') {
-                    Linking.openSettings()
-                }
-            }
+        if (await ensureCameraPermission()) {
+            cameraClick()
         }
     }
 

@@ -1,6 +1,6 @@
 import {
-    Alert, BackHandler, Image, Linking, Modal,
-    PermissionsAndroid, Platform, Pressable, ScrollView,
+    Alert, Image, Modal,
+    Platform, Pressable, ScrollView,
     StyleSheet, Text, View,
 } from "react-native";
 import { Baseprops } from "../utils/navigation";
@@ -22,7 +22,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { excuteGetResponse } from "../apis/api";
 import { useFocusEffect } from "@react-navigation/native";
 import Geolocation from "@react-native-community/geolocation";
-import { check, PERMISSIONS, request, RESULTS } from "react-native-permissions";
+import { ensureLocationPermission } from "../utils/permissions";
 import { getCity } from "../storage/AsyncStorage";
 import moment from "moment";
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -41,7 +41,6 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
     const [pickupTime, setPickupTime] = useState(new Date());
     const [dropTime, setDropTime] = useState(new Date())
     const [cityname, setCityname] = useState<any>([])
-    const [locationDeniedFlag, setLocationDeniedFlag] = useState(false)
     const [timeFlag, setTimeFlag] = useState<any>('')
 
     useFocusEffect(
@@ -176,86 +175,39 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
     const VerifyLocationPermission = async () => {
         if (hasAnyWarning) return;
 
-        if (Platform.OS === 'android') {
-            try {
-                const fine = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
-                const coarse = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION);
-
-                if (!fine || !coarse) {
-                    const granted = await PermissionsAndroid.requestMultiple([
-                        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-                        PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
-                    ]);
-                    if (
-                        granted[PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION] !== PermissionsAndroid.RESULTS.GRANTED ||
-                        granted[PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION] !== PermissionsAndroid.RESULTS.GRANTED
-                    ) {
-                        Alert.alert('Location Required', 'Please enable Location permission in settings.');
-                        return;
-                    }
-                }
-
-                Geolocation.getCurrentPosition(
-                    (pos: any) => {
-                        const { latitude, longitude } = pos.coords;
-                        handelCheckDate(latitude, longitude);
-                    },
-                    async (error: any) => {
-                        if (error.code === 3 || error.code === 2) {
-                            Geolocation.getCurrentPosition(
-                                (pos2: any) => {
-                                    const { latitude, longitude } = pos2.coords;
-                                    handelCheckDate(latitude, longitude);
-                                },
-                                () => {
-                                    Alert.alert(
-                                        'Location Required',
-                                        'Unable to get your location. Please turn on GPS and try again.',
-                                        [{ text: 'OK' }]
-                                    );
-                                },
-                                { enableHighAccuracy: true, timeout: 5000, maximumAge: 5000 }
-                            );
-                        } else {
-                            Alert.alert('Location Error', 'Unable to detect location. Please enable GPS.');
-                        }
-                    },
-                    { enableHighAccuracy: false, timeout: 7000, maximumAge: 5000 }
-                );
-            } catch (err) {
-                console.log('Permission error:', err);
-            }
-        } else if (Platform.OS === 'ios') {
-            const status = await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
-            if (status === RESULTS.GRANTED) {
-                Geolocation.getCurrentPosition(
-                    (pos: any) => {
-                        const { latitude, longitude } = pos.coords;
-                        handelCheckDate(latitude, longitude);
-                    },
-                    () => {
-                        Alert.alert('Location Required', 'Please enable Location Services.');
-                    },
-                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 5000 }
-                );
-            } else {
-                const req = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
-                if (req === RESULTS.GRANTED) {
-                    VerifyLocationPermission();
-                } else {
-                    Alert.alert('Location Required', 'Please enable Location permission in Settings.', [
-                        { text: 'Open Settings', onPress: () => Linking.openSettings() },
-                        { text: 'Cancel' },
-                    ]);
-                }
-            }
+        if (!(await ensureLocationPermission())) {
+            return;
         }
-    };
 
-    const handleOpenSettings = async () => {
-        setLocationDeniedFlag(false)
-        Linking.openSettings()
-    }
+        // Approximate location is enough to find nearby cars.
+        Geolocation.getCurrentPosition(
+            (pos: any) => {
+                const { latitude, longitude } = pos.coords;
+                handelCheckDate(latitude, longitude);
+            },
+            async (error: any) => {
+                if (error.code === 3 || error.code === 2) {
+                    Geolocation.getCurrentPosition(
+                        (pos2: any) => {
+                            const { latitude, longitude } = pos2.coords;
+                            handelCheckDate(latitude, longitude);
+                        },
+                        () => {
+                            Alert.alert(
+                                'Location Required',
+                                'Unable to get your location. Please turn on GPS and try again.',
+                                [{ text: 'OK' }]
+                            );
+                        },
+                        { enableHighAccuracy: true, timeout: 5000, maximumAge: 5000 }
+                    );
+                } else {
+                    Alert.alert('Location Error', 'Unable to detect location. Please enable GPS.');
+                }
+            },
+            { enableHighAccuracy: false, timeout: 7000, maximumAge: 5000 }
+        );
+    };
 
     return (
         <GestureHandlerRootView style={[Background.bgcolor, { flex: 1 }]}>
@@ -369,53 +321,6 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
             )}
 
             <SafeAreaView style={{ flex: 1 }}>
-
-                <View>
-                    {locationDeniedFlag && (
-                        <Modal
-                            animationType="slide"
-                            transparent={true}
-                            visible={locationDeniedFlag}
-                        >
-                            <View style={styles.centeredView}>
-                                <View style={styles.modalView}>
-                                    <Text style={{
-                                        color: '#000000', fontWeight: 'bold',
-                                        fontSize: 18, textAlign: 'center'
-                                    }}>
-                                        Location Permission Required!
-                                    </Text>
-                                    <Text style={{
-                                        color: '#000000', fontWeight: '500',
-                                        fontSize: 16, marginTop: hp(1),
-                                        width: wp(60), textAlign: 'center',
-                                        alignSelf: 'center'
-                                    }}>
-                                        We couldn't access your location. Please enable location services in your device settings.
-                                    </Text>
-                                    <View style={{ width: wp(50), alignSelf: 'center', marginTop: hp(3) }}>
-                                        <PrimaryButton title="Open settings" onclick={() => handleOpenSettings()} />
-                                    </View>
-                                    <View style={{ width: wp(50), alignSelf: 'center', marginTop: hp(1) }}>
-                                        <PrimaryButton
-                                            title={Platform.OS == 'android' ? "Close App" : "Close"}
-                                            onclick={() => {
-                                                if (Platform.OS == 'android') {
-                                                    BackHandler.exitApp()
-                                                } else {
-                                                    props.navigation.reset({
-                                                        index: 0,
-                                                        routes: [{ name: 'HomeScreen' }],
-                                                    });
-                                                }
-                                            }}
-                                        />
-                                    </View>
-                                </View>
-                            </View>
-                        </Modal>
-                    )}
-                </View>
 
                 <ScrollView style={{ flex: 1 }}>
 

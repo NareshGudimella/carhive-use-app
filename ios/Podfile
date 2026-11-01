@@ -34,7 +34,7 @@ target 'carhive_user' do
   setup_permissions([
     'LocationWhenInUse',
     'Camera',
-    'PhotoLibrary'
+    'Notifications'
   ])
   
   post_install do |installer|

@@ -1,7 +1,5 @@
 import {
     getMessaging,
-    AuthorizationStatus,
-    requestPermission,
     getToken as getFcmToken,
     onTokenRefresh,
     onMessage,
@@ -9,12 +7,13 @@ import {
     onNotificationOpenedApp,
 } from '@react-native-firebase/messaging';
 import type { RemoteMessage } from '@react-native-firebase/messaging';
-import { Linking, PermissionsAndroid, Platform } from 'react-native';
+import { Platform } from 'react-native';
 import notifee, { EventType } from '@notifee/react-native';
 import { firebasemessage } from '../apis/api';
 import DeviceInfo from 'react-native-device-info';
 import { getToken } from '../storage/AsyncStorage';
 import { navigateTo } from '../utils/session';
+import { requestNotificationPermissionOnce } from '../utils/permissions';
 
 let tokenRefreshUnsubscribe: (() => void) | null = null
 let foregroundUnsubscribe: (() => void) | null = null
@@ -22,32 +21,29 @@ let tapListenersRegistered = false
 let pendingTap: any = null
 let loggedInReady = false
 
-export const requestfirebasePermissions = async () => {
-    const authStatus = await requestPermission(getMessaging());
-    const enabled =
-        authStatus === AuthorizationStatus.AUTHORIZED ||
-        authStatus === AuthorizationStatus.PROVISIONAL;
-    if (!enabled) {
+// FCM tokens work without the notification permission, so the device is
+// registered regardless and starts receiving once the user enables
+// notifications in Settings.
+export const registerForPush = async () => {
+    const authToken = await getToken()
+    if (!authToken || authToken == '') {
         return
-    }
-    if (Platform.OS == 'android' && Platform.Version >= 33) {
-        const check = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS)
-        if (!check) {
-            const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS)
-            if (granted != 'granted') {
-                Linking.openSettings()
-            }
-        }
     }
     Token()
     if (!tokenRefreshUnsubscribe) {
         tokenRefreshUnsubscribe = onTokenRefresh(getMessaging(), async (token: string) => {
-            const authToken = await getToken()
-            if (authToken && authToken != '' && token && token != '') {
+            const latestAuthToken = await getToken()
+            if (latestAuthToken && latestAuthToken != '' && token && token != '') {
                 registerFcmToken(token)
             }
         })
     }
+}
+
+// Prompts only if the OS still allows it, then registers the device.
+export const requestfirebasePermissions = async () => {
+    await requestNotificationPermissionOnce()
+    await registerForPush()
 }
 
 const registerFcmToken = async (token: string) => {

@@ -44,11 +44,11 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>This app requires access to the camera to take photos or record videos.</string>
+	<string>CarHive uses the camera to take photos of your driving licence and documents for verification.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We use your location to show nearby vehicle listings.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>We need access to your photo library to upload or save media.</string>
+	<string>CarHive uses your photo library to choose photos of your documents.</string>
 	<key>RCTNewArchEnabled</key>
 	<true/>
 	<key>UIAppFonts</key>

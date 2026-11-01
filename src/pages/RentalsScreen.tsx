@@ -26,7 +26,7 @@ import { updateProfile } from "../storage/redux";
 import { useDispatch, useSelector } from "react-redux";
 import { PaymentConfirmingModal, payWithRazorpay } from "../utils/payment";
 import { showAccountRestored } from "../utils/session";
-import { Foregroundmessage, requestfirebasePermissions } from "../firebase/firebase";
+import { Foregroundmessage, registerForPush } from "../firebase/firebase";
 import { showMessage } from "../components/MessageModal";
 import { getFriendlyError } from "../utils/apiMessages";
 
@@ -95,7 +95,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                 const profileresponse = await excuteGetResponse('secure/profile')
                 setLoadingOtp(false) // ── NEW
                 if (profileresponse.code == 0) {
-                    requestfirebasePermissions()
+                    registerForPush()
                     Foregroundmessage()
                     setOtpModal(false)
                     dispatch(updateProfile(profileresponse.data));

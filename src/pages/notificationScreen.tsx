@@ -19,8 +19,16 @@ import { updateProfile } from '../storage/redux';
 import { useDispatch } from 'react-redux';
 import {
     Foregroundmessage,
+    registerForPush,
     requestfirebasePermissions
 } from '../firebase/firebase';
+import {
+    getNotificationStatus,
+    isGranted,
+    requestNotificationPermissionOnce
+} from '../utils/permissions';
+import { openSettings, RESULTS } from 'react-native-permissions';
+import type { PermissionStatus } from 'react-native-permissions';
 import { showMessage } from "../components/MessageModal";
 import { getFriendlyError } from "../utils/apiMessages";
 import { showAccountRestored } from "../utils/session";
@@ -37,9 +45,28 @@ const NotificationScreen: React.FC<Componentprops> = (props) => {
     const [otpModal, setOtpModal] = useState(false)
     const [phoneNumber, setPhoneNumber] = useState<any>('')
     const [otp, setOtp] = useState<any>('')
+    const [notificationStatus, setNotificationStatus] = useState<PermissionStatus | null>(null)
+
+    const refreshNotificationStatus = async () => {
+        getNotificationStatus()
+            .then(setNotificationStatus)
+            .catch(() => setNotificationStatus(null))
+    }
+
+    const handleTurnOnNotifications = async () => {
+        if (notificationStatus === RESULTS.DENIED) {
+            if (await requestNotificationPermissionOnce()) {
+                registerForPush()
+            }
+            refreshNotificationStatus()
+        } else {
+            openSettings().catch(() => { })
+        }
+    }
 
     useFocusEffect(
         useCallback(() => {
+            refreshNotificationStatus()
             loadNotification()
         }, [])
     )
@@ -323,6 +350,37 @@ const NotificationScreen: React.FC<Componentprops> = (props) => {
                     marginHorizontal: wp(2)
                 }}>Notification</Text>
             </View>
+
+            {notificationStatus !== null && !isGranted(notificationStatus) && (
+                <View style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    backgroundColor: '#E5EEF2',
+                    paddingHorizontal: wp(5),
+                    paddingVertical: hp(1.2)
+                }}>
+                    <Text style={{
+                        flex: 1,
+                        fontSize: 14,
+                        color: '#00354a'
+                    }}>Notifications are off. Turn them on to get booking updates.</Text>
+                    <Pressable
+                        onPress={handleTurnOnNotifications}
+                        style={{
+                            backgroundColor: '#00354a',
+                            borderRadius: 10,
+                            paddingHorizontal: wp(4),
+                            paddingVertical: hp(1),
+                            marginLeft: wp(2)
+                        }}>
+                        <Text style={{
+                            fontSize: 14,
+                            fontWeight: 'bold',
+                            color: '#ffffff'
+                        }}>Turn on</Text>
+                    </Pressable>
+                </View>
+            )}
 
             {loading ? (
                 <View style={{
