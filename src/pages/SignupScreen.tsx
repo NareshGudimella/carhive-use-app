@@ -61,13 +61,16 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
         const response = await SignUp(object);
         setIndiCator(false)
         if (response.code == 0) {
+            // VehicleDetailsScreen sends either fromDate/toDate/lat/long or
+            // from_date/to_date/latitude/longitude; accept both.
+            const params = (props.route && props.route.params) || {}
             props.navigation.navigate('CarSummaryScreen',
                 {
-                    carid: props.route && props.route.params && props.route.params.carid,
-                    fromDate: props.route && props.route.params && props.route.params.from_date,
-                    toDate: props.route && props.route.params && props.route.params.to_date,
-                    lat: props.route && props.route.params && props.route.params.latitude,
-                    long: props.route && props.route.params &&props.route.params.longitude
+                    carid: params.carid,
+                    fromDate: params.fromDate ?? params.from_date,
+                    toDate: params.toDate ?? params.to_date,
+                    lat: params.lat ?? params.latitude,
+                    long: params.long ?? params.longitude
                 })
         } else if (response.message == 'NAME_NOT_MATCH' && response.code == 1) {
             Alert.alert('Alert', 'Enter your name as per aadhar card')

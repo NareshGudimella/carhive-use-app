@@ -62,11 +62,29 @@ const PaymentSuccessScreen: React.FC<Componentprops> = (props) => {
                         width: wp(70),
                         textAlign: 'center'
                     }}>Your payment is successfully completed</Text>
+                {orderDetails && orderDetails.booking_id &&
+                    <Text style={{
+                        fontSize: 15,
+                        color: '#64748B',
+                        marginTop: hp(1),
+                        textAlign: 'center'
+                    }}>Booking ID : {orderDetails.booking_id}{orderDetails.brand ? `\n${orderDetails.brand} ${orderDetails.model || ''}` : ''}</Text>}
                 <View style={{
                     width: wp(70),
                     marginVertical: hp(5)
                 }}>
-                    <PrimaryButton title='View details' onclick={() => props.navigation.navigate('HomeScreen')} />
+                    <PrimaryButton title='View details' onclick={() => {
+                        const id = props.route && props.route.params && props.route.params.Id
+                        if (id) {
+                            // Keep Home underneath so "back" from the details does not exit the app.
+                            props.navigation.reset({
+                                index: 1,
+                                routes: [{ name: 'HomeScreen' }, { name: 'OrderDetailsScreen', params: { Id: id } }],
+                            })
+                        } else {
+                            props.navigation.navigate('HomeScreen')
+                        }
+                    }} />
                 </View>
             </View>
         </SafeAreaView>

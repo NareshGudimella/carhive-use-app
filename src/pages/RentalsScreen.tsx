@@ -24,9 +24,11 @@ import { OtpInput } from "react-native-otp-entry";
 import { style } from "../styles/OtpStyle";
 import { updateProfile } from "../storage/redux";
 import { useDispatch, useSelector } from "react-redux";
-//@ts-ignore
-import RazorpayCheckout from 'react-native-razorpay';
+import { PaymentConfirmingModal, payWithRazorpay } from "../utils/payment";
+import { showAccountRestored } from "../utils/session";
 import { Foregroundmessage, requestfirebasePermissions } from "../firebase/firebase";
+import { showMessage } from "../components/MessageModal";
+import { getFriendlyError } from "../utils/apiMessages";
 
 class Componentprops extends Baseprops { }
 
@@ -53,6 +55,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
     const [loadingExtendPay, setLoadingExtendPay] = useState<any>(null)
     const [loadingExtendKms, setLoadingExtendKms] = useState<any>(null)
     const [loadingResendOtp, setLoadingResendOtp] = useState(false)
+    const [confirmingPayment, setConfirmingPayment] = useState(false)
 
     useFocusEffect(
         useCallback(() => {
@@ -81,7 +84,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
 
     const handelOtp = async () => {
         if (!otp || otp.length !== 4) {
-            Alert.alert('Alert!', 'Enter a valid 4-digit OTP.');
+            showMessage({ kind: 'warning', title: 'Enter the OTP', message: 'Please enter the 4-digit OTP sent to your mobile number.' });
             return;
         }
         setLoadingOtp(true) // ── NEW
@@ -96,17 +99,18 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                     Foregroundmessage()
                     setOtpModal(false)
                     dispatch(updateProfile(profileresponse.data));
+                    showAccountRestored(response)
                     props.navigation.reset({
                         index: 0,
                         routes: [{ name: 'HomeScreen' }]
                     })
                 } else {
-                    Alert.alert('Alert', 'Unable to profile details.')
+                    showMessage(getFriendlyError(profileresponse))
                 }
             }
         } else {
             setLoadingOtp(false) // ── NEW
-            Alert.alert('Alert', 'Invalid OTP')
+            showMessage(getFriendlyError(response, 'loginOtp'))
         }
     }
 
@@ -146,39 +150,14 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
         const response = await excuteGetResponse(`secure/cars/extended_payment/${booking_car_id}`)
         setLoadingExtendPay(null) // ── NEW
         if (response.code == 0) {
-            var options = {
-                description: 'Payment for booking',
-                image: response.data.image,
-                currency: 'INR',
-                key: response.data.key,
-                amount: response.data.amount,
-                name: 'CARHIVE SERVICES',
-                prefill: {
-                    email: user.email,
-                    contact: user.mobile,
-                    name: user.name
-                },
-                order_id: response.data.id,
-                theme: { color: '#F37254' }
-            }
-            RazorpayCheckout.open(options).then((data: any) => {
-                props.navigation.reset({
-                    index: 0,
-                    routes: [
-                        {
-                            name: 'PaymentSuccessScreen',
-                            params: { amount: response.data.actual_amount }
-                        }
-                    ],
-                });
-            }).catch((error: any) => {
-                console.log('ERROR', error)
-                Alert.alert('Payment failed', 'Please try again.',
-                    [
-                        { text: 'OK', onPress: () => console.log('OK Pressed') }
-                    ],
-                );
-            });
+            payWithRazorpay({
+                order: response.data,
+                user,
+                bookingId: booking_car_id,
+                navigation: props.navigation,
+                description: 'Payment for booking extension',
+                setConfirming: setConfirmingPayment,
+            })
         } else {
             Alert.alert('Alert', 'unable to get Booking Payment Details')
         }
@@ -191,40 +170,15 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
         setLoadingExtendKms(null) // ── NEW
         if (response.code == 0) {
             setBookingId(response.data.booking_id)
-            var options = {
-                description: 'Payment for booking',
-                image: response.data.image,
-                currency: 'INR',
-                key: response.data.key,
-                amount: response.data.amount,
-                name: 'CARHIVE SERVICES',
-                prefill: {
-                    email: user.email,
-                    contact: user.mobile,
-                    name: user.name
-                },
-                order_id: response.data.id,
-                theme: { color: '#F37254' }
-            }
             setTimeout(() => {
-                RazorpayCheckout.open(options).then((data: any) => {
-                    props.navigation.reset({
-                        index: 0,
-                        routes: [
-                            {
-                                name: 'PaymentSuccessScreen',
-                                params: { amount: response.data.actual_amount }
-                            }
-                        ],
-                    });
-                }).catch((error: any) => {
-                    console.log('ERROR', error)
-                    Alert.alert('Payment failed', 'Please try again.',
-                        [
-                            { text: 'OK', onPress: () => console.log('OK Pressed') }
-                        ],
-                    );
-                });
+                payWithRazorpay({
+                    order: response.data,
+                    user,
+                    bookingId: booking_car_id,
+                    navigation: props.navigation,
+                    description: 'Payment for extra kilometres',
+                    setConfirming: setConfirmingPayment,
+                })
             }, 500)
         } else {
             Alert.alert('Alert', 'unable to get Booking Payment Details')
@@ -234,7 +188,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
 
     const handelLogin = async () => {
         if (phoneNumber.trim().length != 10) {
-            Alert.alert('Alert', 'Invalid mobile number')
+            showMessage({ kind: 'warning', title: 'Invalid mobile number', message: 'Please enter a valid 10-digit mobile number.' })
             return
         }
         setMobileNumberModal(false)
@@ -244,12 +198,13 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
         if (response.code == 0) {
             setOtpModal(true)
         } else {
-            Alert.alert('Alert', 'Unable to get Phone number')
+            showMessage(getFriendlyError(response, 'login'))
         }
     }
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
+            <PaymentConfirmingModal visible={confirmingPayment} />
             <View>
                 {mobileNumberModal &&
                     <View>
@@ -635,7 +590,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
 
                     {rentalData.length == 0 && <Text style={{ color: '#000000', textAlign: 'center', fontWeight: 'bold', marginTop: hp(2) }}>No bookings user</Text>}
 
-                    {rentalData && rentalData.filter((e1: any) => searchData.trim === '' ||
+                    {rentalData && rentalData.filter((e1: any) => searchData.trim() === '' ||
                         e1.brand?.toLowerCase().includes(searchData.toLowerCase())).map((e: any, index: any) => (
                             <View key={index}>
                                 {

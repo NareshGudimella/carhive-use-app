@@ -21,6 +21,9 @@ import {
     Foregroundmessage,
     requestfirebasePermissions
 } from '../firebase/firebase';
+import { showMessage } from "../components/MessageModal";
+import { getFriendlyError } from "../utils/apiMessages";
+import { showAccountRestored } from "../utils/session";
  
 class Componentprops extends Baseprops { }
 
@@ -61,7 +64,7 @@ const NotificationScreen: React.FC<Componentprops> = (props) => {
 
     const handelLogin = async () => {
         if (phoneNumber.trim().length != 10) {
-            Alert.alert('Alert', 'Invalid mobile number')
+            showMessage({ kind: 'warning', title: 'Invalid mobile number', message: 'Please enter a valid 10-digit mobile number.' })
             return
         }
         setMobileNumberModal(false)
@@ -69,13 +72,13 @@ const NotificationScreen: React.FC<Componentprops> = (props) => {
         if (response.code == 0) {
             setOtpModal(true)
         } else {
-            Alert.alert('Alert', 'Unable to get Phone number')
+            showMessage(getFriendlyError(response, 'login'))
         }
     }
 
     const handelOtp = async () => {
         if (!otp || otp.length !== 4) {
-            Alert.alert('Alert!', 'Enter a valid 4-digit OTP.');
+            showMessage({ kind: 'warning', title: 'Enter the OTP', message: 'Please enter the 4-digit OTP sent to your mobile number.' });
             return;
         }
         const response = await Otp(phoneNumber, otp)
@@ -88,16 +91,17 @@ const NotificationScreen: React.FC<Componentprops> = (props) => {
                     Foregroundmessage()
                     setOtpModal(false)
                     dispatch(updateProfile(profileresponse.data));
+                    showAccountRestored(response)
                     props.navigation.reset({
                         index: 0,
                         routes: [{ name: 'HomeScreen' }]
                     })
                 } else {
-                    Alert.alert('Alert', 'Unable to profile details.')
+                    showMessage(getFriendlyError(profileresponse))
                 }
             }
         } else {
-            Alert.alert('Alert', 'Invalid OTP')
+            showMessage(getFriendlyError(response, 'loginOtp'))
         }
     }
 

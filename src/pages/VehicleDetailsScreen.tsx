@@ -18,6 +18,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import {
     aadharnumberverify, aadharotpverify, carDetails,
     excuteGetResponse, licenceverify, Login, Otp,
+    addFavouriteCar, getFavouriteCars, removeFavouriteCar,
 } from "../apis/api";
 import { getToken, setToken } from "../storage/AsyncStorage";
 import { useFocusEffect } from "@react-navigation/native";
@@ -35,8 +36,14 @@ import CarViewScreen from "./CarViewScreen";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import ReadMore from '@fawazahmed/react-native-read-more';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { showMessage } from "../components/MessageModal";
+import { getFriendlyError } from "../utils/apiMessages";
+import { showAccountRestored } from "../utils/session";
 
 class Componentprops extends Baseprops { }
+
+// KYC flags: 1 = verified by Cashfree, 2 = verified manually by admin.
+const isVerified = (flag: any) => flag == 1 || flag == 2
 
 const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
 
@@ -77,13 +84,47 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
     // FIX 2: Added licenceIndicator for licence submit separately from aadhar indicator
     const [licenceIndicator, setLicenceIndicator] = useState(false)
 
+    // Favourites (only shown when logged in)
+    const [loggedIn, setLoggedIn] = useState(false)
+    const [favourite, setFavourite] = useState(false)
+    const [favouriteLoading, setFavouriteLoading] = useState(false)
+
     useFocusEffect(
         useCallback(() => {
             if (props.route.params && props.route.params?.id) {
                 handelVicheDetails(props.route.params?.id)
+                loadFavourite(props.route.params?.id)
             }
         }, [])
     )
+
+    const loadFavourite = async (carid: any) => {
+        const token = await getToken()
+        const hasToken = !!(token && token != '')
+        setLoggedIn(hasToken)
+        if (!hasToken) {
+            return
+        }
+        const response = await getFavouriteCars()
+        if (response.code == 0 && Array.isArray(response.data)) {
+            setFavourite(response.data.some((e: any) => e.carid == carid))
+        }
+    }
+
+    const handelFavourite = async () => {
+        const carid = props.route.params?.id
+        if (!carid || favouriteLoading) {
+            return
+        }
+        setFavouriteLoading(true)
+        const response = favourite ? await removeFavouriteCar(carid) : await addFavouriteCar(carid)
+        setFavouriteLoading(false)
+        if (response.code == 0 || (!favourite && response.message == 'ALREADY_EXIST')) {
+            setFavourite(!favourite)
+        } else {
+            showMessage(getFriendlyError(response))
+        }
+    }
 
     const handleInputChangeValue = (key: string, value: any) => {
         setUserDetailsObj((e: any) => ({ ...e, [key]: value }))
@@ -95,13 +136,17 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
             setIndiCator(true)
             const response = await excuteGetResponse('secure/profile')
             setIndiCator(false)
-            if (response.data.aadhar_verfy_flag == 0) {
+            if (response.code != 0 || !response.data) {
+                showMessage(getFriendlyError(response))
+                return
+            }
+            if (!isVerified(response.data.aadhar_verfy_flag)) {
                 setAadharmodal(true)
                 setIndiCator(false)
-            } else if (response.data.aadhar_verfy_flag == 1 && response.data.driving_licence_flag == 0) {
+            } else if (!isVerified(response.data.driving_licence_flag)) {
                 setLicencemodal(true)
                 setIndiCator(false)
-            } else if (response.data.aadhar_verfy_flag == 1 && response.data.driving_licence_flag == 1 && response.data.profile_flag == 0) {
+            } else if (response.data.profile_flag == 0) {
                 props.navigation.navigate('SignupScreen', {
                     carid: carData && carData.carid,
                     from_date: carData && carData.from_date,
@@ -110,7 +155,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                     longitude: carData && carData.longitude
                 })
                 setIndiCator(false)
-            } else if (response.data.aadhar_verfy_flag == 1 && response.data.driving_licence_flag == 1 && response.data.profile_flag == 1) {
+            } else if (response.data.profile_flag == 1) {
                 props.navigation.navigate('CarSummaryScreen',
                     {
                         carid: carData.carid,
@@ -130,7 +175,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
     // The modal stays open so loginIndicator is visible to the user during the request.
     const handelLogin = async () => {
         if (phoneNumber.trim().length != 10) {
-            Alert.alert('Alert', 'Invalid mobile number')
+            showMessage({ kind: 'warning', title: 'Invalid mobile number', message: 'Please enter a valid 10-digit mobile number.' })
             return
         }
         setLoginIndicator(true)
@@ -140,13 +185,13 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
             setMobileNumberModal(false)
             setOtpModal(true)
         } else {
-            Alert.alert('Alert', 'Unable to get Phone number')
+            showMessage(getFriendlyError(response, 'login'))
         }
     }
 
     const handelOtp = async () => {
         if (!otp || otp.length !== 4) {
-            Alert.alert('Alert!', 'Enter a valid 4-digit OTP.');
+            showMessage({ kind: 'warning', title: 'Enter the OTP', message: 'Please enter the 4-digit OTP sent to your mobile number.' });
             return;
         }
         setOtpIndicator(true)
@@ -161,15 +206,18 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                     requestfirebasePermissions()
                     Foregroundmessage()
                     dispatch(updateProfile(profileresponse.data));
-                    if (profileresponse.data.aadhar_verfy_flag == 0) {
+                    showAccountRestored(response)
+                    setLoggedIn(true)
+                    loadFavourite(props.route.params?.id)
+                    if (!isVerified(profileresponse.data.aadhar_verfy_flag)) {
                         setOtpModal(false)
                         setTimeout(() => {
                             setAadharmodal(true)
                         }, 1000);
-                    } else if (profileresponse.data.aadhar_verfy_flag == 1 && profileresponse.data.driving_licence_flag == 0) {
+                    } else if (!isVerified(profileresponse.data.driving_licence_flag)) {
                         setOtpModal(false)
                         setLicencemodal(true)
-                    } else if (profileresponse.data.aadhar_verfy_flag == 1 && profileresponse.data.driving_licence_flag == 1 && profileresponse.data.profile_flag == 0) {
+                    } else if (profileresponse.data.profile_flag == 0) {
                         setOtpModal(false)
                         props.navigation.navigate('SignupScreen', {
                             carid: carData.carid,
@@ -178,7 +226,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                             lat: carData.latitude,
                             long: carData.longitude
                         })
-                    } else if (profileresponse.data.aadhar_verfy_flag == 1 && profileresponse.data.driving_licence_flag == 1 && profileresponse.data.profile_flag == 1) {
+                    } else if (profileresponse.data.profile_flag == 1) {
                         setOtpModal(false)
                         props.navigation.navigate('CarSummaryScreen',
                             {
@@ -191,12 +239,12 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                     }
                 } else {
                     setOtpIndicator(false)
-                    Alert.alert('Alert', 'Unable to profile details.')
+                    showMessage(getFriendlyError(profileresponse))
                 }
             }
         } else {
             setOtpIndicator(false)
-            Alert.alert('Alert', 'Invalid Otp')
+            showMessage(getFriendlyError(response, 'loginOtp'))
         }
     }
 
@@ -218,33 +266,39 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
 
     const handelAadhardetails = async () => {
         if (aadharnumber.trim().length != 12) {
-            Alert.alert('Alert', 'Enter Valid Aadhar number')
+            showMessage({ kind: 'warning', title: 'Invalid Aadhaar number', message: 'Please enter your 12-digit Aadhaar number.' })
             return
         }
         if (aadharfront == null) {
-            Alert.alert('Alert', 'Please upload your aadhar front image')
+            showMessage({ kind: 'info', title: 'Aadhaar front photo needed', message: 'Please upload a clear photo of the front of your Aadhaar card.' })
             return
         }
         if (aadharback == null) {
-            Alert.alert('Alert', 'Please upload your aadhar back image')
+            showMessage({ kind: 'info', title: 'Aadhaar back photo needed', message: 'Please upload a clear photo of the back of your Aadhaar card.' })
             return
         }
         setIndiCator(true)
         const response = await aadharnumberverify(aadharnumber)
         setIndiCator(false)
-        if (response.code == 0) {
+        if (response.code == 0 && response.message == 'ALREADY_VERIFIED') {
+            // This Aadhaar was verified on this account before: the server reused it, no OTP is sent.
+            setAadharmodal(false)
+            setTimeout(() => {
+                setLicencemodal(true)
+            }, 1000);
+        } else if (response.code == 0) {
             setAadharmodal(false)
             setTimeout(() => {
                 setAadharotpmodal(true)
             }, 1000);
         } else {
-            Alert.alert('Alert', 'Verification pending, please contact our support.')
+            showMessage(getFriendlyError(response, 'aadharSend'))
         }
     }
 
     const handelAadharotp = async () => {
         if (aadharotp.trim().length != 6) {
-            Alert.alert('Alert', 'Enter valid 6-digit OTP.')
+            showMessage({ kind: 'warning', title: 'Enter the OTP', message: 'Please enter the 6-digit OTP sent to your Aadhaar-linked mobile number.' })
             return
         }
         const object = JSON.parse(JSON.stringify(userDetailsObj))
@@ -262,22 +316,29 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                 setLicencemodal(true)
             }, 1000);
         } else {
-            Alert.alert('Alert', 'Unable to get details')
+            showMessage(getFriendlyError(response, 'aadharOtp'))
             return
         }
     }
 
     const handelLicencedata = async () => {
-        if (licencenumber != 16 && licencenumber == 0) {
-            Alert.alert('Alert', 'Enter your valid driving licence')
+        // Indian DL numbers are 15-16 characters (e.g. MH14 20110062821); allow some
+        // older state formats, the server verifies the number itself.
+        const dlLength = String(licencenumber || '').replace(/[\s-]/g, '').length
+        if (dlLength == 0) {
+            showMessage({ kind: 'warning', title: 'Enter licence number', message: 'Please enter your driving licence number.' })
+            return
+        }
+        if (dlLength < 10 || dlLength > 20) {
+            showMessage({ kind: 'warning', title: 'Invalid licence number', message: 'Please enter your driving licence number exactly as shown on your licence, e.g. MH14 20110062821.' })
             return
         }
         if (licensefront == null) {
-            Alert.alert('Alert', 'Upload your licence front image')
+            showMessage({ kind: 'info', title: 'Licence front photo needed', message: 'Please upload a clear photo of the front of your driving licence.' })
             return
         }
         if (licenseback == null) {
-            Alert.alert('Alert', 'Upload your licence back image')
+            showMessage({ kind: 'info', title: 'Licence back photo needed', message: 'Please upload a clear photo of the back of your driving licence.' })
             return
         }
         const object = JSON.parse(JSON.stringify(userDetailsObj))
@@ -303,10 +364,8 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                     },
                 }]
             })
-        } else if (response.message == 'LICIENCE_NOT_FOUND') {
-            Alert.alert('Alert', 'Verification pending, please contact our support.');
         } else {
-            Alert.alert('Alert', 'Verification pending, please contact our support.');
+            showMessage(getFriendlyError(response, 'licence'))
         }
     }
     return (
@@ -1217,6 +1276,22 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                                     tintColor='#ffffff' />
                                             </Pressable>
                                         </View>
+                                        {loggedIn && carData &&
+                                            <Pressable
+                                                onPress={handelFavourite}
+                                                hitSlop={10}
+                                                style={{
+                                                    backgroundColor: '#ffffff',
+                                                    borderRadius: 20,
+                                                    width: 38, height: 38,
+                                                    justifyContent: 'center', alignItems: 'center',
+                                                }}>
+                                                {favouriteLoading ?
+                                                    <ActivityIndicator size="small" color="#E53935" /> :
+                                                    <Text style={{ fontSize: 22, color: favourite ? '#E53935' : '#64748B' }}>
+                                                        {favourite ? '♥' : '♡'}
+                                                    </Text>}
+                                            </Pressable>}
                                     </View>
                                     <ScrollView
                                         showsVerticalScrollIndicator={false}

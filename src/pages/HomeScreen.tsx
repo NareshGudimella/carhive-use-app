@@ -56,17 +56,16 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
         console.log('reshours', response)
         if (response.code == 0) {
             setTimeFlag(response.data && response.data.hours_flag)
-            if (response.data && response.data.hours_flag != 1) {
-                const pickup = new Date(new Date().getTime() + 60 * 60 * 1000);
-                setPickupTime(pickup);
-                setDropTime(new Date(pickup.getTime() + 12 * 60 * 60 * 1000));
-                setDropDate(new Date(pickup.getTime() + 12 * 60 * 60 * 1000));
-            } else {
-                const pickup = new Date(new Date().getTime() + 60 * 60 * 1000);
-                setPickupTime(pickup);
-                setDropTime(new Date(pickup.getTime() + 24 * 60 * 60 * 1000));
-                setDropDate(new Date(pickup.getTime() + 24 * 60 * 60 * 1000));
-            }
+            // Default pickup: 1 hour from now, rounded up to the next 15 minutes so it clears the buffer check
+            const pickup = new Date(new Date().getTime() + 60 * 60 * 1000);
+            pickup.setSeconds(0, 0);
+            pickup.setMinutes(Math.ceil((pickup.getMinutes() + 1) / 15) * 15);
+            const minHours = response.data && response.data.hours_flag == 1 ? 24 : 12;
+            const drop = new Date(pickup.getTime() + minHours * 60 * 60 * 1000);
+            setPickupDate(pickup);
+            setPickupTime(pickup);
+            setDropTime(drop);
+            setDropDate(drop);
         } else {
             Alert.alert('Alert', 'Unable to get details')
         }
@@ -686,7 +685,12 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                 <PrimaryButton
                                     title="Search"
                                     onclick={() => {
-                                        if (hasAnyWarning) return;
+                                        if (hasAnyWarning) {
+                                            Alert.alert('Alert', bufferWarning
+                                                ? 'Please select a pickup time at least 1 hour from now.'
+                                                : String(dropTimeWarning));
+                                            return;
+                                        }
                                         VerifyLocationPermission();
                                     }}
                                 />

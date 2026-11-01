@@ -16,6 +16,7 @@ const SelectCityScreen: React.FC<Componentprops> = (props) => {
     const [selectCity, setSelectCity] = useState<any>('')
     const [citys, setCitys] = useState<any>([])
     const [onselectcity, setOnSelectCity] = useState<any>('')
+    const [search, setSearch] = useState('')
 
 
     useFocusEffect(
@@ -46,7 +47,9 @@ const SelectCityScreen: React.FC<Componentprops> = (props) => {
                     }}>
                         <Textinput placeholder='Search'
                             image={require('../assets/search.png')}
-                            keyboardtype='default' />
+                            keyboardtype='default'
+                            value={search}
+                            onChangeText={setSearch} />
                     </View>
                     <Text style={{
                         fontSize: 18,
@@ -57,7 +60,9 @@ const SelectCityScreen: React.FC<Componentprops> = (props) => {
                         flexDirection: 'row',
                         flexWrap: 'wrap'
                     }}>
-                        {citys.map((e: any, index: any) => (
+                        {citys.filter((e: any) => search.trim() === '' ||
+                            String(e.cityname || '').toLowerCase().includes(search.trim().toLowerCase())
+                        ).map((e: any, index: any) => (
                             <Pressable
                                 onPress={() => {
                                     setSelectCity(e.cityId)

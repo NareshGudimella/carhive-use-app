@@ -30,9 +30,15 @@ import SplaceScreen from './src/pages/SplaceScreen';
 import NoNetworkScreen from './src/pages/NoNetworkScreen';
 import NetworkListener from './src/components/NetworkListener';
 import MaintenanceScreen from './src/pages/MaintenanceScreen';
+import MessageModal from './src/components/MessageModal';
+import FavouritesScreen from './src/pages/FavouritesScreen';
+import { registerNavigation } from './src/utils/session';
+import { registerNotificationTapHandlers } from './src/firebase/firebase';
 
 
 export const navigationRef = createNavigationContainerRef();
+// Lets the request wrappers and notification taps navigate without importing App.tsx.
+registerNavigation(navigationRef);
 const Stack = createNativeStackNavigator();
 
 function RootStack() {
@@ -59,6 +65,7 @@ function RootStack() {
       <Stack.Screen name="RattingScreen" component={RattingScreen} />
       <Stack.Screen name="NoNetworkScreen" component={NoNetworkScreen} />
       <Stack.Screen name='MaintenanceScreen' component={MaintenanceScreen} />
+      <Stack.Screen name="FavouritesScreen" component={FavouritesScreen} />
     </Stack.Navigator>
   );
 }
@@ -74,6 +81,10 @@ export default function App() {
     return () => unsubscribe();
   }, []);
 
+  useEffect(() => {
+    return registerNotificationTapHandlers();
+  }, []);
+
   if (isConnected == 0) {
     return <></>
   }
@@ -87,6 +98,7 @@ export default function App() {
       <NavigationContainer ref={navigationRef}>
         <RootStack />
       </NavigationContainer>
+      <MessageModal />
     </Provider>
   );
 }

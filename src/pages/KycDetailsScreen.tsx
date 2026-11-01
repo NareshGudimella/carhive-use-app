@@ -41,7 +41,7 @@ const KycDetailsScreen: React.FC<Componentprops> = (props) => {
             return
         }
         if (licenseback == null) {
-            Alert.alert('Alert', 'Upload the License front side photo')
+            Alert.alert('Alert', 'Upload the License back side photo')
             return
         }
         const response = await KycDetails(aadharfront, aadharback, licensefront, licenseback)

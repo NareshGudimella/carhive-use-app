@@ -13,9 +13,8 @@ import CheckBox from '@react-native-community/checkbox';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { carBookings, excuteGetResponse, summery } from "../apis/api";
 import { useFocusEffect } from "@react-navigation/native";
-//@ts-ignore
-import RazorpayCheckout from 'react-native-razorpay';
 import { useSelector } from "react-redux";
+import { PaymentConfirmingModal, payWithRazorpay } from "../utils/payment";
 import moment from "moment";
 
 class Componentprops extends Baseprops { }
@@ -34,6 +33,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
     const [cuopon, setCoupons] = useState([])
     const [couponcode, setCouponcode] = useState<any>('')
     const [flag, setFlag] = useState(false)
+    const [confirmingPayment, setConfirmingPayment] = useState(false)
 
     useFocusEffect(
         useCallback(() => {
@@ -53,10 +53,11 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
         console.log('asadjeofj', response)
         if (response.code == 0) {
             setCarDetails(response.data)
-            if (carDetails && carDetails.from_date && carDetails.to_date) {
-                console.log('rrrrr')
-                const fromDate = moment(carDetails.from_date);
-                const toDate = moment(carDetails.to_date);
+            // Use the fresh response, not carDetails (state is not updated yet).
+            const details = response.data
+            if (details && details.from_date && details.to_date) {
+                const fromDate = moment(details.from_date);
+                const toDate = moment(details.to_date);
                 const durationInHours = toDate.diff(fromDate, 'hours', true);
                 console.log('Duration', durationInHours)
                 if (durationInHours < 24) {
@@ -75,12 +76,16 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
             Alert.alert('Alert', 'Coupon code is invalid')
             setCouponcode('')
         } else if (response.message == "BOOKING_EXIST") {
-            Alert.alert('Alert!', 'Booking already exists!', [
-                { text: 'OK', onPress: () => { props.navigation.navigate('RentalsScreen') } },
-            ]);
+            showBookingExistAlert(response)
         } else {
             Alert.alert('Alert', 'Unable to get details')
         }
+    }
+    const showBookingExistAlert = (response: any) => {
+        const ref = response.booking_id ? `\n\nBooking ID: ${response.booking_id} (${response.booking_status})` : ''
+        Alert.alert('Alert!', `You already have an active booking. Complete it before making a new one.${ref}`, [
+            { text: 'OK', onPress: () => { props.navigation.navigate('RentalsScreen') } },
+        ]);
     }
     const handelModelData = async () => {
         setTermsAndCondition(true)
@@ -107,42 +112,21 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
             setEligiabilityModal(false)
             const paymentResponse = await excuteGetResponse(`secure/cars/payment/${response.booking_car_id}`)
             if (paymentResponse.code == 0) {
-                var options = {
-                    description: 'Payment for booking',
-                    image: paymentResponse.data.image,
-                    currency: 'INR',
-                    key: paymentResponse.data.key,
-                    amount: paymentResponse.data.amount,
-                    name: 'CARHIVE SERVICES',
-                    prefill: {
-                        email: user.email,
-                        contact: user.mobile,
-                        name: user.name
-                    },
-                    order_id: paymentResponse.data.id,
-                    theme: { color: '#F37254' }
-                }
                 setTimeout(() => {
-                    RazorpayCheckout.open(options).then((data: any) => {
-                        props.navigation.reset({
-                            index: 0,
-                            routes: [
-                                {
-                                    name: 'PaymentSuccessScreen',
-                                    params: { amount: paymentResponse.data.actual_amount }
-                                }
-                            ],
-                        });
-                    }).catch((error: any) => {
-                        console.log('ERROR', error)
-                        Alert.alert('Payment failed', 'Please try again.',
-                            [
-                                { text: 'OK', onPress: () => console.log('OK Pressed') }
-                            ],
-                        );
-                    });
+                    payWithRazorpay({
+                        order: paymentResponse.data,
+                        user,
+                        bookingId: response.booking_car_id,
+                        navigation: props.navigation,
+                        setConfirming: setConfirmingPayment,
+                    })
                 }, 500);
+            } else {
+                Alert.alert('Alert', 'unable to get Booking Payment Details')
             }
+        } else if (response.message == "BOOKING_EXIST") {
+            setEligiabilityModal(false)
+            showBookingExistAlert(response)
         } else {
             Alert.alert('Alert', 'unable to get Booking Payment Details')
         }
@@ -171,6 +155,7 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
+            <PaymentConfirmingModal visible={confirmingPayment} />
             <View>
                 {couponModalScreen &&
                     <View>

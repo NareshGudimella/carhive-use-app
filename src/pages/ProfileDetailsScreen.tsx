@@ -55,8 +55,6 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
         setUserDetailsObj((e: any) => ({ ...e, [key]: value }))
     }
     const updateEmail = async () => {
-        const response = await userUpdateProfile(userDetailsObj.email)
-        console.log('res', response)
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!userDetailsObj.email || userDetailsObj.email.trim().length == 0) {
             Alert.alert('Alert', 'Enter your email')
@@ -65,6 +63,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
             Alert.alert('Alert', 'Invalid email format')
             return
         }
+        const response = await userUpdateProfile(userDetailsObj.email)
         if (response.code == 0) {
             Alert.alert('Alert', 'Your email is updated')
         } else {
@@ -250,7 +249,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                             </Cardview>
                         </View>
                     </Cardview>
-                    {(profilDetails && (profilDetails.aadhar_verfy_flag == 1 || profilDetails.driving_licence_flag == 1)) && <View style={{
+                    {(profilDetails && ((profilDetails.aadhar_verfy_flag == 1 || profilDetails.aadhar_verfy_flag == 2) || (profilDetails.driving_licence_flag == 1 || profilDetails.driving_licence_flag == 2))) && <View style={{
                         marginVertical: hp(2)
                     }}>
                         <Cardview>
@@ -258,13 +257,13 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                 marginHorizontal: wp(4),
                                 marginVertical: hp(1)
                             }}>
-                                {profilDetails && profilDetails.aadhar_verfy_flag == 1 && <><View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                {profilDetails && (profilDetails.aadhar_verfy_flag == 1 || profilDetails.aadhar_verfy_flag == 2) && <><View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                                     <Text style={{
                                         fontSize: 18,
                                         fontWeight: 'bold',
                                         marginVertical: hp(1)
                                     }}>Aadhar card</Text>
-                                    {profilDetails && profilDetails.aadhar_verfy_flag == 1 &&
+                                    {profilDetails && (profilDetails.aadhar_verfy_flag == 1 || profilDetails.aadhar_verfy_flag == 2) &&
                                         <Image resizeMode='contain' style={{ width: 30, height: 30 }} source={require('../assets/check.png')} />}
                                 </View><View style={{
                                     flexDirection: 'row',
@@ -323,13 +322,13 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                             </Cardview>
                                         </View>
                                     </View></>}
-                                {profilDetails && profilDetails.driving_licence_flag == 1 && <><View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                {profilDetails && (profilDetails.driving_licence_flag == 1 || profilDetails.driving_licence_flag == 2) && <><View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                                     <Text style={{
                                         fontSize: 18,
                                         fontWeight: 'bold',
                                         marginVertical: hp(1)
                                     }}>Driving License</Text>
-                                    {profilDetails && profilDetails.driving_licence_flag == 1 &&
+                                    {profilDetails && (profilDetails.driving_licence_flag == 1 || profilDetails.driving_licence_flag == 2) &&
                                         <Image resizeMode='contain' style={{ width: 30, height: 30 }} source={require('../assets/check.png')} />}
                                 </View><View style={{
                                     flexDirection: 'row',

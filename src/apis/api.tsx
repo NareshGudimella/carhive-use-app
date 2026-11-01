@@ -1,6 +1,19 @@
 import { getToken } from "../storage/AsyncStorage"
+import { BASE_URL } from "../config"
+import { handleInvalidSession } from "../utils/session"
 
-const BASE_URL = 'https://carhive.co.in/api'
+// 401 = token expired/invalid, 403 ACCOUNT_BLOCKED = blocked by admin.
+// Only acted on when a token was sent, so public calls are unaffected.
+const checkSession = (status: number, data: any, hadToken: boolean) => {
+    if (!hadToken) {
+        return
+    }
+    if (status === 401) {
+        handleInvalidSession('expired')
+    } else if (status === 403 && data && data.message === 'ACCOUNT_BLOCKED') {
+        handleInvalidSession('blocked')
+    }
+}
 
 export const excuteResponse = async (url: string, body: any) => {
 
@@ -19,8 +32,11 @@ export const excuteResponse = async (url: string, body: any) => {
             headers: headers,
             body: (body instanceof FormData) ? body : JSON.stringify(body)
         })
-        const data = await response.json()
-        return data
+        const data = await response.json().catch(() => null)
+        checkSession(response.status, data, !!(token && token != ''))
+        if (data !== null) {
+            return data
+        }
     } catch (e) {
         console.log(e)
     }
@@ -43,8 +59,11 @@ export const excuteGetResponse = async (url: string) => {
             method: 'GET',
             headers: headers,
         })
-        const data = await response.json()
-        return data
+        const data = await response.json().catch(() => null)
+        checkSession(response.status, data, !!(token && token != ''))
+        if (data !== null) {
+            return data
+        }
     } catch (e) {
         console.log(e)
     }
@@ -208,7 +227,6 @@ export const aadharnumberverify = async (aadharnumber: any) => {
 }
 export const aadharotpverify = async (body: any) => {
     const data = new FormData()
-    console.log('value', Object.entries<any>(body))
     for (const [key, value] of Object.entries<any>(body)) {
         if (key == 'aadhar_front_image') {
             if (value && value.uri) {
@@ -234,7 +252,6 @@ export const aadharotpverify = async (body: any) => {
 }
 export const licenceverify = async (body: any) => {
     const data = new FormData()
-    console.log('value', Object.entries<any>(body))
     for (const [key, value] of Object.entries<any>(body)) {
         if (key == 'driving_licence_front') {
             if (value && value.uri) {
@@ -257,4 +274,19 @@ export const licenceverify = async (body: any) => {
         }
     }
     return excuteResponse(`secure/driving`, data)
+}
+export const deleteAccount = async () => {
+    return excuteResponse(`secure/account/delete`, {})
+}
+export const paymentVerify = async (razorpay_order_id: any, razorpay_payment_id: any, razorpay_signature: any) => {
+    return excuteResponse(`secure/cars/payment/verify`, { razorpay_order_id, razorpay_payment_id, razorpay_signature })
+}
+export const getFavouriteCars = async () => {
+    return excuteGetResponse(`secure/cars/favorite`)
+}
+export const addFavouriteCar = async (carid: any) => {
+    return excuteGetResponse(`secure/cars/favorite/add/${carid}`)
+}
+export const removeFavouriteCar = async (carid: any) => {
+    return excuteGetResponse(`secure/cars/favorite/remove/${carid}`)
 }

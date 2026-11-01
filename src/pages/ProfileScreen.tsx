@@ -25,9 +25,13 @@ import { useFocusEffect } from "@react-navigation/native";
 import PrimaryButton from "../components/PrimaryButton";
 import { style } from "../styles/OtpStyle";
 import { OtpInput } from "react-native-otp-entry";
-import { excuteGetResponse, Login, Otp } from "../apis/api";
+import { deleteAccount, excuteGetResponse, Login, Otp } from "../apis/api";
 import Textinput from "../components/TextInput";
 import { Foregroundmessage, requestfirebasePermissions } from "../firebase/firebase";
+import { showMessage } from "../components/MessageModal";
+import { getFriendlyError } from "../utils/apiMessages";
+import { clearSession, showAccountRestored } from "../utils/session";
+import { PRIVACY_URL, TERMS_URL } from "../config";
 
 class Componentprops extends Baseprops { }
 
@@ -167,6 +171,7 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                         Foregroundmessage()
                         setOtpModal(false)
                         dispatch(updateProfile(profileresponse.data))
+                        showAccountRestored(response)
                         props.navigation.reset({
                             index: 0,
                             routes: [{ name: 'HomeScreen' }],
@@ -186,26 +191,40 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
     }
 
     const handelDeleteAccount = () => {
+        // The real number of days is only known after the call; 90 is the default.
         Alert.alert(
-            'Alert!',
-            'Are you sure you want to delete your account?',
+            'Delete account?',
+            'Your account will be deactivated now and permanently deleted after 90 days. Log in again within 90 days to keep it.',
             [
                 { text: 'Cancel', style: 'cancel' },
                 {
-                    text: 'OK',
+                    text: 'Delete',
+                    style: 'destructive',
                     onPress: async () => {
-                        try {
-                            setDeleteLoading(true)
-                            dispatch(removeProfile(null))
-                            await removeToken()
+                        setDeleteLoading(true)
+                        const response = await deleteAccount()
+                        setDeleteLoading(false)
+                        if (response.code == 0 && response.message == 'ACCOUNT_DEACTIVATED') {
+                            const days = (response.data && response.data.days) || 90
+                            await clearSession()
+                            setTokenFlag(false)
                             props.navigation.reset({
                                 index: 0,
                                 routes: [{ name: 'HomeScreen' }],
                             })
-                        } catch (e) {
-                            Alert.alert('Error', 'Unable to delete account.')
-                        } finally {
-                            setDeleteLoading(false)
+                            showMessage({
+                                kind: 'info',
+                                title: 'Account deactivated',
+                                message: `Your account has been deactivated and will be permanently deleted after ${days} days. Log in again within ${days} days to keep it.`,
+                            })
+                        } else if (response.message == 'ACTIVE_BOOKING_EXISTS') {
+                            showMessage({
+                                kind: 'warning',
+                                title: 'Active booking',
+                                message: 'You have an active booking. Please complete or cancel it before deleting your account.',
+                            })
+                        } else {
+                            showMessage(getFriendlyError(response))
                         }
                     },
                 },
@@ -519,6 +538,29 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                             </View>
                                         </Pressable>
                                         <View style={divider} />
+
+                                        <Pressable
+                                            onPress={() => props.navigation.navigate('FavouritesScreen')}
+                                            style={{ flexDirection: 'row', alignItems: 'center' }}
+                                        >
+                                            <View style={iconContainer}>
+                                                <Text style={{ fontSize: 18, lineHeight: 22, width: 22, textAlign: 'center', color: '#E53935' }}>
+                                                    ♥
+                                                </Text>
+                                            </View>
+                                            <View style={{ marginHorizontal: wp(3) }}>
+                                                <Text style={{ fontSize: 15, fontWeight: 'bold' }}>
+                                                    Favourites
+                                                </Text>
+                                                <Text style={{
+                                                    fontSize: 12, fontWeight: '500',
+                                                    color: '#64748B', width: wp(55),
+                                                }}>
+                                                    Cars you have saved
+                                                </Text>
+                                            </View>
+                                        </Pressable>
+                                        <View style={divider} />
                                     </>
                                 )}
 
@@ -602,7 +644,7 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                             <View style={{ marginHorizontal: wp(5), marginVertical: hp(2) }}>
 
                                 <Text
-                                    onPress={() => Linking.openURL('https://carhive.co.in/terms_conditions')}
+                                    onPress={() => Linking.openURL(TERMS_URL)}
                                     style={{ fontSize: 15, fontWeight: 'bold' }}
                                 >
                                     Terms & Conditions
@@ -613,7 +655,7 @@ const ProfileScreen: React.FC<Componentprops> = (props) => {
                                 }} />
 
                                 <Text
-                                    onPress={() => Linking.openURL('https://carhive.co.in/privacy_policy')}
+                                    onPress={() => Linking.openURL(PRIVACY_URL)}
                                     style={{ fontSize: 16, fontWeight: 'bold' }}
                                 >
                                     Privacy policy

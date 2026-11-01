@@ -16,6 +16,7 @@ import {
 import { CenterModalView } from "../components/CenterModelView";
 import PrimaryButton from "../components/PrimaryButton";
 import FastImage from "react-native-fast-image";
+import { APP_STORE_URL, PLAY_STORE_URL } from "../config";
 
 class Componentprops extends Baseprops { }
 
@@ -31,7 +32,6 @@ const SplaceScreen: React.FC<Componentprops> = (props) => {
 
     const loadUserDetails = async () => {
         const token = await getToken()
-        console.log(token)
         if (token && token != '') {
             const response = await excuteGetResponse('secure/profile')
             if (response.code == 0) {
@@ -39,8 +39,12 @@ const SplaceScreen: React.FC<Componentprops> = (props) => {
                 Foregroundmessage()
                 dispatch(updateProfile(response.data));
                 props.navigation.navigate('HomeScreen')
-            } else {
+            } else if (response.code == 2) {
                 Alert.alert('Alert', 'Unable to get details')
+                props.navigation.navigate('HomeScreen')
+            } else {
+                // 401/403 are handled by the request wrapper (session reset); otherwise continue.
+                props.navigation.navigate('HomeScreen')
             }
         } else {
             props.navigation.navigate('HomeScreen')
@@ -49,23 +53,28 @@ const SplaceScreen: React.FC<Componentprops> = (props) => {
 
     const CheckVersion = async () => {
         const response = await excuteGetResponse(`auth/versions`)
-        if (response.code == 0) {
+        if (response.code == 0 && response.data) {
             if (Platform.OS === 'android') {
                 const buildNumber = DeviceInfo.getBuildNumber();
-                if (buildNumber < response.data.User_Android_Version) {
+                if (Number(buildNumber) < Number(response.data.User_Android_Version)) {
                     setVersionmodal(true)
                 } else {
                     loadUserDetails()
                 }
             } else if (Platform.OS === 'ios') {
                 const buildNumber = DeviceInfo.getBuildNumber();
-                if (buildNumber < response.data.User_IOS_Version) {
+                if (Number(buildNumber) < Number(response.data.User_IOS_Version)) {
                     setVersionmodal(true)
                 } else {
                     loadUserDetails()
 
                 }
+            } else {
+                loadUserDetails()
             }
+        } else {
+            // Version check unavailable: don't block startup on it.
+            loadUserDetails()
         }
     }
     const CheckMaintenance = async () => {
@@ -77,7 +86,8 @@ const SplaceScreen: React.FC<Componentprops> = (props) => {
                 props.navigation.navigate('MaintenanceScreen')
             }
         } else {
-            Alert.alert('Alert', 'Unable to get details')
+            // Maintenance check unavailable: continue startup.
+            CheckVersion()
         }
     }
 
@@ -121,9 +131,7 @@ const SplaceScreen: React.FC<Componentprops> = (props) => {
                                     width: wp(60)
                                 }}>
                                     <PrimaryButton title='Update' onclick={() => {
-                                        Linking.openURL(Platform.OS == 'android' ?
-                                            'https://play.google.com/store/apps/details?id=com.carhive.user&pcampaignid=web_share' :
-                                            'https://apps.apple.com/in/app/carhive-rentals/id6748205300')
+                                        Linking.openURL(Platform.OS == 'android' ? PLAY_STORE_URL : APP_STORE_URL)
                                     }} />
                                 </View>
                             </View>

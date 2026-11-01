@@ -1,15 +1,12 @@
 import React from 'react';
 import {
-  Image,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
   Pressable,
   TouchableWithoutFeedback,
-  View
 } from 'react-native';
 import { BottomModelStyle } from '../styles/BottomModelStyle';
-import { hp, wp } from '../utils/ResponsiveScreen';
 import { Baseprops } from '../utils/navigation';
 
 interface ComponentProps extends Baseprops {
@@ -20,12 +17,13 @@ interface ComponentProps extends Baseprops {
 export const BottomModelView: React.FC<ComponentProps> = ({ children, onclick }) => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <Pressable onPress={()=>onclick} style={BottomModelStyle.mainView}>
+      <Pressable onPress={onclick} style={BottomModelStyle.mainView}>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={{ width: '100%' }}
         >
-          <View style={BottomModelStyle.subView}>{children}</View>
+          {/* Taps inside the sheet must not reach the backdrop (which closes it). */}
+          <Pressable onPress={Keyboard.dismiss} style={BottomModelStyle.subView}>{children}</Pressable>
         </KeyboardAvoidingView>
       </Pressable>
     </TouchableWithoutFeedback>

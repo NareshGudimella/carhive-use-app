@@ -19,11 +19,6 @@ const CarCountData = [
     { label: '5', value: 5 },
     { label: '6', value: 6 },
 ];
-const LocationData = [
-    { label: 'Hyderabad', value: 'Hyderabad' },
-    { label: 'Visakhapatnam', value: 'Visakhapatnam' },
-    { label: 'Mumbai', value: 'Mumbai' },
-];
 const BecomeHostScreen: React.FC<Componentprops> = (props) => {
     const [cars, setCars] = useState('');
     const [isFocus, setIsFocus] = useState(false);
@@ -54,8 +49,11 @@ const BecomeHostScreen: React.FC<Componentprops> = (props) => {
             Alert.alert('Alert', 'Invalid email format')
             return
         }
-        if (number.trim().length == 0 && number.trim().length != 10) {
+        if (number.trim().length == 0) {
             Alert.alert('Alert', 'Enter host Number')
+            return
+        } else if (!/^[0-9]{10}$/.test(number.trim())) {
+            Alert.alert('Alert', 'Enter a valid 10-digit mobile number')
             return
         }
         if (cars == '') {
