@@ -15,7 +15,7 @@ import {
 } from "../firebase/firebase";
 import { CenterModalView } from "../components/CenterModelView";
 import PrimaryButton from "../components/PrimaryButton";
-import FastImage from "react-native-fast-image";
+import FastImage, { FastImageProps } from "@d11/react-native-fast-image";
 import { APP_STORE_URL, PLAY_STORE_URL } from "../config";
 
 class Componentprops extends Baseprops { }
@@ -118,7 +118,7 @@ const SplaceScreen: React.FC<Componentprops> = (props) => {
                                     style={{
                                         height: 70,
                                         width: 70
-                                    }}
+                                    } as FastImageProps['style']}
                                     source={require('../assets/update.gif')} />
                                 <Text style={{
                                     fontSize: 18,

@@ -9,7 +9,7 @@ import {
 import { BackButtonStyle } from "../styles/BackButtonStyle";
 import { wp, hp } from "../utils/ResponsiveScreen";
 import { BottomTabstyles } from "../styles/BottomTabstyles";
-import { ICarouselInstance } from "react-native-reanimated-carousel";
+import type { CarouselRef } from "react-native-reanimated-carousel";
 import React, { useCallback, useState } from "react";
 import { BottomModelView } from "../components/BottomModelView";
 import FilterButton from "../components/FilterButton";
@@ -61,7 +61,7 @@ const short = [
 ]
 
 const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
-    const ref = React.useRef<ICarouselInstance>(null);
+    const ref = React.useRef<CarouselRef>(null);
     const [filterModel, setFilterModal] = useState(false);
     const [carsList, setCarsList] = useState<any>(null);
     const [search, SetSearch] = useState('');

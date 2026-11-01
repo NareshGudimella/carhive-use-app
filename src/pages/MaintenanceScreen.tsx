@@ -1,7 +1,7 @@
 import { Pressable, SafeAreaView, Text, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { wp, hp } from "../utils/ResponsiveScreen";
-import FastImage from "react-native-fast-image";
+import FastImage, { FastImageProps } from "@d11/react-native-fast-image";
 import PrimaryButton from "../components/PrimaryButton";
 
 class Componentprops extends Baseprops { }
@@ -28,7 +28,7 @@ const MaintenanceScreen: React.FC<Componentprops> = (props) => {
                             height: hp(20),
                             width: hp(20),
                             left:hp(-2)
-                        }}
+                        } as FastImageProps['style']}
                     />
                 </View>
                 <View>

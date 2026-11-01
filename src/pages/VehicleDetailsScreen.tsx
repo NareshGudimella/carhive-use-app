@@ -22,7 +22,7 @@ import {
 } from "../apis/api";
 import { getToken, setToken } from "../storage/AsyncStorage";
 import { useFocusEffect } from "@react-navigation/native";
-import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
+import { Carousel, CarouselRef } from "react-native-reanimated-carousel";
 import { input } from "../styles/TextInputStyle";
 //import DatePicker from "react-native-date-picker";
 import moment from "moment";
@@ -53,7 +53,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
     const [otp, setOtp] = useState<any>('')
     const [phoneNumber, setPhoneNumber] = useState<any>('')
     const [carData, setCarData] = useState<any>(null)
-    const ref = React.useRef<ICarouselInstance>(null);
+    const ref = React.useRef<CarouselRef>(null);
     const [aadharmodal, setAadharmodal] = useState(false)
     const [aadharnumber, setAadharnumber] = useState<any>('')
     const [licencemodal, setLicencemodal] = useState<any>(false)
@@ -1233,11 +1233,10 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                 <>
                                     <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                                         {carData && <Carousel
-                                            autoPlay={false}
+                                            autoplay={false}
+                                            loop={true}
                                             ref={ref}
-                                            width={wp(94)}
-                                            style={{}}
-                                            height={hp(23)}
+                                            style={{ width: wp(94), height: hp(23) }}
                                             data={carData.gallery}
                                             renderItem={({ item }: { item: any; }) => (
                                                 <View style={{
@@ -1452,10 +1451,10 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                             <View>
                                                 <Cardview>
                                                     <Carousel
-                                                        autoPlay={false}
+                                                        autoplay={false}
+                                                        loop={true}
                                                         ref={ref}
-                                                        width={wp(87)}
-                                                        height={hp(15)}
+                                                        style={{ width: wp(87), height: hp(15) }}
                                                         data={carData.reviews}
                                                         renderItem={({ item }: { item: any; }) => (
                                                             <View style={{ paddingVertical: hp(1), marginHorizontal: hp(2), width: wp(87) }}>

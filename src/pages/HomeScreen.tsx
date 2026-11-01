@@ -15,7 +15,7 @@ import { BottomTabstyles } from "../styles/BottomTabstyles";
 import React, { useCallback, useState } from "react";
 import PrimaryButton from "../components/PrimaryButton";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
+import { Carousel, CarouselRef } from "react-native-reanimated-carousel";
 import { Cardview } from "../components/Cardview";
 import { CarouselimageStyles } from "../styles/CarouselimageStyles";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -37,7 +37,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
     const [open, setOpen] = useState(false);
     const [dateType, setDateType] = useState<'pickup' | 'drop' | ''>('');
     const [modeltype, setModeltype] = useState('')
-    const ref = React.useRef<ICarouselInstance>(null);
+    const ref = React.useRef<CarouselRef>(null);
     const [pickupTime, setPickupTime] = useState(new Date());
     const [dropTime, setDropTime] = useState(new Date())
     const [cityname, setCityname] = useState<any>([])
@@ -699,11 +699,11 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
 
                         <View>
                             <Carousel
-                                autoPlay={true}
+                                autoplay={true}
+                                autoplayInterval={1000}
+                                loop={true}
                                 ref={ref}
-                                width={wp(90)}
-                                style={{ marginTop: hp(2) }}
-                                height={hp(25)}
+                                style={{ marginTop: hp(2), width: wp(90), height: hp(25) }}
                                 data={banner}
                                 renderItem={({ item }: { item: any }) => (
                                     <View>

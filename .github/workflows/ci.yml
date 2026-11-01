@@ -15,12 +15,10 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
-      # react-native-auto-height-image declares a React 17 peer dependency, so a
-      # strict install fails; --legacy-peer-deps matches how the lock file was made.
-      - run: npm ci --legacy-peer-deps
+      - run: npm ci
 
       - run: npx tsc --noEmit
 

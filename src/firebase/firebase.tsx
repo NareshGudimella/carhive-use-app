@@ -1,4 +1,14 @@
-import messaging from '@react-native-firebase/messaging';
+import {
+    getMessaging,
+    AuthorizationStatus,
+    requestPermission,
+    getToken as getFcmToken,
+    onTokenRefresh,
+    onMessage,
+    getInitialNotification,
+    onNotificationOpenedApp,
+} from '@react-native-firebase/messaging';
+import type { RemoteMessage } from '@react-native-firebase/messaging';
 import { Linking, PermissionsAndroid, Platform } from 'react-native';
 import notifee, { EventType } from '@notifee/react-native';
 import { firebasemessage } from '../apis/api';
@@ -13,10 +23,10 @@ let pendingTap: any = null
 let loggedInReady = false
 
 export const requestfirebasePermissions = async () => {
-    const authStatus = await messaging().requestPermission();
+    const authStatus = await requestPermission(getMessaging());
     const enabled =
-        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+        authStatus === AuthorizationStatus.AUTHORIZED ||
+        authStatus === AuthorizationStatus.PROVISIONAL;
     if (!enabled) {
         return
     }
@@ -31,7 +41,7 @@ export const requestfirebasePermissions = async () => {
     }
     Token()
     if (!tokenRefreshUnsubscribe) {
-        tokenRefreshUnsubscribe = messaging().onTokenRefresh(async (token: string) => {
+        tokenRefreshUnsubscribe = onTokenRefresh(getMessaging(), async (token: string) => {
             const authToken = await getToken()
             if (authToken && authToken != '' && token && token != '') {
                 registerFcmToken(token)
@@ -46,7 +56,7 @@ const registerFcmToken = async (token: string) => {
 
 export const Token = async () => {
     try {
-        const token = await messaging().getToken();
+        const token = await getFcmToken(getMessaging());
         if (token && token != '') {
             await registerFcmToken(token)
         }
@@ -59,7 +69,7 @@ export const Token = async () => {
 // foreground handler only once, then opens any notification tapped earlier.
 export const Foregroundmessage = async () => {
     if (!foregroundUnsubscribe) {
-        foregroundUnsubscribe = messaging().onMessage(async remoteMessage => {
+        foregroundUnsubscribe = onMessage(getMessaging(), async (remoteMessage: RemoteMessage) => {
             const title = remoteMessage.notification?.title
             const body = remoteMessage.notification?.body
             await notifee.createChannel({
@@ -118,7 +128,7 @@ export const registerNotificationTapHandlers = () => {
     }
     tapListenersRegistered = true
     // Cold start from a system (FCM) notification.
-    messaging().getInitialNotification().then(remoteMessage => {
+    getInitialNotification(getMessaging()).then((remoteMessage: RemoteMessage | null) => {
         if (remoteMessage) {
             handleNotificationTap(remoteMessage.data || {})
         }
@@ -130,7 +140,7 @@ export const registerNotificationTapHandlers = () => {
         }
     }).catch(() => { })
     // App in background, system notification tapped.
-    const unsubscribeOpened = messaging().onNotificationOpenedApp(remoteMessage => {
+    const unsubscribeOpened = onNotificationOpenedApp(getMessaging(), (remoteMessage: RemoteMessage) => {
         handleNotificationTap(remoteMessage.data || {})
     })
     // App in foreground, Notifee notification tapped.

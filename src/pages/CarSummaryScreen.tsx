@@ -9,7 +9,7 @@ import { Rating } from "react-native-ratings";
 import PrimaryButton from "../components/PrimaryButton";
 import { useCallback, useEffect, useState } from "react";
 import { BottomModelView } from "../components/BottomModelView";
-import CheckBox from '@react-native-community/checkbox';
+import CheckBox from '../components/CheckBox';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { carBookings, excuteGetResponse, summery } from "../apis/api";
 import { useFocusEffect } from "@react-navigation/native";

@@ -2,7 +2,7 @@
 // Mocks for native modules so the App smoke test can render under Jest.
 
 jest.mock('@react-native-async-storage/async-storage', () =>
-  require('@react-native-async-storage/async-storage/jest/async-storage-mock'),
+  require('@react-native-async-storage/async-storage/jest'),
 );
 
 jest.mock('@react-native-community/netinfo', () =>
@@ -15,24 +15,22 @@ jest.mock('react-native-device-info', () =>
 
 jest.mock('react-native-permissions', () => require('react-native-permissions/mock'));
 
-jest.mock('@react-native-firebase/messaging', () => {
-  const messaging = () => ({
-    requestPermission: jest.fn(() => Promise.resolve(1)),
-    getToken: jest.fn(() => Promise.resolve('')),
-    onMessage: jest.fn(() => jest.fn()),
-    onTokenRefresh: jest.fn(() => jest.fn()),
-    onNotificationOpenedApp: jest.fn(() => jest.fn()),
-    getInitialNotification: jest.fn(() => Promise.resolve(null)),
-    setBackgroundMessageHandler: jest.fn(),
-  });
-  messaging.AuthorizationStatus = {
+jest.mock('@react-native-firebase/messaging', () => ({
+  getMessaging: jest.fn(() => ({})),
+  AuthorizationStatus: {
     NOT_DETERMINED: -1,
     DENIED: 0,
     AUTHORIZED: 1,
     PROVISIONAL: 2,
-  };
-  return { __esModule: true, default: messaging };
-});
+  },
+  requestPermission: jest.fn(() => Promise.resolve(1)),
+  getToken: jest.fn(() => Promise.resolve('')),
+  onMessage: jest.fn(() => jest.fn()),
+  onTokenRefresh: jest.fn(() => jest.fn()),
+  onNotificationOpenedApp: jest.fn(() => jest.fn()),
+  getInitialNotification: jest.fn(() => Promise.resolve(null)),
+  setBackgroundMessageHandler: jest.fn(),
+}));
 
 jest.mock('@notifee/react-native', () => ({
   __esModule: true,
@@ -51,7 +49,26 @@ jest.mock('react-native-razorpay', () => ({
   default: { open: jest.fn(() => Promise.reject(new Error('mock'))) },
 }));
 
-jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
+// Reanimated 4 / Worklets need their native runtime, so the libraries built on
+// them are stubbed for the render smoke test.
+jest.mock('react-native-worklets', () => require('react-native-worklets/lib/module/mock'));
+
+jest.mock('react-native-reanimated', () => ({
+  __esModule: true,
+  default: {
+    View: require('react-native').View,
+    createAnimatedComponent: component => component,
+  },
+}));
+
+jest.mock('react-native-reanimated-carousel', () => ({
+  Carousel: () => null,
+  Pagination: () => null,
+}));
+
+jest.mock('@likashefqet/react-native-image-zoom', () => ({
+  ImageZoom: () => null,
+}));
 
 jest.mock('@react-native-community/geolocation', () => ({
   __esModule: true,

@@ -1,7 +1,7 @@
 import { Pressable, SafeAreaView, Text, View } from "react-native";
 import { Baseprops } from "../utils/navigation";
 import { wp, hp } from "../utils/ResponsiveScreen";
-import FastImage from "react-native-fast-image";
+import FastImage, { FastImageProps } from "@d11/react-native-fast-image";
 import NetInfo from '@react-native-community/netinfo';
 
 class Componentprops extends Baseprops { }
@@ -27,7 +27,7 @@ const NoNetworkScreen: React.FC<Componentprops> = (props) => {
                         style={{
                             height: hp(15),
                             width: hp(15),
-                        }}
+                        } as FastImageProps['style']}
                     />
                 </View>
                 <View>

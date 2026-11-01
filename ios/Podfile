@@ -12,7 +12,9 @@ node_require('react-native-permissions/scripts/setup.rb')
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
 
-linkage = ENV['USE_FRAMEWORKS']
+# @react-native-firebase 27 resolves Firebase through Swift Package Manager, which requires
+# dynamic framework linkage (https://rnfirebase.io/ios-spm).
+linkage = ENV['USE_FRAMEWORKS'] || 'dynamic'
 if linkage != nil
   Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
   use_frameworks! :linkage => linkage.to_sym
@@ -35,17 +37,37 @@ target 'carhive_user' do
     'PhotoLibrary'
   ])
   
-  pod 'FirebaseCoreInternal', :modular_headers => true
-  pod 'GoogleUtilities', :modular_headers => true
-  pod 'FirebaseCore', :modular_headers => true
-
   post_install do |installer|
-    # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
     react_native_post_install(
       installer,
       config[:reactNativePath],
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+
+    # Xcode 27 rejects pod targets (mostly resource bundles) below iOS 15.0.
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        if config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f < 15.0
+          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.1'
+        end
+      end
+    end
+
+    # With dynamic frameworks (required by react-native-firebase 27) every pod links on its own,
+    # so frameworks that used to be resolved by the final app link must be added per pod.
+    extra_frameworks = {
+      # razorpay-pod's framework does not inherit the frameworks of razorpay-core-pod.
+      'react-native-razorpay' => ['Razorpay', 'RazorpayCore'],
+      # Uses kUTType*/UTType constants and the Photos and AVFoundation APIs.
+      'react-native-image-picker' => ['MobileCoreServices', 'UniformTypeIdentifiers', 'Photos', 'PhotosUI', 'AVFoundation'],
+    }
+    installer.pods_project.targets.each do |target|
+      frameworks = extra_frameworks[target.name]
+      next unless frameworks
+      target.build_configurations.each do |config|
+        config.build_settings['OTHER_LDFLAGS'] = ['$(inherited)'] + frameworks.map { |f| "-framework #{f}" }
+      end
+    end
   end
 end

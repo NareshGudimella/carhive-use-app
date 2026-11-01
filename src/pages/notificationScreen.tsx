@@ -5,7 +5,7 @@ import {
     Image, Pressable, ScrollView, Text, View, Dimensions,
     Alert, Modal, TouchableOpacity, ActivityIndicator
 } from "react-native";
-import AutoHeightImage from 'react-native-auto-height-image';
+import AutoHeightImage from '../components/AutoHeightImage';
 import { hp, wp } from "../utils/ResponsiveScreen";
 import { excuteGetResponse, Login, Otp } from '../apis/api';
 import { useFocusEffect } from '@react-navigation/native';
