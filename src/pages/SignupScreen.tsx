@@ -8,7 +8,7 @@ import { useCallback, useState } from "react";
 import { input } from "../styles/TextInputStyle";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { excuteGetResponse, SignUp } from "../apis/api";
-import moment from "moment";
+import dayjs from "../utils/date";
 import { CenterModalView } from "../components/CenterModelView";
 import { useFocusEffect } from "@react-navigation/native";
 import { Asset, launchCamera } from "react-native-image-picker";
@@ -55,7 +55,7 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
         object.name = profilDetails.name,
             object.email = userEmail,
             object.gender = profilDetails.gender,
-            object.dob = moment(date).format('YYYY-MM-DD'),
+            object.dob = dayjs(date).format('YYYY-MM-DD'),
             object.profile_pic = profileImage
         setIndiCator(true)
         const response = await SignUp(object);
@@ -315,7 +315,7 @@ const SignupScreen: React.FC<Componentprops> = (props) => {
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Image source={require('../assets/sms.png')} style={input.style} />
                             <Text style={[input.textinput, { color: '#000' }]}>
-                                {date ? moment(date).format('YYYY-MM-DD') : 'Date of birth'}
+                                {date ? dayjs(date).format('YYYY-MM-DD') : 'Date of birth'}
                             </Text>
                         </View>
                     </Pressable>

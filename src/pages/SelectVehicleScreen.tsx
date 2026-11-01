@@ -14,12 +14,12 @@ import React, { useCallback, useState } from "react";
 import { BottomModelView } from "../components/BottomModelView";
 import FilterButton from "../components/FilterButton";
 import PrimaryButton from "../components/PrimaryButton";
-import { Rating } from "react-native-ratings";
+import StarRating from '../components/StarRating';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useFocusEffect } from "@react-navigation/native";
 import { CarsList, excuteGetResponse } from "../apis/api";
 import LinearGradient from "react-native-linear-gradient";
-import moment from "moment";
+import dayjs from "../utils/date";
 
 class Componentprops extends Baseprops { }
 
@@ -367,10 +367,10 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                         }}>
                             <View style={{ alignItems: 'center' }}>
                                 <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
-                                    {carsList && moment(carsList.from_date).format('DD MMM YYYY')}
+                                    {carsList && dayjs(carsList.from_date).format('DD MMM YYYY')}
                                 </Text>
                                 <Text style={{ color: '#13131380', fontSize: 13, fontWeight: '500' }}>
-                                    {carsList && moment(carsList.from_date).format('h:mm A')}
+                                    {carsList && dayjs(carsList.from_date).format('h:mm A')}
                                 </Text>
                             </View>
                             <Image
@@ -379,10 +379,10 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                             />
                             <View style={{ alignItems: 'center' }}>
                                 <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
-                                    {carsList && moment(carsList.to_date).format('DD MMM YYYY')}
+                                    {carsList && dayjs(carsList.to_date).format('DD MMM YYYY')}
                                 </Text>
                                 <Text style={{ color: '#13131380', fontSize: 13, fontWeight: '500' }}>
-                                    {carsList && moment(carsList.to_date).format('h:mm A')}
+                                    {carsList && dayjs(carsList.to_date).format('h:mm A')}
                                 </Text>
                             </View>
                         </View>
@@ -614,12 +614,11 @@ const SelectVehicleScreen: React.FC<Componentprops> = (props) => {
                                                     <Text style={{ fontSize: 16, fontWeight: '400', color: '#666666' }}>
                                                         {e.rating}
                                                     </Text>
-                                                    <Rating
+                                                    <StarRating
                                                         readonly
                                                         startingValue={e.rating}
                                                         imageSize={13}
                                                         ratingCount={5}
-                                                        fractions={1}
                                                         style={{ marginLeft: 8 }}
                                                     />
                                                     <Text>

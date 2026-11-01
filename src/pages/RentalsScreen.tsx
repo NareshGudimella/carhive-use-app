@@ -16,7 +16,7 @@ import { CenterModalView } from "../components/CenterModelView";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { excuteGetResponse, Login, Otp } from "../apis/api";
 import { useFocusEffect } from "@react-navigation/native";
-import moment from "moment";
+import dayjs from "../utils/date";
 import { getToken, setToken } from "../storage/AsyncStorage";
 import { BottomModelView } from "../components/BottomModelView";
 import Textinput from "../components/TextInput";
@@ -652,8 +652,8 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                             marginHorizontal: wp(5),
                                                             marginVertical: hp(2),
                                                             textAlign: 'center'
-                                                        }}>{moment(e.from_date).format('DD MMM YYYY HH:mm A')} -
-                                                        {moment(e.to_date).format('DD MMM YYYY HH:mm A')}</Text>
+                                                        }}>{dayjs(e.from_date).format('DD MMM YYYY HH:mm A')} -
+                                                        {dayjs(e.to_date).format('DD MMM YYYY HH:mm A')}</Text>
                                                 </View>
 
                                                 {/* ── NEW: cancel loading indicator ── */}
@@ -759,7 +759,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                                     fontWeight: 'bold',
                                                                     color: '#64748B'
                                                                 }}>
-                                                                Delivery date :{moment(e.from_date).format('DD MMM YYYY HH:mm A')}
+                                                                Delivery date :{dayjs(e.from_date).format('DD MMM YYYY HH:mm A')}
                                                             </Text>
                                                             <Text
                                                                 style={{
@@ -983,7 +983,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                                         fontSize: 12,
                                                                         fontWeight: 'bold',
 
-                                                                    }}> {moment(e.to_date).format('DD MMM YYYY HH:mm A')}
+                                                                    }}> {dayjs(e.to_date).format('DD MMM YYYY HH:mm A')}
                                                                 </Text>
                                                             </View>
 
@@ -1171,8 +1171,8 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                                         marginHorizontal: wp(5),
                                                                         marginVertical: hp(2),
                                                                         textAlign: 'center'
-                                                                    }}>{moment(e.from_date).format('DD MMM YYYY HH:mm A')}
-                                                                    - {moment(e.to_date).format('DD MMM YYYY HH:mm A')}</Text>
+                                                                    }}>{dayjs(e.from_date).format('DD MMM YYYY HH:mm A')}
+                                                                    - {dayjs(e.to_date).format('DD MMM YYYY HH:mm A')}</Text>
                                                                 {e.rating_flag == 1 ? <View style={{
                                                                     marginBottom: hp(2),
                                                                     marginHorizontal: wp(10)
@@ -1258,7 +1258,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                                                 fontSize: 12,
                                                                                 fontWeight: 'bold',
 
-                                                                            }}> {moment(e.extended_date).format('DD MMM YYYY HH:mm A')}
+                                                                            }}> {dayjs(e.extended_date).format('DD MMM YYYY HH:mm A')}
                                                                         </Text>
                                                                     </View>
                                                                     {
@@ -1378,7 +1378,7 @@ const RentalsScreen: React.FC<Componentprops> = (props) => {
                                                                                     fontSize: 12,
                                                                                     fontWeight: 'bold',
 
-                                                                                }}> {moment(e.extended_date).format('DD MMM YYYY HH:mm A')}
+                                                                                }}> {dayjs(e.extended_date).format('DD MMM YYYY HH:mm A')}
                                                                             </Text>
                                                                         </View>
                                                                         {e.pay_flag == 1 ?

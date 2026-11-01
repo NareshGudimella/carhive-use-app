@@ -6,7 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { excuteGetResponse } from "../apis/api";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useState } from "react";
-import moment from "moment";
+import dayjs from "../utils/date";
 
 class Componentprops extends Baseprops { }
 
@@ -145,13 +145,13 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                     <Text style={{
                                         fontSize: 14,
                                         fontWeight: 'bold'
-                                    }}>{orderDetails && moment(orderDetails.from_date).format('DD MMM YYYY')}</Text>
+                                    }}>{orderDetails && dayjs(orderDetails.from_date).format('DD MMM YYYY')}</Text>
                                     <Text style={{
                                         color: '#27272780',
                                         fontWeight: '500',
                                         marginTop: 2,
                                         fontSize: 13
-                                    }}>{orderDetails && moment(orderDetails.from_date).format('hh:mm A')}</Text>
+                                    }}>{orderDetails && dayjs(orderDetails.from_date).format('hh:mm A')}</Text>
                                 </View>
                                 <Image
                                     source={require('../assets/arrow.png')}
@@ -164,13 +164,13 @@ const OrderDetailsScreen: React.FC<Componentprops> = (props) => {
                                     <Text style={{
                                         fontSize: 14,
                                         fontWeight: 'bold'
-                                    }}>{orderDetails && moment(orderDetails.to_date).format('DD MMM YYYY')}</Text>
+                                    }}>{orderDetails && dayjs(orderDetails.to_date).format('DD MMM YYYY')}</Text>
                                     <Text style={{
                                         color: '#27272780',
                                         fontWeight: '500',
                                         marginTop: 2,
                                         fontSize: 13
-                                    }}>{orderDetails && moment(orderDetails.to_date).format('hh:mm A')}</Text>
+                                    }}>{orderDetails && dayjs(orderDetails.to_date).format('hh:mm A')}</Text>
                                 </View>
                             </View>
                         </Cardview>

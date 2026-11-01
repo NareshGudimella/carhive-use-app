@@ -7,7 +7,7 @@ import { BottomTabstyles } from "../styles/BottomTabstyles";
 import PrimaryButton from "../components/PrimaryButton";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useCallback, useState } from "react";
-import moment from "moment";
+import dayjs from "../utils/date";
 import { excuteGetResponse, extendtime } from "../apis/api";
 import { useFocusEffect } from "@react-navigation/native";
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -60,7 +60,7 @@ const ExtendServiceRequestScreen: React.FC<Componentprops> = (props) => {
     }
 
     const requestExtendtime = async (bookingID: any) => {
-        const combinedDateTime = `${moment(dropDate).format('YYYY-MM-DD')} ${moment(dropTime).format('HH:mm:ss')}`
+        const combinedDateTime = `${dayjs(dropDate).format('YYYY-MM-DD')} ${dayjs(dropTime).format('HH:mm:ss')}`
         const response = await extendtime(bookingID, combinedDateTime)
         console.log('request Success', response, bookingID, combinedDateTime)
         if (response.code == 0) {
@@ -292,7 +292,7 @@ const ExtendServiceRequestScreen: React.FC<Componentprops> = (props) => {
                                             fontSize: 14,
                                             fontWeight: '600'
                                         }}>
-                                            {moment(dropDate).format('DD MMM YYYY')}
+                                            {dayjs(dropDate).format('DD MMM YYYY')}
                                         </Text>
                                     </Pressable>
 
@@ -309,7 +309,7 @@ const ExtendServiceRequestScreen: React.FC<Componentprops> = (props) => {
                                             fontSize: 14,
                                             fontWeight: '600'
                                         }}>
-                                            {moment(dropTime).format('hh:mm A')}
+                                            {dayjs(dropTime).format('hh:mm A')}
                                         </Text>
                                     </Pressable>
                                 </View>

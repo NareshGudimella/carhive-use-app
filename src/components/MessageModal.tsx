@@ -3,7 +3,7 @@ import { Animated, Modal, Pressable, StyleSheet, Text, View } from "react-native
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp
-} from 'react-native-responsive-screen';
+} from '../utils/responsive';
 import { FriendlyMessage, MessageKind } from "../utils/apiMessages";
 
 // App-wide message popup. Mount <MessageModal /> once at the root, then call

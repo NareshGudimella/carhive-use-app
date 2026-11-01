@@ -5,7 +5,7 @@ import {
 import { Baseprops } from "../utils/navigation";
 import { hp, wp } from "../utils/ResponsiveScreen";
 import { Cardview } from "../components/Cardview";
-import { Rating } from "react-native-ratings";
+import StarRating from '../components/StarRating';
 import PrimaryButton from "../components/PrimaryButton";
 import { useCallback, useEffect, useState } from "react";
 import { BottomModelView } from "../components/BottomModelView";
@@ -15,7 +15,7 @@ import { carBookings, excuteGetResponse, summery } from "../apis/api";
 import { useFocusEffect } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { PaymentConfirmingModal, payWithRazorpay } from "../utils/payment";
-import moment from "moment";
+import dayjs from "../utils/date";
 
 class Componentprops extends Baseprops { }
 
@@ -56,8 +56,8 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
             // Use the fresh response, not carDetails (state is not updated yet).
             const details = response.data
             if (details && details.from_date && details.to_date) {
-                const fromDate = moment(details.from_date);
-                const toDate = moment(details.to_date);
+                const fromDate = dayjs(details.from_date);
+                const toDate = dayjs(details.to_date);
                 const durationInHours = toDate.diff(fromDate, 'hours', true);
                 console.log('Duration', durationInHours)
                 if (durationInHours < 24) {
@@ -776,13 +776,13 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                 <Text style={{
                                     fontSize: 15,
                                     fontWeight: 'bold'
-                                }}>{moment(carDetails && carDetails.from_date).format('YYYY-MM-DD')}</Text>
+                                }}>{dayjs(carDetails && carDetails.from_date).format('YYYY-MM-DD')}</Text>
                                 <Text style={{
                                     color: '#27272780',
                                     fontWeight: '500',
                                     marginTop: 2,
                                     fontSize: 13
-                                }}>{moment(carDetails && carDetails.from_date).format('hh:mm A')}</Text>
+                                }}>{dayjs(carDetails && carDetails.from_date).format('hh:mm A')}</Text>
                             </View>
                             <Image
                                 source={require('../assets/arrow.png')}
@@ -795,13 +795,13 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                 <Text style={{
                                     fontSize: 15,
                                     fontWeight: 'bold'
-                                }}>{moment(carDetails && carDetails.to_date).format('YYYY-MM-DD')}</Text>
+                                }}>{dayjs(carDetails && carDetails.to_date).format('YYYY-MM-DD')}</Text>
                                 <Text style={{
                                     color: '#27272780',
                                     fontWeight: '500',
                                     marginTop: 2,
                                     fontSize: 13
-                                }}>{moment(carDetails && carDetails.to_date).format('hh:mm A')}</Text>
+                                }}>{dayjs(carDetails && carDetails.to_date).format('hh:mm A')}</Text>
                             </View>
                         </View>
                     </Cardview>
@@ -837,12 +837,11 @@ const CarSummaryScreen: React.FC<Componentprops> = (props) => {
                                             alignItems: 'center'
                                         }}>
                                             <Text>{carDetails && carDetails.reviews.length > 0 && carDetails.reviews[0].rating}</Text>
-                                            <Rating
+                                            <StarRating
                                                 readonly
                                                 startingValue={carDetails && carDetails.reviews.length > 0 && carDetails.reviews[0].rating}
                                                 imageSize={10}
                                                 ratingCount={5}
-                                                fractions={1}
                                                 style={{ marginLeft: 8 }}
                                             />
                                         </View>

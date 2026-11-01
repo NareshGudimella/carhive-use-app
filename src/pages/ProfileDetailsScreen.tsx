@@ -11,7 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { excuteGetResponse, userUpdateProfile } from "../apis/api";
 import { useFocusEffect } from "@react-navigation/native";
 import { Dropdown } from "react-native-element-dropdown";
-import moment from "moment";
+import dayjs from "../utils/date";
 import { useDispatch } from "react-redux";
 import PrimaryButton from "../components/PrimaryButton";
 
@@ -243,7 +243,7 @@ const ProfileDetailsScreen: React.FC<Componentprops> = (props) => {
                                         top: hp(2)
                                     }}
                                 >
-                                    {date ? moment(date).format('YYYY-MM-DD') : 'Date of birth'}
+                                    {date ? dayjs(date).format('YYYY-MM-DD') : 'Date of birth'}
                                 </Text>
                             </Cardview>
                         </View>

@@ -8,7 +8,7 @@ import {
 } from '@react-native-firebase/messaging';
 import type { RemoteMessage } from '@react-native-firebase/messaging';
 import { Platform } from 'react-native';
-import notifee, { EventType } from '@notifee/react-native';
+import notifee, { EventType } from 'react-native-notify-kit';
 import { firebasemessage } from '../apis/api';
 import DeviceInfo from 'react-native-device-info';
 import { getToken } from '../storage/AsyncStorage';

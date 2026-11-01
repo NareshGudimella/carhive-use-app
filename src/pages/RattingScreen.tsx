@@ -2,7 +2,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Baseprops } from "../utils/navigation";
 import { Alert, Image, Pressable, Text, TextInput, View } from "react-native";
 import { hp, wp } from "../utils/ResponsiveScreen";
-import { Rating } from 'react-native-ratings';
+import StarRating from '../components/StarRating';
 import { useState } from "react";
 import PrimaryButton from "../components/PrimaryButton";
 import { Ratting } from "../apis/api";
@@ -69,11 +69,9 @@ const RattingScreen: React.FC<Componentprops> = (props) => {
                     fontWeight: 'bold',
                     marginVertical: hp(2)
                 }}>How was your ride?</Text>
-                <Rating
-                    type="star"
+                <StarRating
                     ratingCount={5}
                     imageSize={40}
-                    showRating={false}
                     startingValue={rating}
                     onFinishRating={(value: any) => setRating(value)}
                 />

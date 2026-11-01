@@ -3,7 +3,7 @@ import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp
 }
-    from 'react-native-responsive-screen';
+    from '../utils/responsive';
 
 export const Background = StyleSheet.create({
     bgcolor: {

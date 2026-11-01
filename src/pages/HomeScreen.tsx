@@ -9,7 +9,7 @@ import BottomTabNavigation from "../components/BottomTab";
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp
-} from 'react-native-responsive-screen';
+} from '../utils/responsive';
 import { SelectorBoxStyle } from "../styles/Selectorbox";
 import { BottomTabstyles } from "../styles/BottomTabstyles";
 import React, { useCallback, useState } from "react";
@@ -24,7 +24,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import Geolocation from "@react-native-community/geolocation";
 import { ensureLocationPermission } from "../utils/permissions";
 import { getCity } from "../storage/AsyncStorage";
-import moment from "moment";
+import dayjs from "../utils/date";
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 class Componentprops extends Baseprops { }
@@ -161,8 +161,8 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
             props.navigation.navigate('SelectVehicleScreen', {
                 lat: latitude,
                 long: longitude,
-                pickdate: `${moment(pickupDateTime).format('DD-MM-YYYY HH:mm')}`,
-                drop: `${moment(dropDateTime).format('DD-MM-YYYY HH:mm')}`,
+                pickdate: `${dayjs(pickupDateTime).format('DD-MM-YYYY HH:mm')}`,
+                drop: `${dayjs(dropDateTime).format('DD-MM-YYYY HH:mm')}`,
                 picktime: pickupTime,
                 dropuptime: dropTime,
                 addressid: cityname.cityId
@@ -482,7 +482,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                                 tintColor='#000000'
                                             />
                                             <Text style={{ marginHorizontal: wp(2), fontSize: 14, fontWeight: '600' }}>
-                                                {moment(pickupDate).format('MMM D YYYY')}
+                                                {dayjs(pickupDate).format('MMM D YYYY')}
                                             </Text>
                                         </Pressable>
                                     </View>
@@ -506,7 +506,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                                 tintColor='#000000'
                                             />
                                             <Text style={{ marginHorizontal: wp(2), fontSize: 14, fontWeight: '600' }}>
-                                                {moment(pickupTime).format('h:mm A')}
+                                                {dayjs(pickupTime).format('h:mm A')}
                                             </Text>
                                         </Pressable>
                                     </View>
@@ -537,7 +537,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                                 tintColor='#000000'
                                             />
                                             <Text style={{ marginHorizontal: wp(2), fontSize: 14, fontWeight: '600' }}>
-                                                {moment(dropDate).format('MMM D YYYY')}
+                                                {dayjs(dropDate).format('MMM D YYYY')}
                                             </Text>
                                         </Pressable>
                                     </View>
@@ -561,7 +561,7 @@ const HomeScreen: React.FC<Componentprops> = (props) => {
                                                 tintColor='#000000'
                                             />
                                             <Text style={{ marginHorizontal: wp(2), fontSize: 14, fontWeight: '600' }}>
-                                                {moment(dropTime).format('h:mm A')}
+                                                {dayjs(dropTime).format('h:mm A')}
                                             </Text>
                                         </Pressable>
                                     </View>

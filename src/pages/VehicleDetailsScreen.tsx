@@ -8,7 +8,7 @@ import { BackButtonStyle } from "../styles/BackButtonStyle";
 import { Cardview } from "../components/Cardview";
 import React, { useCallback, useState } from "react";
 import { ImageStyle } from "../styles/ImageStyle";
-import { Rating } from 'react-native-ratings';
+import StarRating from '../components/StarRating';
 import PrimaryButton from "../components/PrimaryButton";
 import { BottomModelView } from "../components/BottomModelView";
 import Textinput from "../components/TextInput";
@@ -25,7 +25,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { Carousel, CarouselRef } from "react-native-reanimated-carousel";
 import { input } from "../styles/TextInputStyle";
 //import DatePicker from "react-native-date-picker";
-import moment from "moment";
+import dayjs from "../utils/date";
 import CameraModalScreen from "../components/CameraModel";
 import { Asset } from "react-native-image-picker";
 import { CameraView } from "../components/CameraView";
@@ -345,7 +345,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
         object.driving_licence_front = licensefront
         object.driving_licence_back = licenseback
         object.dl_number = licencenumber
-        object.dob = moment(date).format('YYYY-MM-DD')
+        object.dob = dayjs(date).format('YYYY-MM-DD')
         // FIX 5: Use licenceIndicator so aadhar modal indicator is not affected
         setLicenceIndicator(true)
         const response = await licenceverify(object)
@@ -957,7 +957,7 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                                         style={[input.textinput,
                                                         { color: isDateSelected ? '#000' : '#9CA3AF' }]}>
                                                         {isDateSelected ?
-                                                            moment(date).format('YYYY-MM-DD')
+                                                            dayjs(date).format('YYYY-MM-DD')
                                                             : 'Date of birth'}
                                                     </Text>
                                                 </View>
@@ -1479,12 +1479,11 @@ const VehicleDetailsScreen: React.FC<Componentprops> = (props) => {
                                                                             width: wp(60),
                                                                         }}>{item.name}</Text>
                                                                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                                                            <Rating
+                                                                            <StarRating
                                                                                 readonly
                                                                                 startingValue={item.rating}
                                                                                 imageSize={11}
                                                                                 ratingCount={5}
-                                                                                fractions={1}
                                                                                 style={{ marginLeft: 8 }} />
                                                                             <Text style={{
                                                                                 fontSize: 12,

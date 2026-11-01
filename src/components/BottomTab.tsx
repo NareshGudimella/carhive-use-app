@@ -4,7 +4,7 @@ import { BottomTabstyles } from "../styles/BottomTabstyles";
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp
-} from 'react-native-responsive-screen';
+} from '../utils/responsive';
 
 class Componentprops extends Baseprops {
     step?: any;

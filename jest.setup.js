@@ -32,7 +32,7 @@ jest.mock('@react-native-firebase/messaging', () => ({
   setBackgroundMessageHandler: jest.fn(),
 }));
 
-jest.mock('@notifee/react-native', () => ({
+jest.mock('react-native-notify-kit', () => ({
   __esModule: true,
   default: {
     createChannel: jest.fn(() => Promise.resolve('default')),
@@ -43,6 +43,12 @@ jest.mock('@notifee/react-native', () => ({
   },
   EventType: { DISMISSED: 0, PRESS: 1, ACTION_PRESS: 2, DELIVERED: 3 },
 }));
+
+// The icon font is a .ttf that Jest cannot parse.
+jest.mock('@react-native-vector-icons/material-design-icons', () => {
+  const { Text } = require('react-native');
+  return { __esModule: true, default: Text };
+});
 
 jest.mock('react-native-razorpay', () => ({
   __esModule: true,
